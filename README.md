@@ -1,14 +1,12 @@
-#React Client Starter App [![Build Status](https://travis-ci.org/atomicjolt/react_client_starter_app.svg?branch=master)](https://travis-ci.org/atomicjolt/react_client_starter_app) [![Coverage Status](https://coveralls.io/repos/github/atomicjolt/react_client_starter_app/badge.svg?branch=coveralls)](https://coveralls.io/github/atomicjolt/react_client_starter_app?branch=coveralls)
+#Atomic Search Widget [![Build Status](https://travis-ci.org/atomicjolt/react_client_starter_app.svg?branch=master)](https://travis-ci.org/atomicjolt/react_client_starter_app) [![Coverage Status](https://coveralls.io/repos/github/atomicjolt/react_client_starter_app/badge.svg?branch=coveralls)](https://coveralls.io/github/atomicjolt/react_client_starter_app?branch=coveralls)
 -----------------------
-There are many starter kits that will help you get started with React and Redux.
-This is the one created by, maintained by and used by [Atomic Jolt](http://www.atomicjolt.com).
-Atomic Jolt uses this as application as a starting place for our
-[Ruby on Rails and React starter application](https://github.com/atomicjolt/react_rails_starter_app)
-and our [Firebase React starter appliction](https://github.com/atomicjolt/react_firebase_starter_app).
+This application adds a search widget to Canvas.
 
-#Demo:
+
+#Install:
 -----------------------
-[React Client Starter App Demo](https://reactclientstarterapp.s3-website-us-east-1.amazonaws.com/hello_world)
+Add the following code to your Canvas Template:
+<script type="text/javascript" src="https://atomic-search-widget.atomicjoltapps.com/atomic_search_widget.js" />
 
 
 #Getting Started:
@@ -40,13 +38,6 @@ If you have multiple applications you can run them one at a time with the applic
 
 then visit `http://localhost:8080`
 
-
-# Using the React Client Starter App
------------------------
-The starter app is setup to serve multiple isolated client applications each with their own package.json. You will find
-an example "hello world" application in client/apps/hello_world
-Modify html and js files in that directory to build your application or copy paste that directory to build additional
-applications. The build process will automatically add a new webpack entry point for each folder in that directory.
 
 ## Custom Build Settings
 -----------
@@ -88,10 +79,6 @@ In webpack.json
 }
 `
 
-## React.js
------------
-React code can be found in client/js. We use Redux and the React-Router.
-
 
 ## Html
 -----------
@@ -100,32 +87,6 @@ as process markdown for files that end in .md. All front matter in .md files wil
 the ejs templates and will be used when generating html. For example, you can set a custom layout for the html
 file by setting `layout: custom_layout` in the front matter. See apps/hello_world/html/about.md for an example.
 
-
-## Assets
------------
-Any files added to the assets directory can be used by in code and assigned to a variable. This
-allows for referring to assets using dynamically generated strings. The assets will be built according to
-the rules specified in your webpack configuration. Typically, this means that in production the names will
-be changed to include a SHA.
-
-First importing the assets:
-  `import assets from '../libs/assets';`
-
-Then assign the assest to a variable:
-  `const img = assets("./images/atomicjolt.jpg");`
-
-The value can then be used when rendering:
-  `render(){
-    const img = assets("./images/atomicjolt.jpg");
-    return<div>
-    <img src={img} />
-    </div>;
-  }`
-
-
-## Static
------------
-Files added to the static directory will be copied directly into the build. These files will not be renamed.
 
 
 #Tests

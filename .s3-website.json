@@ -21,8 +21,8 @@
          "MaxAgeSeconds": 0
       }
    ],
-   "enableCloudfront": false,
+   "enableCloudfront": true,
    "retries": 20,
-   "domain": "reactclientstarterapp",
+   "domain": "atomic-search-widget.atomicjoltapps.com",
    "configFile": ".s3-website.json"
 }

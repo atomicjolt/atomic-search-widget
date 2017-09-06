@@ -1,0 +1,8 @@
+{
+  "file": "app.js",
+  "buildSuffix": ".js",
+  "filename": "[name]",
+  "chunkFilename": "[id]",
+  "codeSplittingOff": true,
+  "extractCssOff": true
+}
