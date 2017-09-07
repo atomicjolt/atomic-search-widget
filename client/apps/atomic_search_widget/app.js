@@ -31,7 +31,7 @@ function ajHandleComm(event) {
       case 'atomicjolt.requestSearchParams': {
         const ajsearch = getQueryVariable('ajsearch');
         event.source.postMessage(JSON.stringify({ subject: 'atomicjolt.searchParams', search: ajsearch }), '*');
-        $('#atomic-search-widget').val(ajsearch);
+        $('#ajas-search01').val(ajsearch);
         break;
       }
       default:
@@ -85,7 +85,7 @@ function buildWidget(toolUrl) {
   }
 
   const html = `<div class="ajas-search-widget ${cssClass}">
-    <form id="form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
+    <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
       <input type="text" placeholder="Search..." id="ajas-search01" />
       <button class="ajas-search-widget__btn--search" type="submit" id="submit">
@@ -116,9 +116,9 @@ function addWidget() {
 
       if (widget.parentRelative) { $(widget.appendTo).css('position', 'relative'); }
 
-      $('#atomic-search-widget-form').submit((e) => {
+      $('#ajas-search-form').submit((e) => {
         e.preventDefault();
-        const searchVal = $('#atomic-search-widget').val();
+        const searchVal = $('#ajas-search01').val();
         const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
 
         window.location.href = toolUrl + ajParam + encodeURIComponent(searchVal);
