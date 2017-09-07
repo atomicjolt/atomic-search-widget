@@ -44,9 +44,9 @@ function ajEnableListener() {
   // Create IE + others compatible event handler
   const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
   const eventer = window[eventMethod];
-  this.messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message';
+  Window.messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message';
   // Listen to message from child window
-  eventer(this.messageEvent, ajHandleComm, false);
+  eventer(Window.messageEvent, ajHandleComm, false);
 }
 
 function getToolUrl() {
