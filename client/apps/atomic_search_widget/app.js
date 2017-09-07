@@ -65,30 +65,43 @@ function getToolUrl() {
 
 function buildWidget(toolUrl) {
   let appendTo;
-  let positionCSS;
+  let cssClass;
+  let parentRelative = false;
   const path = window.location.pathname;
 
   if (path === '/') { // Dashboard page.
-    appendTo = '#dashboard_header_container';
-    positionCSS = 'top: 5px; right: 50px';
+    appendTo = '.ic-Dashboard-header__layout';
+    cssClass = 'ajas-search-widget--dashboard';
+    parentRelative = true;
   } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
     appendTo = '.header-bar';
-    positionCSS = 'top: 30px; right: 24px;';
+    cssClass = 'ajas-search-widget--all-courses';
   } else if (path.match(/^\/courses\/[\d]+\/files/i)) { // Course files page.
     appendTo = '#main';
-    positionCSS = 'top: 10px; right: 24px;';
+    cssClass = 'ajas-search-widget--files';
   } else { // Any course page.
     appendTo = '#main';
-    positionCSS = 'top: -52px; right: 24px;';
+    cssClass = 'ajas-search-widget--course';
   }
 
-  let html = `<form id="atomic-search-widget-form" style="position: absolute; ${positionCSS}" action="${toolUrl}" method="GET">`;
-  html += '<div style="box-sizing: border-box; display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; height: 40px; width: 300px; padding: 5px 5px; background: #f5f5f5; border: 1px solid #dddddd; border-radius: 3px;"><div style="box-sizing: border-box; width: 100%; position: relative;"><label for="atomic-search-widget" style="display: none;">Atomic Search</label><input name="ajsearch" id="atomic-search-widget" type="text" placeholder="Search..." style="font-family: LatoWeb, sans-serif; font-weight: normal; font-size: 14px; color: #333333; box-sizing: border-box; width: 100%; height: 30px; border: 1px solid #dddddd; border-radius: 3px; padding: 0 35px 0 10px; margin: 0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-515 337 48 48" enable-background="new -515 337 48 48"style="height: 18px;position: absolute;right: 7px;top: 6px;pointer-events: none;"><defs> <style>.cls-2{fill: #777777;}</style> </defs><path class="cls-2" d="M-484,365h-1.6l-0.5-0.5c2-2.3,3.1-5.2,3.1-8.5c0-7.2-5.8-13-13-13s-13,5.8-13,13s5.8,13,13,13c3.2,0,6.2-1.2,8.5-3.1l0.5,0.5v1.6l10,10l3-3L-484,365z M-496,365c-5,0-9-4-9-9s4-9,9-9s9,4,9,9S-491,365-496,365z"/><path fill="none" d="M-515,337h48v48h-48V337z"/></svg></div></div>';
-  html += '</form>';
+  const html = `<div class="ajas-search-widget ${cssClass}">
+    <form id="form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
+      <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
+      <input type="text" placeholder="Search..." id="ajas-search01" />
+      <button class="ajas-search-widget__btn--search" type="submit" id="submit">
+        <svg role="img" aria-label="submit search" xmlns="http://www.w3.org/2000/svg" viewBox="-515 337 48 48" enable-background="new -515 337 48 48">
+          <path d="M-484,365h-1.6l-0.5-0.5c2-2.3,3.1-5.2,3.1-8.5c0-7.2-5.8-13-13-13s-13,5.8-13,13s5.8,13,13,13c3.2,0,6.2-1.2,8.5-3.1
+            l0.5,0.5v1.6l10,10l3-3L-484,365z M-496,365c-5,0-9-4-9-9s4-9,9-9s9,4,9,9S-491,365-496,365z"/>
+          <path fill="none" d="M-515,337h48v48h-48V337z" />
+        </svg>
+      </button>
+    </form>
+  </div>`;
 
   return {
     appendTo,
     html,
+    parentRelative,
   };
 }
 
@@ -100,6 +113,8 @@ function addWidget() {
       const widget = buildWidget(toolUrl);
 
       $(widget.appendTo).append(widget.html);
+
+      if (widget.parentRelative) { $(widget.appendTo).css('position', 'relative'); }
 
       $('#atomic-search-widget-form').submit((e) => {
         e.preventDefault();
