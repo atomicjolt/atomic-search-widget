@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import './styles/styles';
 
 // To use real values, the administrator is expected to place an
