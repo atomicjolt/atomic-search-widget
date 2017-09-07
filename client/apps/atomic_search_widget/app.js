@@ -58,24 +58,26 @@ function getToolUrl() {
   }
 }
 
-function buildWidget(toolUrl){
+function buildWidget(toolUrl) {
   var appendTo, positionCSS, html;
-  var width = "300px";
+  var path = window.location.pathname;
 
-  if (window.location.pathname == '/') { // Dashboard page.
-    positionCSS = 'position: relative; margin: 15px 0 0;';
-    appendTo = '#right-side-wrapper';
-    width = "240px";
-  } else if (window.location.pathname.match(/^\/courses\/?$/i)) { // All courses page.
-    positionCSS = 'position: absolute; right: 24px; top: 30px;';
+  if (path == '/') { // Dashboard page.
+    appendTo = '#dashboard_header_container';
+    positionCSS = 'top: 5px; right: 50px';
+  } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
     appendTo = '.header-bar';
+    positionCSS = 'top: 30px; right: 24px;';
+  } else if (path.match(/^\/courses\/[\d]+\/files/i)) { // Course files page.
+    appendTo = '#main'
+    positionCSS = 'top: 10px; right: 24px;'
   } else { // Any course page.
-    positionCSS = 'position: absolute; right: 24px; top: -52px;'
     appendTo = '#main';
+    positionCSS = 'top: -52px; right: 24px;'
   }
 
-  html = '<form id="atomic-search-widget-form" style="' + positionCSS + '" action="' + toolUrl + '" method="GET">';
-  html += '<div style="box-sizing: border-box;display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; height: 40px; width: ' + width + '; padding: 5px 10px; background: #f5f5f5; border: 1px solid #dddddd; border-radius: 3px;"><div style="box-sizing: border-box;width: 280px; position: relative;"><label for="atomic-search-widget" style="display: none;">Atomic Search</label><input name="ajsearch" id="atomic-search-widget" type="text" placeholder="Search..." style="box-sizing: border-box;width: 100%; font-family: LatoWeb, sans-serif; font-weight: normal; height: 30px; border: 1px solid #dddddd; border-radius: 3px; font-size: 14px; padding: 0 35px 0 10px; color: #333333;margin: 0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-515 337 48 48" enable-background="new -515 337 48 48"style="height: 18px;position: absolute;right: 7px;top: 6px;pointer-events: none;"><defs> <style>.cls-2{fill: #777777;}</style> </defs><path class="cls-2" d="M-484,365h-1.6l-0.5-0.5c2-2.3,3.1-5.2,3.1-8.5c0-7.2-5.8-13-13-13s-13,5.8-13,13s5.8,13,13,13c3.2,0,6.2-1.2,8.5-3.1l0.5,0.5v1.6l10,10l3-3L-484,365z M-496,365c-5,0-9-4-9-9s4-9,9-9s9,4,9,9S-491,365-496,365z"/><path fill="none" d="M-515,337h48v48h-48V337z"/></svg></div></div>';
+  html = '<form id="atomic-search-widget-form" style="position: absolute; ' + positionCSS + '" action="' + toolUrl + '" method="GET">';
+  html += '<div style="box-sizing: border-box; display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; height: 40px; width: 300px; padding: 5px 5px; background: #f5f5f5; border: 1px solid #dddddd; border-radius: 3px;"><div style="box-sizing: border-box; width: 100%; position: relative;"><label for="atomic-search-widget" style="display: none;">Atomic Search</label><input name="ajsearch" id="atomic-search-widget" type="text" placeholder="Search..." style="font-family: LatoWeb, sans-serif; font-weight: normal; font-size: 14px; color: #333333; box-sizing: border-box; width: 100%; height: 30px; border: 1px solid #dddddd; border-radius: 3px; padding: 0 35px 0 10px; margin: 0;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-515 337 48 48" enable-background="new -515 337 48 48"style="height: 18px;position: absolute;right: 7px;top: 6px;pointer-events: none;"><defs> <style>.cls-2{fill: #777777;}</style> </defs><path class="cls-2" d="M-484,365h-1.6l-0.5-0.5c2-2.3,3.1-5.2,3.1-8.5c0-7.2-5.8-13-13-13s-13,5.8-13,13s5.8,13,13,13c3.2,0,6.2-1.2,8.5-3.1l0.5,0.5v1.6l10,10l3-3L-484,365z M-496,365c-5,0-9-4-9-9s4-9,9-9s9,4,9,9S-491,365-496,365z"/><path fill="none" d="M-515,337h48v48h-48V337z"/></svg></div></div>';
   html += '</form>';
 
   return {
