@@ -1,7 +1,101 @@
-@import "defines";
-@import "modules/mixins";
-
-body {
-  text-align: center;
-  font-family: 'robotoregular';
+.ajas-search-widget{
+  max-width: 240px;
+  width: 100%;
+  position: absolute;
+}
+.ajas-search-widget--dashboard{
+  top: 2px;
+  right: 50px;
+}
+.ajas-search-widget--all-courses{
+  top: 30px;
+  right: 24px;
+}
+.ajas-search-widget--files{
+  top: 10px;
+  right: 24px;
+}
+.ajas-search-widget--course{
+  top: -52px;
+  right: 24px;
+}
+.ajas-search-widget, .ajas-search-widget *{
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.ajas-search-widget__form{
+  display: block;
+  position: relative;
+  width: 100%;
+  margin: 0;
+}
+.ajas-search-widget__form input{
+  height: 40px;
+  font-family: LatoWeb, sans-serif;
+  font-weight: normal;
+  font-size: 15px;
+  color: #333;
+  width: 100%;
+  padding: 0 40px 0 10px;
+  outline: 0;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  line-height: 43px;
+}
+.ajas-search-widget__form input:focus{
+  border-color: #05AFFA;
+}
+.ajas-search-widget__form input:focus + .ajas-search-widget__btn--search{
+  background: #05AFFA;
+}
+.ajas-search-widget__form input:focus + .ajas-search-widget__btn--search svg{
+  fill: #fff;
+}
+.ajas-search-widget-hidden{
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.ajas-search-widget__btn--search{
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  background: #eee;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  -webkit-transition: transform 0.1s ease;
+  -moz-transition: transform 0.1s ease;
+  -o-transition: transform 0.1s ease;
+  -ms-transition: transform 0.1s ease;
+  transition: transform 0.1s ease;
+  border: none;
+  padding: 0;
+}
+.ajas-search-widget__btn--search svg{
+  width: 20px;
+  fill: #595959;
+  margin-top: 5px;
+  height: 20px;
+}
+.ajas-search-widget__btn--search:hover{
+  cursor: pointer;
+}
+.ajas-search-widget__btn--search:active{
+  -webkit-transform: scale(0.95);
+  -moz-transform: scale(0.95);
+  -o-transform: scale(0.95);
+  -ms-transform: scale(0.95);
+  transform: scale(0.95);
+}
+.ajas-search-widget__btn--search:focus{
+  outline: thin dotted #222;
+  background: #05AFFA;
+}
+.ajas-search-widget__btn--search:focus svg{
+  fill: #fff;
 }
