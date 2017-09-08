@@ -6,7 +6,8 @@ This application adds a search widget to Canvas.
 #Install:
 -----------------------
 Add the following code to your Canvas Template:
-<script type="text/javascript" src="https://atomic-search-widget.atomicjoltapps.com/atomic_search_widget.js" />
+
+`<script type="text/javascript" src="https://atomic-search-widget.atomicjoltapps.com/atomic_search_widget.js" />`
 
 
 #Getting Started:
