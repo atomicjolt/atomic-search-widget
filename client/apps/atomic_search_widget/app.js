@@ -9,19 +9,48 @@ var atomicSearchConfig = atomicSearchConfig || {
   externalToolId: null,
 };
 
-function getQueryVariable(variable) {
+let APP_IFRAME;
+
+function getQueryHash() {
   const query = window.location.search.substring(1);
   const vars = query.split('&');
-
-  for (let i = 0; i < vars.length; i += 1) {
+  const hash = {};
+  for (let i = 0; i < vars.length; i++) {
     const pair = vars[i].split('=');
-
-    if (decodeURIComponent(pair[0]) === variable) {
-      return decodeURIComponent(pair[1]);
-    }
+    hash[pair[0]] = pair[1];
   }
+  return hash;
+}
 
-  console.log('Query variable %s not found', variable);
+function getQueryVariable(variable) {
+  const queryHash = getQueryHash();
+  let queryVar;
+  if (queryHash[variable]) {
+    queryVar = queryHash[variable];
+  }
+  return queryVar;
+}
+
+function toQuery(hash) {
+  return $.map(hash, (value, key) => `${key}=${value}`).join('&');
+}
+
+function sendQueryVariables(source) {
+  const ajsearch = getQueryVariable('ajsearch');
+  const ajpage = getQueryVariable('ajpage');
+  const ajcontext = getQueryVariable('ajcontext');
+  const ajfilters = getQueryVariable('ajfilters');
+  source.postMessage(
+    JSON.stringify({
+      subject: 'atomicjolt.searchParams',
+      search: ajsearch,
+      page: ajpage,
+      context: ajcontext,
+      filters: ajfilters,
+    }),
+    '*'
+  );
+  $('#ajas-search01').val(ajsearch);
 }
 
 function ajHandleComm(event) {
@@ -29,15 +58,37 @@ function ajHandleComm(event) {
     const message = JSON.parse(event.data);
     switch (message.subject) {
       case 'atomicjolt.requestSearchParams': {
-        const ajsearch = getQueryVariable('ajsearch');
-        event.source.postMessage(JSON.stringify({ subject: 'atomicjolt.searchParams', search: ajsearch }), '*');
-        $('#ajas-search01').val(ajsearch);
+        if (!APP_IFRAME) {
+          APP_IFRAME = event.source;
+          // catch the back button and re-search down below.
+          window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
+        }
+        sendQueryVariables(APP_IFRAME);
+        break;
+      } case 'atomicjolt.updateSearchParams': {
+        const queryHash = {
+          ajsearch: message.search,
+          ajpage: message.page,
+          ajcontext: message.context
+        };
+        if (message.filters && message.filters !== '') {
+          queryHash.ajfilters = message.filters;
+        }
+        const newState = `?${toQuery(queryHash)}`;
+        window.history.pushState(
+          null,
+          '',
+          newState
+        );
+        $('#ajas-search01').val(message.search);
         break;
       }
       default:
         break;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function ajEnableListener() {
@@ -120,8 +171,16 @@ function addWidget() {
         e.preventDefault();
         const searchVal = $('#ajas-search01').val();
         const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
-
-        window.location.href = toolUrl + ajParam + encodeURIComponent(searchVal);
+        if (APP_IFRAME) {
+          window.history.pushState(
+            null,
+            '',
+            `${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`,
+          );
+          sendQueryVariables(APP_IFRAME);
+        } else {
+          window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`;
+        }
       });
     }
   }

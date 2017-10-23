@@ -7616,10 +7616,6 @@ sum-up@^1.0.1:
   dependencies:
     chalk "^1.0.0"
 
-superagent-mock@^3.4.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/superagent-mock/-/superagent-mock-3.5.0.tgz#ab6cefa4f18dc2b9d22bf5df4ad61d2c0ca5b7a9"
-
 superagent@^3.5.0:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/superagent/-/superagent-3.5.2.tgz#3361a3971567504c351063abeaae0faa23dbf3f8"
