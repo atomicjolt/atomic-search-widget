@@ -53,6 +53,32 @@ function sendQueryVariables(source) {
   $('#ajas-search01').val(ajsearch);
 }
 
+function allModuleProgress(courseIds, cb) {
+  const results = {};
+  let count = courseIds.length;
+  for (let i = 0; i < count; i++){
+    const id = courseIds[i];
+    $.ajax({ url: `/courses/${id}/modules/progressions.json` })
+      .done((data) => { results[id] = data; })
+      .fail(() => console.warn(`course ${id} failed`))
+      .always(() => {
+        if(--count === 0) {
+          cb(results);
+        }
+      });
+  }
+}
+
+function sendModuleProgress(source, progress) {
+  source.postMessage(
+    JSON.stringify({
+      subject: 'atomicjolt.moduleProgress',
+      moduleProgress: progress,
+    }),
+    '*'
+  );
+}
+
 function ajHandleComm(event) {
   try {
     const message = JSON.parse(event.data);
@@ -64,6 +90,7 @@ function ajHandleComm(event) {
           window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
         }
         sendQueryVariables(APP_IFRAME);
+        allModuleProgress(message.roles, progress => sendModuleProgress(APP_IFRAME, progress));
         break;
       } case 'atomicjolt.updateSearchParams': {
         const queryHash = {
@@ -82,8 +109,7 @@ function ajHandleComm(event) {
         );
         $('#ajas-search01').val(message.search);
         break;
-      }
-      default:
+      } default:
         break;
     }
   } catch (error) {
