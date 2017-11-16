@@ -53,17 +53,46 @@ function sendQueryVariables(source) {
   $('#ajas-search01').val(ajsearch);
 }
 
+function cacheResults(results) {
+  try {
+    localStorage.setItem('atomicjoltModuleProgress', JSON.stringify({
+      time: Date.now(), data: results
+    }));
+  } catch (e) {
+    console.warn('failed to write to localStorage', e);
+  }
+}
+
 function allModuleProgress(courseIds, cb) {
+  // first check if we already have it in local storage
+  try {
+    let stored = localStorage.getItem('atomicjoltModuleProgress');
+    if (stored) {
+      stored = JSON.parse(stored);
+      if (Date.now() - stored.time < 3600000) { // one hour
+        cb(stored.data);
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn('failed to read from localStorage', e)
+  }
+
   const results = {};
   let count = courseIds.length;
   for (let i = 0; i < count; i++){
     const id = courseIds[i];
-    $.ajax({ url: `/courses/${id}/modules/progressions.json` })
-      .done((data) => { results[id] = data; })
-      .fail(() => console.warn(`course ${id} failed`))
+    $.ajax({
+      url: `/courses/${id}/modules/progressions.json`,
+      dataType: 'text',
+    }).done((data) => {
+      const json = JSON.parse(data.replace(/^while\(1\);/, ''));
+      results[id] = json;
+    }).fail(() => console.warn(`course ${id} failed`))
       .always(() => {
-        if(--count === 0) {
+        if (--count === 0) {
           cb(results);
+          cacheResults(results);
         }
       });
   }
@@ -90,7 +119,11 @@ function ajHandleComm(event) {
           window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
         }
         sendQueryVariables(APP_IFRAME);
-        allModuleProgress(message.roles, progress => sendModuleProgress(APP_IFRAME, progress));
+        if (message.roles) {
+          allModuleProgress(message.roles,
+            progress => sendModuleProgress(APP_IFRAME, progress)
+          );
+        }
         break;
       } case 'atomicjolt.updateSearchParams': {
         const queryHash = {
