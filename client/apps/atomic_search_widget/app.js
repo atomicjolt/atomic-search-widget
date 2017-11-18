@@ -119,11 +119,6 @@ function ajHandleComm(event) {
           window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
         }
         sendQueryVariables(APP_IFRAME);
-        if (message.roles) {
-          allModuleProgress(message.roles,
-            progress => sendModuleProgress(APP_IFRAME, progress)
-          );
-        }
         break;
       } case 'atomicjolt.updateSearchParams': {
         const queryHash = {
@@ -141,6 +136,13 @@ function ajHandleComm(event) {
           newState
         );
         $('#ajas-search01').val(message.search);
+        break;
+      } case 'atomicjolt.requestModuleProgress': {
+        if (message.roles) {
+          allModuleProgress(message.roles,
+            progress => sendModuleProgress(APP_IFRAME, progress)
+          );
+        }
         break;
       } default:
         break;
