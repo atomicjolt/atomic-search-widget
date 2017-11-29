@@ -127,7 +127,7 @@ function buildWidget(toolUrl) {
   } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
     appendTo = '.header-bar';
     cssClass = 'ajas-search-widget--all-courses';
-  } else if (path.match(/^\/courses\/[\d]+\/files/i)) { // Course files page.
+  } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) { // Course files page. Not individual file pages though.
     appendTo = '#main';
     cssClass = 'ajas-search-widget--files';
   } else { // Any course page.
