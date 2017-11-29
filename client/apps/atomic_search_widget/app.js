@@ -54,40 +54,42 @@ function sendQueryVariables(source) {
 }
 
 function ajHandleComm(event) {
-  try {
-    const message = JSON.parse(event.data);
-    switch (message.subject) {
-      case 'atomicjolt.requestSearchParams': {
-        if (!APP_IFRAME) {
-          APP_IFRAME = event.source;
-          // catch the back button and re-search down below.
-          window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
+  if(typeof event.data === 'string'){
+    try {
+      const message = JSON.parse(event.data);
+      switch (message.subject) {
+        case 'atomicjolt.requestSearchParams': {
+          if (!APP_IFRAME) {
+            APP_IFRAME = event.source;
+            // catch the back button and re-search down below.
+            window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
+          }
+          sendQueryVariables(APP_IFRAME);
+          break;
+        } case 'atomicjolt.updateSearchParams': {
+          const queryHash = {
+            ajsearch: message.search,
+            ajpage: message.page,
+            ajcontext: message.context
+          };
+          if (message.filters && message.filters !== '') {
+            queryHash.ajfilters = message.filters;
+          }
+          const newState = `?${toQuery(queryHash)}`;
+          window.history.pushState(
+            null,
+            '',
+            newState
+          );
+          $('#ajas-search01').val(message.search);
+          break;
         }
-        sendQueryVariables(APP_IFRAME);
-        break;
-      } case 'atomicjolt.updateSearchParams': {
-        const queryHash = {
-          ajsearch: message.search,
-          ajpage: message.page,
-          ajcontext: message.context
-        };
-        if (message.filters && message.filters !== '') {
-          queryHash.ajfilters = message.filters;
-        }
-        const newState = `?${toQuery(queryHash)}`;
-        window.history.pushState(
-          null,
-          '',
-          newState
-        );
-        $('#ajas-search01').val(message.search);
-        break;
+        default:
+          break;
       }
-      default:
-        break;
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
   }
 }
 
@@ -188,4 +190,3 @@ function addWidget() {
 
 ajEnableListener();
 addWidget();
-
