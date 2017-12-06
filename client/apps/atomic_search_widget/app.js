@@ -109,46 +109,48 @@ function sendModuleProgress(source, progress) {
 }
 
 function ajHandleComm(event) {
-  try {
-    const message = JSON.parse(event.data);
-    switch (message.subject) {
-      case 'atomicjolt.requestSearchParams': {
-        if (!APP_IFRAME) {
-          APP_IFRAME = event.source;
-          // catch the back button and re-search down below.
-          window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
-        }
-        sendQueryVariables(APP_IFRAME);
-        break;
-      } case 'atomicjolt.updateSearchParams': {
-        const queryHash = {
-          ajsearch: message.search,
-          ajpage: message.page,
-          ajcontext: message.context
-        };
-        if (message.filters && message.filters !== '') {
-          queryHash.ajfilters = message.filters;
-        }
-        const newState = `?${toQuery(queryHash)}`;
-        window.history.pushState(
-          null,
-          '',
-          newState
-        );
-        $('#ajas-search01').val(message.search);
-        break;
-      } case 'atomicjolt.requestModuleProgress': {
-        if (message.roles) {
-          allModuleProgress(message.roles,
-            progress => sendModuleProgress(APP_IFRAME, progress)
+  if(typeof event.data === 'string'){
+    try {
+      const message = JSON.parse(event.data);
+      switch (message.subject) {
+        case 'atomicjolt.requestSearchParams': {
+          if (!APP_IFRAME) {
+            APP_IFRAME = event.source;
+            // catch the back button and re-search down below.
+            window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
+          }
+          sendQueryVariables(APP_IFRAME);
+          break;
+        } case 'atomicjolt.updateSearchParams': {
+          const queryHash = {
+            ajsearch: message.search,
+            ajpage: message.page,
+            ajcontext: message.context
+          };
+          if (message.filters && message.filters !== '') {
+            queryHash.ajfilters = message.filters;
+          }
+          const newState = `?${toQuery(queryHash)}`;
+          window.history.pushState(
+            null,
+            '',
+            newState
           );
-        }
-        break;
-      } default:
-        break;
+          $('#ajas-search01').val(message.search);
+          break;
+        } case 'atomicjolt.requestModuleProgress': {
+          if (message.roles) {
+            allModuleProgress(message.roles,
+              progress => sendModuleProgress(APP_IFRAME, progress)
+            );
+          }
+          break;
+        } default:
+          break;
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
   }
 }
 
@@ -188,7 +190,7 @@ function buildWidget(toolUrl) {
   } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
     appendTo = '.header-bar';
     cssClass = 'ajas-search-widget--all-courses';
-  } else if (path.match(/^\/courses\/[\d]+\/files/i)) { // Course files page.
+  } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) { // Course files page. Not individual file pages though.
     appendTo = '#main';
     cssClass = 'ajas-search-widget--files';
   } else { // Any course page.
@@ -249,4 +251,3 @@ function addWidget() {
 
 ajEnableListener();
 addWidget();
-
