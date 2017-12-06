@@ -109,16 +109,19 @@ function sendModuleProgress(source, progress) {
 }
 
 function ajHandleComm(event) {
-  if(typeof event.data === 'string'){
+  if (typeof event.data === 'string') {
     try {
       const message = JSON.parse(event.data);
+
+      if (!APP_IFRAME && message.subject
+      && message.subject.substring(0, 11) === 'atomicjolt.') {
+        APP_IFRAME = event.source;
+        // catch the back button and re-search down below.
+        window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
+      }
+
       switch (message.subject) {
         case 'atomicjolt.requestSearchParams': {
-          if (!APP_IFRAME) {
-            APP_IFRAME = event.source;
-            // catch the back button and re-search down below.
-            window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
-          }
           sendQueryVariables(APP_IFRAME);
           break;
         } case 'atomicjolt.updateSearchParams': {
