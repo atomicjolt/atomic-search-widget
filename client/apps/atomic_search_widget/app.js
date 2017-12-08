@@ -35,7 +35,7 @@ function toQuery(hash) {
 }
 
 function sendQueryVariables(source) {
-  const ajsearch = getQueryVariable('ajsearch');
+  const ajsearch = decodeURIComponent(getQueryVariable('ajsearch'));
   const ajpage = getQueryVariable('ajpage');
   const ajcontext = getQueryVariable('ajcontext');
   const ajfilters = getQueryVariable('ajfilters');
