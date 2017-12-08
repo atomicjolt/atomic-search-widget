@@ -15,20 +15,19 @@ function getQueryHash() {
   const query = window.location.search.substring(1);
   const vars = query.split('&');
   const hash = {};
-  for (let i = 0; i < vars.length; i++) {
-    const pair = vars[i].split('=');
+
+  vars.forEach((singleVar) => {
+    const pair = singleVar.split('=');
     hash[pair[0]] = pair[1];
-  }
+  });
+
   return hash;
 }
 
 function getQueryVariable(variable) {
   const queryHash = getQueryHash();
-  let queryVar;
-  if (queryHash[variable]) {
-    queryVar = queryHash[variable];
-  }
-  return queryVar;
+
+  return queryHash[variable];
 }
 
 function toQuery(hash) {
@@ -36,7 +35,7 @@ function toQuery(hash) {
 }
 
 function sendQueryVariables(source) {
-  const ajsearch = getQueryVariable('ajsearch');
+  const ajsearch = decodeURIComponent(getQueryVariable('ajsearch'));
   const ajpage = getQueryVariable('ajpage');
   const ajcontext = getQueryVariable('ajcontext');
   const ajfilters = getQueryVariable('ajfilters');
@@ -54,7 +53,7 @@ function sendQueryVariables(source) {
 }
 
 function ajHandleComm(event) {
-  if(typeof event.data === 'string'){
+  if (typeof event.data === 'string') {
     try {
       const message = JSON.parse(event.data);
       switch (message.subject) {
