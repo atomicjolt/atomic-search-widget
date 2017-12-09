@@ -142,6 +142,11 @@ function ajHandleComm(event) {
           $('#ajas-search01').val(message.search);
           break;
         } case 'atomicjolt.requestModuleProgress': {
+          event.source.postMessage(
+            JSON.stringify({
+              subject: 'atomicjolt.ping',
+            }), '*'
+          );
           if (message.roles) {
             allModuleProgress(message.roles,
               progress => sendModuleProgress(APP_IFRAME, progress)
