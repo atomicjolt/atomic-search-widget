@@ -19,8 +19,11 @@
     "build": "cd ./client && node ./build.js --release",
     "build_pack": "cd ./client && node ./build.js --release --onlyPack",
     "ball": "cd ./client && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js create",
+    "ball_beta": "cd ./client && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js create -f .s3-website.beta.json",
+    "ball_dev": "cd ./client && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js create -f .s3-website.dev.json",
     "release": "cd ./client && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js deploy",
     "release_beta": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy -f .s3-website.beta.json",
+    "release_dev": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy -f .s3-website.dev.json",
     "lint": "cd ./client && eslint js",
     "nuke": "rm -rf node_modules && cd ./client && yarn nuke"
   },

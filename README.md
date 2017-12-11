@@ -3,14 +3,12 @@
 This application adds a search widget to Canvas.
 
 
-#Install:
+#Install into Canvas:
 -----------------------
-Add the following code to your Canvas Template:
-
-`<script type="text/javascript" src="https://atomic-search-widget.atomicjoltapps.com/atomic_search_widget.js" />`
+[Follow these instructions to install into Canvas](Instructions.md)
 
 
-#Getting Started:
+#Getting Started with Development:
 -----------------------
 
 Make sure to install git, npm and yarn before you start then:
