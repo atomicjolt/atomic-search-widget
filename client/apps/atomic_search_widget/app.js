@@ -113,15 +113,13 @@ function ajHandleComm(event) {
     try {
       const message = JSON.parse(event.data);
 
-      if (!APP_IFRAME && message.subject
-      && message.subject.substring(0, 11) === 'atomicjolt.') {
-        APP_IFRAME = event.source;
-        // catch the back button and re-search down below.
-        window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
-      }
-
       switch (message.subject) {
         case 'atomicjolt.requestSearchParams': {
+          if (!APP_IFRAME) {
+            APP_IFRAME = event.source;
+            // catch the back button and re-search down below.
+            window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
+          }
           sendQueryVariables(APP_IFRAME);
           break;
         } case 'atomicjolt.updateSearchParams': {
@@ -151,7 +149,7 @@ function ajHandleComm(event) {
           );
           if (message.roles) {
             allModuleProgress(message.roles,
-              progress => sendModuleProgress(APP_IFRAME, progress)
+              progress => sendModuleProgress(event.source, progress)
             );
           }
           break;
