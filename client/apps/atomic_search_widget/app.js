@@ -75,27 +75,26 @@ function allModuleProgress(courseIds, cb) {
       }
     }
   } catch (e) {
-    console.warn('failed to read from localStorage', e)
+    console.warn('failed to read from localStorage', e);
   }
 
-  const results = {};
-  let count = courseIds.length;
-  for (let i = 0; i < courseIds.length; i++) {
-    const id = courseIds[i];
-    $.ajax({
-      url: `/courses/${id}/modules/progressions.json`,
-      dataType: 'text',
-    }).done((data) => {
-      const json = JSON.parse(data.replace(/^while\(1\);/, ''));
-      results[id] = json;
-    }).fail(() => console.warn(`course ${id} failed`))
-      .always(() => {
-        if (--count === 0) {
-          cb(results);
-          cacheResults(results);
-        }
-      });
-  }
+  const promises = courseIds.map(id =>
+    new Promise((resolve, reject) => {
+      $.ajax({
+        url: `/courses/${id}/modules/progressions.json`,
+        dataType: 'text',
+      }).done((data) => {
+        const json = JSON.parse(data.replace(/^while\(1\);/, ''));
+        resolve({ [id]: json });
+      }).fail(() => reject(`course ${id} failed`));
+    })
+  );
+
+  Promise.all(promises).then((results) => {
+    const progress = results.reduce((acc, pair) => ({ ...acc, ...pair }), {});
+    cb(progress);
+    cacheResults(progress);
+  }).catch(error => console.error(error));
 }
 
 function sendModuleProgress(source, progress) {
@@ -147,8 +146,8 @@ function ajHandleComm(event) {
               subject: 'atomicjolt.ping',
             }), '*'
           );
-          if (message.roles) {
-            allModuleProgress(message.roles,
+          if (message.courseIds) {
+            allModuleProgress(message.courseIds,
               progress => sendModuleProgress(event.source, progress)
             );
           }
