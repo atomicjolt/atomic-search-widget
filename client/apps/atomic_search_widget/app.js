@@ -142,6 +142,8 @@ function ajHandleComm(event) {
           $('#ajas-search01').val(message.search);
           break;
         } case 'atomicjolt.requestModuleProgress': {
+          // Send a 'ping' back immediately. If the app doesn't receive it, it
+          // will assume they don't have global JS enabled.
           event.source.postMessage(
             JSON.stringify({
               subject: 'atomicjolt.ping',
