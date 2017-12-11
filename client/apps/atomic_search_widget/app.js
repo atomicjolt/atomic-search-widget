@@ -80,7 +80,7 @@ function allModuleProgress(courseIds, cb) {
 
   const results = {};
   let count = courseIds.length;
-  for (let i = 0; i < count; i++){
+  for (let i = 0; i < courseIds.length; i++) {
     const id = courseIds[i];
     $.ajax({
       url: `/courses/${id}/modules/progressions.json`,
