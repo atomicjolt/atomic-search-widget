@@ -1,6 +1,4 @@
-# TEMP Widget Instructions
-
-## Installation
+# Installation
 
 We've provided 2 options for adding the Atomic Search widget to your Canvas instance. Use whichever one works best for your situation.
 
@@ -10,7 +8,7 @@ If you'd prefer not to point to a remote script like this or would prefer to cho
 
 After selecting your preferred method, copy the JS code and add it to your current Canvas theme. (You can find more details on adding the file to your Canvas theme at our [installation instructions page](http://products.atomicjolt.com/atomic-apps-canvas/search/install-the-atomic-search-widget/).)
 
-## Custom Setup
+# Custom Setup
 
 By default, outside of a course, the JavaScript behind the Search widget looks in the global Canvas navigation for a link to the Search tool and uses the URL of that link for submitting queries entered into the Search widget. If it doesn't find that link, the widget doesn't display and can't be used. 
 
