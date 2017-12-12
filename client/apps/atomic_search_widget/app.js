@@ -54,10 +54,65 @@ function sendQueryVariables(source) {
   $('#ajas-search01').val(ajsearch);
 }
 
+function cacheResults(results) {
+  try {
+    localStorage.setItem('atomicjoltModuleProgress', JSON.stringify({
+      time: Date.now(), data: results
+    }));
+  } catch (e) {
+    console.warn('failed to write to localStorage', e);
+  }
+}
+
+function allModuleProgress(courseIds, cb) {
+  // first check if we already have it in local storage
+  try {
+    let stored = localStorage.getItem('atomicjoltModuleProgress');
+    if (stored) {
+      stored = JSON.parse(stored);
+      if (Date.now() - stored.time < 3600000) { // one hour
+        cb(stored.data);
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn('failed to read from localStorage', e);
+  }
+
+  const promises = courseIds.map(id =>
+    new Promise((resolve, reject) => {
+      $.ajax({
+        url: `/courses/${id}/modules/progressions.json`,
+        dataType: 'text',
+      }).done((data) => {
+        const json = JSON.parse(data.replace(/^while\(1\);/, ''));
+        resolve({ [id]: json });
+      }).fail(() => reject(`course ${id} failed`));
+    })
+  );
+
+  Promise.all(promises).then((results) => {
+    const progress = results.reduce((acc, pair) => ({ ...acc, ...pair }), {});
+    cb(progress);
+    cacheResults(progress);
+  }).catch(error => console.error(error));
+}
+
+function sendModuleProgress(source, progress) {
+  source.postMessage(
+    JSON.stringify({
+      subject: 'atomicjolt.moduleProgress',
+      moduleProgress: progress,
+    }),
+    '*'
+  );
+}
+
 function ajHandleComm(event) {
   if (typeof event.data === 'string') {
     try {
       const message = JSON.parse(event.data);
+
       switch (message.subject) {
         case 'atomicjolt.requestSearchParams': {
           if (!APP_IFRAME) {
@@ -84,8 +139,21 @@ function ajHandleComm(event) {
           );
           $('#ajas-search01').val(message.search);
           break;
-        }
-        default:
+        } case 'atomicjolt.requestModuleProgress': {
+          // Send a 'ping' back immediately. If the app doesn't receive it, it
+          // will assume they don't have global JS enabled.
+          event.source.postMessage(
+            JSON.stringify({
+              subject: 'atomicjolt.ping',
+            }), '*'
+          );
+          if (message.courseIds) {
+            allModuleProgress(message.courseIds,
+              progress => sendModuleProgress(event.source, progress)
+            );
+          }
+          break;
+        } default:
           break;
       }
     } catch (error) {
