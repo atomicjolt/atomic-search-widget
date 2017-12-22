@@ -5,7 +5,7 @@ This application adds a search widget to Canvas.
 
 #Install into Canvas:
 -----------------------
-[Follow these instructions to install into Canvas](Instructions.md)
+[Follow these instructions to install into Canvas](Installation_Instructions.md)
 
 
 #Getting Started with Development:
