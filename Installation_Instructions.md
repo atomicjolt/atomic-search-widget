@@ -1,6 +1,6 @@
 # Installation
 
-We've provided 2 options for adding the Atomic Search widget to your Canvas instance. Use whichever one works best for your situation.
+We've provided 2 options for adding the Atomic Search widget to your Canvas instance. Use whichever works best for your situation.
 
 The first option is to use the [remote JavaScript loader](loaders/prod.js). Instead of including all of the code for the widget directly, it grabs the code from our servers every time the widget loads. This ensures that you always have the latest version of the Search widget without any future changes on your part.
 
