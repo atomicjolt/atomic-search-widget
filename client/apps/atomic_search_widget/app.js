@@ -210,7 +210,7 @@ function buildWidget(toolUrl) {
     <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
       <input type="text" placeholder="Search..." id="ajas-search01" />
-      <button class="ajas-search-widget__btn--search" type="submit" id="submit">
+      <button class="ajas-search-widget__btn--search" type="submit">
         <svg role="img" aria-label="submit search" xmlns="http://www.w3.org/2000/svg" viewBox="-515 337 48 48" enable-background="new -515 337 48 48">
           <path d="M-484,365h-1.6l-0.5-0.5c2-2.3,3.1-5.2,3.1-8.5c0-7.2-5.8-13-13-13s-13,5.8-13,13s5.8,13,13,13c3.2,0,6.2-1.2,8.5-3.1
             l0.5,0.5v1.6l10,10l3-3L-484,365z M-496,365c-5,0-9-4-9-9s4-9,9-9s9,4,9,9S-491,365-496,365z"/>
