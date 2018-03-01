@@ -173,11 +173,12 @@ function ajEnableListener() {
 
 function getToolUrl() {
   const baseSelector = 'a:contains("Search")';
-  const courseNavElement = $(`#section-tabs ${baseSelector}`);
+  // this could be within a course or subaccount
+  const localNavElement = $(`#section-tabs ${baseSelector}`);
   const globalNavElement = $(`#menu ${baseSelector}`);
 
-  if (courseNavElement.attr('href')) {
-    return courseNavElement.attr('href');
+  if (localNavElement.attr('href')) {
+    return localNavElement.attr('href');
   } else if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
     return `/accounts/${atomicSearchConfig.accountId}/external_tools/${atomicSearchConfig.externalToolId}`;
   }
@@ -228,7 +229,9 @@ function buildWidget(toolUrl) {
 }
 
 function addWidget() {
-  if (window.location.pathname.match(/^\/courses/i) || window.location.pathname === '/') {
+  if (window.location.pathname.match(/^\/(accounts|courses)/i) ||
+    window.location.pathname === '/'
+  ) {
     const toolUrl = getToolUrl();
 
     if (toolUrl) {
