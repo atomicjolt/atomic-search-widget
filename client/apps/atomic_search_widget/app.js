@@ -4,7 +4,7 @@ import './styles/styles';
 
 // To use real values, the administrator is expected to place an
 // atomicSearchConfig object above this code with their account and tool IDs.
-var atomicSearchConfig = atomicSearchConfig || {
+var atomicSearchConfig = window.atomicSearchConfig || {
   accountId: null,
   externalToolId: null,
 };
