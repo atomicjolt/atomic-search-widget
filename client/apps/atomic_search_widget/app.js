@@ -182,18 +182,19 @@ function getToolUrl() {
     const localNavElement = $(`#section-tabs ${baseSelector}`);
     const globalNavElement = $(`#menu ${baseSelector}`);
 
-    if (localNavElement.attr('href')) {
+    if (localNavElement.attr('href') && localNavElement.text().trim() === word) {
       url = localNavElement.attr('href');
       return true;
-    } else if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
-      url = `/accounts/${atomicSearchConfig.accountId}/external_tools/${atomicSearchConfig.externalToolId}`;
-      return true;
-    } else if (globalNavElement.attr('href')) {
+    } else if (globalNavElement.attr('href') && globalNavElement.find('.menu-item__text').text().trim() === word) {
       url = globalNavElement.attr('href');
       return true;
     }
     return false;
   });
+
+  if (!url && atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
+    return `/accounts/${atomicSearchConfig.accountId}/external_tools/${atomicSearchConfig.externalToolId}`;
+  }
 
   return url;
 }
