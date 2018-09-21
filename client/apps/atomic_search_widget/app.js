@@ -172,18 +172,31 @@ function ajEnableListener() {
 }
 
 function getToolUrl() {
-  const baseSelector = 'a:contains("Search")';
-  // this could be within a course or subaccount
-  const localNavElement = $(`#section-tabs ${baseSelector}`);
-  const globalNavElement = $(`#menu ${baseSelector}`);
+  const searchWords = ['Search', 'Søk', 'Buscar', 'Rechercher', 'Търсене', 'Cerca', 'Hledat', 'Søg', 'Suche', 'Αναζήτηση', 'Ikastaro', 'Etsi', 'Cuardaigh', 'सभी', 'Keresés', 'Որոնել', 'Cari', 'Cerca', 'Hemî', 'Doorzoek', 'Pesquisar', 'Căutați', 'Поиск', 'Sök', 'Tüm'];
+  let url;
+  // the linter doesn't like normal for loops, we use 'some' because returning
+  // true breaks you out early
+  searchWords.some((word) => {
+    const baseSelector = `a:contains("${word}")`;
+    // this could be within a course or subaccount
+    const localNavElement = $(`#section-tabs ${baseSelector}`);
+    const globalNavElement = $(`#menu ${baseSelector}`);
 
-  if (localNavElement.attr('href')) {
-    return localNavElement.attr('href');
-  } else if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
+    if (localNavElement.attr('href') && localNavElement.text().trim() === word) {
+      url = localNavElement.attr('href');
+      return true;
+    } else if (globalNavElement.attr('href') && globalNavElement.find('.menu-item__text').text().trim() === word) {
+      url = globalNavElement.attr('href');
+      return true;
+    }
+    return false;
+  });
+
+  if (!url && atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
     return `/accounts/${atomicSearchConfig.accountId}/external_tools/${atomicSearchConfig.externalToolId}`;
   }
 
-  return globalNavElement.attr('href'); // May be undefined.
+  return url;
 }
 
 function buildWidget(toolUrl) {
