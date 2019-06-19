@@ -80,14 +80,18 @@ function allModuleProgress(courseIds, cb) {
   }
 
   const promises = courseIds.map(id =>
-    new Promise((resolve, reject) => {
+    new Promise((resolve) => {
       $.ajax({
         url: `/courses/${id}/modules/progressions.json`,
         dataType: 'text',
       }).done((data) => {
         const json = JSON.parse(data.replace(/^while\(1\);/, ''));
         resolve({ [id]: json });
-      }).fail(() => reject(`course ${id} failed`));
+      }).fail(() => {
+        // sometimes they will get 401's from this call. proceed with modules we
+        // did manage to load, otherwise they will be stuck waiting
+        resolve({});
+      });
     })
   );
 
