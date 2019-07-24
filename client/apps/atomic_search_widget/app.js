@@ -82,7 +82,7 @@ function allModuleProgress(courseIds, cb) {
   const promises = courseIds.map(id =>
     new Promise((resolve) => {
       $.ajax({
-        url: `/courses/${id}/modules/progressions.json`,
+        url: `/courses/${id}/modules/progressions.json?user_id=${ENV.current_user_id}`,
         dataType: 'text',
       }).done((data) => {
         const json = JSON.parse(data.replace(/^while\(1\);/, ''));
