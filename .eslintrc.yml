@@ -24,6 +24,7 @@ globals:
   module: false
   jest: false
   __DEV__: false
+  ENV: false
 rules:
   linebreak-style:
     - error
