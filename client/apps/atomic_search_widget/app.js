@@ -64,19 +64,37 @@ function cacheResults(results) {
   }
 }
 
-function allModuleProgress(courseIds, cb) {
-  // first check if we already have it in local storage
+function getCachedResults() {
   try {
     let stored = localStorage.getItem('atomicjoltModuleProgress');
     if (stored) {
       stored = JSON.parse(stored);
+
       if (Date.now() - stored.time < 3600000) { // one hour
-        cb(stored.data);
-        return;
+        return stored.data;
       }
     }
+
+    return {};
   } catch (e) {
     console.warn('failed to read from localStorage', e);
+    return {};
+  }
+}
+
+function allModuleProgress(courseIds, cb) {
+  const cachedProgress = getCachedResults();
+
+  const missingCourseIds = [];
+  courseIds.forEach((id) => {
+    if (!cachedProgress[id]) {
+      missingCourseIds.push(id);
+    }
+  });
+
+  if (missingCourseIds.length === 0) {
+    cb(cachedProgress);
+    return;
   }
 
   const promises = courseIds.map(id =>
