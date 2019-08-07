@@ -272,6 +272,11 @@ function addWidget() {
     if (toolUrl) {
       const widget = buildWidget(toolUrl);
 
+      if ($(widget.appendTo).length === 0) {
+        setTimeout(addWidget, 50);
+        return;
+      }
+
       $(widget.appendTo).append(widget.html);
 
       if (widget.parentRelative) { $(widget.appendTo).css('position', 'relative'); }
