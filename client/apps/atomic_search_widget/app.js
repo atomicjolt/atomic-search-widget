@@ -215,7 +215,14 @@ function getToolUrl() {
   });
 
   if (!url && atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
-    return `/accounts/${atomicSearchConfig.accountId}/external_tools/${atomicSearchConfig.externalToolId}`;
+    const toolPath = `external_tools/${atomicSearchConfig.externalToolId}`;
+
+    const courseIdMatch = window.location.pathname.match(/^\/courses\/([0-9]+)/i);
+    if (courseIdMatch) {
+      return `/courses/${courseIdMatch[0]}/${toolPath}`;
+    }
+
+    return `/accounts/${atomicSearchConfig.accountId}/${toolPath}`;
   }
 
   return url;
