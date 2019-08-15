@@ -219,7 +219,7 @@ function getToolUrl() {
 
     const courseIdMatch = window.location.pathname.match(/^\/courses\/([0-9]+)/i);
     if (courseIdMatch) {
-      return `/courses/${courseIdMatch[0]}/${toolPath}`;
+      return `/courses/${courseIdMatch[1]}/${toolPath}`;
     }
 
     return `/accounts/${atomicSearchConfig.accountId}/${toolPath}`;
