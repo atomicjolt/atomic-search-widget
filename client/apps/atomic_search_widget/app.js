@@ -197,7 +197,7 @@ function getToolUrl() {
   if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
     const toolPath = `external_tools/${atomicSearchConfig.externalToolId}`;
 
-    const contextMatch = window.location.pathname.match(/^\/courses|accounts\/[0-9]+/i);
+    const contextMatch = window.location.pathname.match(/^\/(courses|accounts)\/[0-9]+/i);
     if (contextMatch) {
       return `${contextMatch[0]}/${toolPath}`;
     }
