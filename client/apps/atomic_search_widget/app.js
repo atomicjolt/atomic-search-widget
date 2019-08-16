@@ -194,6 +194,17 @@ function ajEnableListener() {
 }
 
 function getToolUrl() {
+  if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
+    const toolPath = `external_tools/${atomicSearchConfig.externalToolId}`;
+
+    const courseIdMatch = window.location.pathname.match(/^\/courses\/([0-9]+)/i);
+    if (courseIdMatch) {
+      return `/courses/${courseIdMatch[1]}/${toolPath}`;
+    }
+
+    return `/accounts/${atomicSearchConfig.accountId}/${toolPath}`;
+  }
+
   const searchWords = ['Search', 'Søk', 'Buscar', 'Rechercher', 'Търсене', 'Cerca', 'Hledat', 'Søg', 'Suche', 'Αναζήτηση', 'Ikastaro', 'Etsi', 'Cuardaigh', 'सभी', 'Keresés', 'Որոնել', 'Cari', 'Cerca', 'Hemî', 'Doorzoek', 'Pesquisar', 'Căutați', 'Поиск', 'Sök', 'Tüm'];
   let url;
   // the linter doesn't like normal for loops, we use 'some' because returning
@@ -213,17 +224,6 @@ function getToolUrl() {
     }
     return false;
   });
-
-  if (!url && atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
-    const toolPath = `external_tools/${atomicSearchConfig.externalToolId}`;
-
-    const courseIdMatch = window.location.pathname.match(/^\/courses\/([0-9]+)/i);
-    if (courseIdMatch) {
-      return `/courses/${courseIdMatch[1]}/${toolPath}`;
-    }
-
-    return `/accounts/${atomicSearchConfig.accountId}/${toolPath}`;
-  }
 
   return url;
 }
