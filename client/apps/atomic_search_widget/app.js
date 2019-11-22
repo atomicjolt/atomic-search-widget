@@ -145,14 +145,17 @@ function ajHandleComm(event) {
           sendQueryVariables(APP_IFRAME);
           break;
         } case 'atomicjolt.updateSearchParams': {
-          const queryHash = {
-            ajsearch: message.search,
-            ajpage: message.page,
-            ajcontext: message.context
-          };
+          const queryHash = getQueryHash();
+          queryHash.ajsearch = message.search;
+          queryHash.ajpage = message.page;
+          queryHash.ajcontext = message.context;
+
           if (message.filters && message.filters !== '') {
             queryHash.ajfilters = message.filters;
+          } else {
+            delete queryHash.ajfilters;
           }
+
           const newState = `?${toQuery(queryHash)}`;
           window.history.pushState(
             null,
@@ -291,15 +294,19 @@ function addWidget() {
       $('#ajas-search-form').submit((e) => {
         e.preventDefault();
         const searchVal = $('#ajas-search01').val();
-        const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
         if (APP_IFRAME) {
+          const queryHash = getQueryHash();
+          queryHash.ajsearch = encodeURIComponent(searchVal);
+          queryHash.ajpage = '1';
+
           window.history.pushState(
             null,
             '',
-            `${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`,
+            `?${toQuery(queryHash)}`,
           );
           sendQueryVariables(APP_IFRAME);
         } else {
+          const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
           window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`;
         }
       });
