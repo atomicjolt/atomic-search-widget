@@ -3,6 +3,7 @@
    "region": "us-east-1",
    "uploadDir": "build/prod",
    "prefix": "",
+   "exclude": [],
    "corsConfiguration": [
       {
          "AllowedMethods": [
@@ -23,6 +24,6 @@
    ],
    "enableCloudfront": true,
    "retries": 20,
-   "domain": "atomic-search-widget-dev.atomicjolt.com",
+   "domain": "jsdev.atomicsearchwidget.com",
    "configFile": ".s3-website.dev.json"
 }
