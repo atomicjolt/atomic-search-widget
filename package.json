@@ -6,10 +6,10 @@
   "license": "MIT",
   "homepage": "https://github.com/atomicjolt/react_client_starter_app",
   "scripts": {
-    "build": "cd ./client && node ./build.js --release",
-    "hot": "cd ./client && node webpack.hot.js",
+    "build": "webpack-cli",
+    "hot": "webpack-dev-server",
     "lint": "cd ./client && eslint js",
-    "release": "yarn build && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js deploy",
+    "release": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy",
     "release_beta": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy -f .s3-website.beta.json",
     "release_dev": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy -f .s3-website.dev.json"
   },
@@ -26,10 +26,12 @@
     "@babel/preset-env": "^7.7.6",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.4.0",
+    "dotenv": "^8.2.0",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.2",
     "webpack": "^4.41.3",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.0"
   }
 }

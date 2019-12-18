@@ -1,10 +1,13 @@
 const path = require('path');
+require('dotenv').config();
+
+const buildPath = env => path.resolve(__dirname, `build/${env}`);
 
 module.exports = {
   mode: 'production',
   entry: './src/app.js',
   output: {
-    path: path.resolve(__dirname, "build"),
+    path: buildPath('prod'),
     filename: "atomic_search_widget.js"
   },
   module: {
@@ -22,5 +25,10 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'sass-loader'],
       }
     ]
+  },
+  devServer: {
+    contentBase: buildPath('dev'),
+    port: process.env.ASSET_PORT,
+    disableHostCheck: true
   }
 };
