@@ -1,6 +1,0 @@
-{
-  "outName": "atomic-search-widget",
-  "port": 8080,
-  "onlyPack": true,
-  "rootOutput": true
-}
