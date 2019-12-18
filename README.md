@@ -41,8 +41,9 @@ Inside the client directory run:
 Run webpack hot reload server:
   `yarn hot`
 
-Release a production build to the S3 website bucket created by `yarn ball`
-  `yarn release{,_beta,_dev}`
+Release a production build to the S3 website bucket
+env is dev, beta, or prod
+  `yarn release [env]`
 
 Run a linter over the project:
   `yarn lint`

@@ -9,9 +9,7 @@
     "build": "webpack-cli",
     "hot": "webpack-dev-server",
     "lint": "eslint src",
-    "release": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy",
-    "release_beta": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy -f .s3-website.beta.json",
-    "release_dev": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy -f .s3-website.dev.json"
+    "release": "yarn build && node ./bin/deploy.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +22,7 @@
   "devDependencies": {
     "@babel/core": "^7.7.5",
     "@babel/preset-env": "^7.7.6",
+    "aws-sdk": "^2.592.0",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.4.0",
     "dotenv": "^8.2.0",
