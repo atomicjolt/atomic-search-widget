@@ -8,6 +8,9 @@ globals:
 plugins:
   - import
 rules:
+  arrow-parens:
+    - warn
+    - as-needed
   linebreak-style:
     - error
     - unix
