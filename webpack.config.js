@@ -8,7 +8,7 @@ module.exports = {
   entry: './src/app.js',
   output: {
     path: buildPath('prod'),
-    filename: "atomic_search_widget.js"
+    filename: 'atomic_search_widget.js'
   },
   module: {
     rules: [
@@ -17,7 +17,7 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader',
         options: {
-          "presets": ["@babel/env"]
+          presets: ['@babel/env']
         },
       },
       {
