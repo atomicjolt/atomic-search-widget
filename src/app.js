@@ -1,6 +1,6 @@
 import $ from 'jquery';
 
-import './styles/styles';
+import '../styles/styles.scss';
 
 // To use real values, the administrator is expected to place an
 // atomicSearchConfig object above this code with their account and tool IDs.
