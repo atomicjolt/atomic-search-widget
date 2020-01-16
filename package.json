@@ -6,39 +6,34 @@
   "license": "MIT",
   "homepage": "https://github.com/atomicjolt/react_client_starter_app",
   "scripts": {
-    "postinstall": "cd ./client && yarn",
-    "test": "cd ./client && for dir in apps/*; do cd \"$dir\" || continue; yarn test; cd ..; cd ..; done && yarn test",
-    "test_debug": "cd ./client && for dir in apps/*; do cd \"$dir\" || continue; node debug ./node_modules/jest/bin/jest --runInBand --config=config/jest_config.json; cd ..; cd ..; done",
-    "watch": "cd ./client && for dir in apps/*; do cd \"$dir\" || continue; yarn watch; cd ..; cd ..; done",
-    "hot": "cd ./client && node webpack.hot.js",
-    "hot_pack": "cd ./client && node webpack.hot.js --hotPack",
-    "hot_lint": "cd ./client && node webpack.hot.js --hotPack --lint",
-    "live": "cd ./client && node server.js",
-    "build_dev": "cd ./client && node ./build.js",
-    "build_dev_pack": "cd ./client && node ./build.js --onlyPack",
-    "build": "cd ./client && node ./build.js --release",
-    "build_pack": "cd ./client && node ./build.js --release --onlyPack",
-    "ball": "cd ./client && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js create",
-    "ball_beta": "cd ./client && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js create -f .s3-website.beta.json",
-    "ball_dev": "cd ./client && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js create -f .s3-website.dev.json",
-    "release": "cd ./client && node ./build.js --release && cd .. && ./client/node_modules/s3-website/s3-website.js deploy",
-    "release_beta": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy -f .s3-website.beta.json",
-    "release_dev": "yarn build && ./client/node_modules/s3-website/s3-website.js deploy -f .s3-website.dev.json",
-    "lint": "cd ./client && eslint js",
-    "nuke": "rm -rf node_modules && cd ./client && yarn nuke"
+    "build": "webpack-cli",
+    "hot": "webpack-dev-server",
+    "lint": "eslint src",
+    "release": "yarn build && node ./bin/deploy.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/atomicjolt/react_client_starter_app"
+    "url": "https://github.com/atomicjolt/atomic-search-widget"
   },
-  "keywords": [
-    "react"
-  ],
+  "keywords": [],
   "dependencies": {
-    "del": "^2.2.2"
+    "jquery": "^3.4.1"
   },
   "devDependencies": {
-    "jest": "^20.0.4",
-    "nock": "^9.0.13"
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.6",
+    "aws-sdk": "^2.592.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.4.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^6.7.2",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.19.1",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.2",
+    "webpack": "^4.41.3",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.0"
   }
 }

@@ -1,31 +1,16 @@
 ---
-ecmaFeatures:
-  jsx: true
-  modules: true
+extends: airbnb-base
 env:
   browser: true
   es6: true
-extends: airbnb
-parser: babel-eslint
-plugins:
-  - react
-  - jsx-a11y
-  - import
 globals:
-  describe: false
-  beforeAll: false
-  beforeEach: false
-  afterEach: false
-  it: false
-  expect: false
-  xit: false
-  spyOn: false
-  jasmine: false
-  module: false
-  jest: false
-  __DEV__: false
-  ENV: false
+  ENV: readonly
+plugins:
+  - import
 rules:
+  arrow-parens:
+    - warn
+    - as-needed
   linebreak-style:
     - error
     - unix
@@ -44,19 +29,10 @@ rules:
     - devDependencies: true
   padded-blocks: 0
   key-spacing: 0
-  react/require-default-props: 0
-  jsx-a11y/no-static-element-interactions: 0
   space-before-function-paren:
     - 2
     - never
   func-names:
     - 2
     - as-needed
-  react/prefer-stateless-function:
-    - 2
-    - ignorePureComponents: true
-  react/forbid-prop-types:
-    - 2
-    - forbid:
-      - any
   import/extensions: 0
