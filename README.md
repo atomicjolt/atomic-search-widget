@@ -17,16 +17,16 @@ Make sure to install git, npm and yarn before you start then:
 2. Rename .env.example to .env. This file contains the port the server will use.
    The default 8080 should be fine, but you can also use a local domain or ngrok if you wish.
 3. run ./bin/setup or ./bin/setup-linux
-3. Install packages with
+4. Install packages with
 
     `yarn`
 
-4. Start server with:
+5. Start server with:
 
   `yarn hot`
 
-5. Upload the file loaders/local.js as your canvas theme js (Do this in a
-   subaccount or on test or beta canvas. It's a small
+6. Upload the file loaders/local.js as your canvas theme js (Do this in a
+   subaccount or on test or beta canvas). It's a small
    snippet that simply loads the js from the webpack server.
 
 #Check for updates
