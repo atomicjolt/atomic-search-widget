@@ -182,7 +182,7 @@ function ajHandleComm(event) {
           break;
       }
     } catch (error) {
-      console.log(error);
+      // Ignore errors
     }
   }
 }
