@@ -231,7 +231,21 @@ function getToolUrl() {
   return url;
 }
 
-function buildWidget(toolUrl) {
+function searchSVG() {
+  return `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="-515 337 48 48" enable-background="new -515 337 48 48">
+    <path d="M-484,365h-1.6l-0.5-0.5c2-2.3,3.1-5.2,3.1-8.5c0-7.2-5.8-13-13-13s-13,5.8-13,13s5.8,13,13,13c3.2,0,6.2-1.2,8.5-3.1 l0.5,0.5v1.6l10,10l3-3L-484,365z M-496,365c-5,0-9-4-9-9s4-9,9-9s9,4,9,9S-491,365-496,365z"/>
+    <path fill="none" d="M-515,337h48v48h-48V337z" />
+  </svg>`;
+}
+
+function closeSVG() {
+  return `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+    <path d="M38 12.83L35.17 10 24 21.17 12.83 10 10 12.83 21.17 24 10 35.17 12.83 38 24 26.83 35.17 38 38 35.17 26.83 24z"/>
+    <path d="M0 0h48v48H0z" fill="none"/>
+  </svg>`;
+}
+
+function buildBigScreenWidget(toolUrl) {
   let appendTo;
   let cssClass;
   let parentRelative = false;
@@ -256,14 +270,33 @@ function buildWidget(toolUrl) {
     <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
       <input type="text" placeholder="Search..." id="ajas-search01" />
-      <button class="ajas-search-widget__btn--search" type="submit">
-        <svg role="img" aria-label="submit search" xmlns="http://www.w3.org/2000/svg" viewBox="-515 337 48 48" enable-background="new -515 337 48 48">
-          <path d="M-484,365h-1.6l-0.5-0.5c2-2.3,3.1-5.2,3.1-8.5c0-7.2-5.8-13-13-13s-13,5.8-13,13s5.8,13,13,13c3.2,0,6.2-1.2,8.5-3.1
-            l0.5,0.5v1.6l10,10l3-3L-484,365z M-496,365c-5,0-9-4-9-9s4-9,9-9s9,4,9,9S-491,365-496,365z"/>
-          <path fill="none" d="M-515,337h48v48h-48V337z" />
-        </svg>
+      <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
+        ${searchSVG()}
       </button>
     </form>
+  </div>`;
+
+  return {
+    appendTo,
+    html,
+    parentRelative,
+  };
+}
+
+function buildSmallScreenWidget(toolUrl) {
+  const appendTo = '#mobile-header';
+  let parentRelative = true;
+  const path = window.location.pathname;
+
+  const html = `<div class="ajas-search-widget ajas-search-widget--small">
+    <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
+      <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
+      <input type="text" placeholder="Search..." id="ajas-search02" />
+      <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
+        ${searchSVG()}
+      </button>
+    </form>
+    <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
   </div>`;
 
   return {
@@ -280,20 +313,22 @@ function addWidget() {
     const toolUrl = getToolUrl();
 
     if (toolUrl) {
-      const widget = buildWidget(toolUrl);
-
-      if ($(widget.appendTo).length === 0) {
+      const bigScreenWidget = buildBigScreenWidget(toolUrl);
+      const smallScreenWidget = buildSmallScreenWidget(toolUrl);
+      if ($(bigScreenWidget.appendTo).length === 0 || $(smallScreenWidget.appendTo).length === 0) {
         setTimeout(addWidget, 50);
         return;
       }
 
-      $(widget.appendTo).append(widget.html);
+      $(bigScreenWidget.appendTo).append(bigScreenWidget.html);
+      $(smallScreenWidget.appendTo).append(smallScreenWidget.html);
 
-      if (widget.parentRelative) { $(widget.appendTo).css('position', 'relative'); }
+      if (bigScreenWidget.parentRelative) { $(bigScreenWidget.appendTo).css('position', 'relative'); }
+      if (smallScreenWidget.parentRelative) { $(smallScreenWidget.appendTo).css('position', 'relative'); }
 
-      $('#ajas-search-form').submit((e) => {
+      $('.ajas-search-widget__form').submit((e) => {
         e.preventDefault();
-        const searchVal = $('#ajas-search01').val();
+        const searchVal = $(e.target).find('input').val();
         if (APP_IFRAME) {
           const queryHash = getQueryHash();
           queryHash.ajsearch = encodeURIComponent(searchVal);
@@ -308,6 +343,16 @@ function addWidget() {
         } else {
           const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
           window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`;
+        }
+      });
+
+      $('.ajas-search-toggle').click((e) => {
+        if ($('.ajas-search-widget--small.is-active').length > 0) {
+          $('.ajas-search-widget--small').removeClass('is-active');
+          $('.ajas-search-toggle').html(searchSVG());
+        } else {
+          $('.ajas-search-widget--small').addClass('is-active');
+          $('.ajas-search-toggle').html(closeSVG());
         }
       });
     }
