@@ -315,7 +315,7 @@ function addWidget() {
     if (toolUrl) {
       const bigScreenWidget = buildBigScreenWidget(toolUrl);
       const smallScreenWidget = buildSmallScreenWidget(toolUrl);
-      if ($(bigScreenWidget.appendTo).length === 0 || $(smallScreenWidget.appendTo).length === 0) {
+      if ($(bigScreenWidget.appendTo).length === 0) {
         setTimeout(addWidget, 50);
         return;
       }
