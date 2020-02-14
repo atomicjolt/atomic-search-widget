@@ -48,6 +48,12 @@ env is dev, beta, or prod
 Run a linter over the project:
   `yarn lint`
 
+#Deploy
+-----------------------
+If you have multiple aws profiles and need to use a specific one you can do so by setting the AWS_PROFILE
+i.e.
+AWS_PROFILE=atomicjolt yarn release dev
+
 
 License and attribution
 -----------------------
