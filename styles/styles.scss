@@ -1,3 +1,5 @@
+
+// Search widget on Large screens
 .ajas-search-widget{
   max-width: 240px;
   width: 100%;
@@ -99,4 +101,85 @@
 }
 .ajas-search-widget__btn--search:focus svg{
   fill: #fff;
+}
+
+@media (max-width: 767px){
+  .ajas-search-widget{
+    display: none;
+    &.ajas-search-widget--small{
+      display: block;
+    }
+  }
+}
+
+
+
+.ajas-search-toggle{
+  width: 55px;
+  height: 55px;
+  background: none;
+  border-radius: 0;
+  border: 1px solid transparent;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg{
+    fill: #ffffff;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:focus{
+    border-color: #ffffff;
+    outline: none;
+  }
+}
+
+.ajas-search-widget--small{
+  top: 0;
+  right: 0;
+  height: 55px;
+  overflow: hidden;
+  max-width: 55px;
+  width: 100%;
+  position: absolute;
+  padding: 5px 55px 5px 0px;
+  padding-left: 0px;
+  transition: all 0.3s ease;
+
+  .ajas-search-widget__btn--search{
+    width: 35px;
+    height: 35px;
+  }
+
+  form{
+    overflow: hidden;
+  }
+
+  input{
+    height: 45px;
+    width: 100%;
+    margin: 0;
+    line-height: normal;
+    position: relative;
+    color: #222 !important;
+    transition: all 0.3s ease;
+
+    &:focus{
+      outline: thin solid #05AFFA;
+    }
+  }
+
+  &.is-active{
+    max-width: 767px;
+    padding-left: 5px;
+
+    input{
+      left: 0;
+    }
+  }
 }
