@@ -16,7 +16,7 @@ source .env
 set +a
 
 # Bootstrap the site - sets up symlinks to database.yml, etc. Be sure to set the correct dropbox folder in bootstrap first.
-bin/bootstrap
+#bin/bootstrap
 
 # Create config file for the app / site.
 cat > "/usr/local/etc/nginx/servers/$ASSETS_SUBDOMAIN.conf" <<-EOF
