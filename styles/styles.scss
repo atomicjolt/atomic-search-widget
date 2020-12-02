@@ -107,13 +107,13 @@
 
 
 .ajas-search-toggle{
-  width: 40px;
+  width: 45px;
   height: 55px;
   background: none;
   border-radius: 0;
   border: 1px solid transparent;
   position: absolute;
-  right: 55px;
+  right: 0;
   top: 0;
   display: flex;
   align-items: center;
@@ -136,13 +136,13 @@
 
 .ajas-search-widget--small{
   top: 0;
-  right: 0;
+  right: 55px;
   height: 55px;
   overflow: hidden;
-  max-width: 96px;
+  max-width: 45px;
   width: 100%;
   position: absolute;
-  padding: 0 96px 0;
+  padding: 0 45px 0;
   padding-left: 0px;
   transition: all 0.3s ease;
   margin: 0;
@@ -178,11 +178,10 @@
   &.is-active{
     max-width: 767px;
     padding-left: 0;
-    padding-right: 45px;
     background-color: #272121;
+    right: 0;
 
     .ajas-search-toggle{
-      right: 0;
       width: 45px;
     }
   }
@@ -191,6 +190,7 @@
 .ajas-search-widget--dashboard-small{
   max-width: 55px;
   padding-right: 55px;
+  right: 0;
   .ajas-search-toggle{
     width: 55px;
     right: 0;
