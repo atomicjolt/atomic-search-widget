@@ -247,7 +247,7 @@ function closeSVG() {
 
 function buildBigScreenWidget(toolUrl) {
   let insertAfter;
-  let cssClass;
+  let cssClass = '';
   const path = window.location.pathname;
 
   if (path === '/') { // Dashboard page.
@@ -283,7 +283,7 @@ function buildBigScreenWidget(toolUrl) {
 function buildSmallScreenWidget(toolUrl) {
   const appendTo = '#mobile-header';
   const parentRelative = true;
-  let cssClass;
+  let cssClass = '';
   const path = window.location.pathname;
 
   // Add a class if it's the Dashboard, All Courses, or Course Files pages.
