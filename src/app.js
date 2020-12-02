@@ -246,23 +246,21 @@ function closeSVG() {
 }
 
 function buildBigScreenWidget(toolUrl) {
-  let appendTo;
-  let cssClass;
-  let parentRelative = false;
+  let insertAfter;
+  let cssClass = '';
   const path = window.location.pathname;
 
   if (path === '/') { // Dashboard page.
-    appendTo = '.ic-Dashboard-header__layout';
+    insertAfter = '.ic-Dashboard-header__title';
     cssClass = 'ajas-search-widget--dashboard';
-    parentRelative = true;
   } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
-    appendTo = '.header-bar';
+    insertAfter = '.header-bar';
     cssClass = 'ajas-search-widget--all-courses';
   } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) { // Course files page. Not individual file pages though.
-    appendTo = '#main';
+    insertAfter = '.ic-app-crumbs';
     cssClass = 'ajas-search-widget--files';
   } else { // Any course page.
-    appendTo = '#main';
+    insertAfter = '.ic-app-crumbs';
     cssClass = 'ajas-search-widget--course';
   }
 
@@ -277,18 +275,23 @@ function buildBigScreenWidget(toolUrl) {
   </div>`;
 
   return {
-    appendTo,
+    insertAfter,
     html,
-    parentRelative,
   };
 }
 
 function buildSmallScreenWidget(toolUrl) {
   const appendTo = '#mobile-header';
-  let parentRelative = true;
+  const parentRelative = true;
+  let cssClass = '';
   const path = window.location.pathname;
 
-  const html = `<div class="ajas-search-widget ajas-search-widget--small">
+  // Add a class if it's the Dashboard, All Courses, or Course Files pages.
+  if (path === '/' || path.match(/^\/courses\/?$/i) || path.match(/^\/courses\/[\d]+\/files\/?$/i)) {
+    cssClass = 'ajas-search-widget--dashboard-small';
+  }
+
+  const html = `<div class="ajas-search-widget ajas-search-widget--small ${cssClass}">
     <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
       <input type="text" placeholder="Search..." id="ajas-search02" />
@@ -315,15 +318,14 @@ function addWidget() {
     if (toolUrl) {
       const bigScreenWidget = buildBigScreenWidget(toolUrl);
       const smallScreenWidget = buildSmallScreenWidget(toolUrl);
-      if ($(bigScreenWidget.appendTo).length === 0) {
+      if ($(bigScreenWidget.insertAfter).length === 0) {
         setTimeout(addWidget, 50);
         return;
       }
 
-      $(bigScreenWidget.appendTo).append(bigScreenWidget.html);
+      $(bigScreenWidget.html).insertAfter(bigScreenWidget.insertAfter);
       $(smallScreenWidget.appendTo).append(smallScreenWidget.html);
 
-      if (bigScreenWidget.parentRelative) { $(bigScreenWidget.appendTo).css('position', 'relative'); }
       if (smallScreenWidget.parentRelative) { $(smallScreenWidget.appendTo).css('position', 'relative'); }
 
       $('.ajas-search-widget__form').submit((e) => {
