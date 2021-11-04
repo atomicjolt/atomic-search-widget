@@ -51,7 +51,7 @@ function sendQueryVariables(source) {
     }),
     '*'
   );
-  $('#ajas-search01').val(ajsearch);
+  $('#ajas-search02').val(ajsearch);
 }
 
 function cacheResults(results) {
@@ -162,7 +162,7 @@ function ajHandleComm(event) {
             '',
             newState
           );
-          $('#ajas-search01').val(message.search);
+          $('#ajas-search02').val(message.search);
           break;
         } case 'atomicjolt.requestModuleProgress': {
           // Send a 'ping' back immediately. If the app doesn't receive it, it
@@ -266,8 +266,8 @@ function buildBigScreenWidget(toolUrl) {
 
   const html = `<div class="ajas-search-widget ${cssClass}">
     <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
-      <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
-      <input type="text" placeholder="Search..." id="ajas-search01" />
+      <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
+      <input type="text" placeholder="Search TEST" id="ajas-search02" />
       <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
         ${searchSVG()}
       </button>
@@ -311,7 +311,7 @@ function buildSmallScreenWidget(toolUrl) {
 
 function addWidget() {
   // widget already exists
-  if ($('#ajas-search01')) {
+  if ($('#ajas-search01') || $('#ajas-search01')) {
     return;
   }
 
