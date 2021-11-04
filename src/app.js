@@ -311,7 +311,7 @@ function buildSmallScreenWidget(toolUrl) {
 
 function addWidget() {
   // widget already exists
-  if ($('#ajas-search01') || $('#ajas-search01')) {
+  if ($('#ajas-search01') || $('#ajas-search02')) {
     return;
   }
 
