@@ -218,11 +218,13 @@ function getToolUrl() {
     const localNavElement = $(`#section-tabs ${baseSelector}`);
     const globalNavElement = $(`#menu ${baseSelector}`);
 
-    if (localNavElement.attr('href') && localNavElement.text().trim() === word) {
+    if (localNavElement.attr('href') && localNavElement[0].text.trim() === word) {
       url = localNavElement.attr('href');
       return true;
     } else if (globalNavElement.attr('href') && globalNavElement.find('.menu-item__text').text().trim() === word) {
-      url = globalNavElement.attr('href');
+      const toolPath = globalNavElement.attr('href').match(/\/(external_tools)\/[0-9]+/i)
+      const contextMatch = window.location.pathname.match(/^\/(courses|accounts)\/[0-9]+/i)
+      url = `${contextMatch[0]}${toolPath[0]}`
       return true;
     }
     return false;
