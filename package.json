@@ -30,7 +30,7 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.19.1",
     "node-sass": "^6.0",
-    "sass-loader": "^8.0.0",
+    "sass-loader": "^10.0",
     "style-loader": "^1.0.2",
     "webpack": "^4.41.3",
     "webpack-cli": "^3.3.10",
