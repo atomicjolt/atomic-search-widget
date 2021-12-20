@@ -283,15 +283,8 @@ function buildBigScreenWidget(toolUrl) {
 function buildSmallScreenWidget(toolUrl) {
   const insertAfter = '.mobile-header-title';
   const parentRelative = true;
-  let cssClass = '';
-  const path = window.location.pathname;
 
-  // Add a class if it's the Dashboard, All Courses, or Course Files pages.
-  // if (path === '/' || path.match(/^\/courses\/?$/i) || path.match(/^\/courses\/[\d]+\/files\/?$/i)) {
-  //   cssClass = 'ajas-search-widget--dashboard-small';
-  // }
-
-  const html = `<div class="ajas-search-widget ajas-search-widget--small ${cssClass}">
+  const html = `<div class="ajas-search-widget ajas-search-widget--small">
     <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
     <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
