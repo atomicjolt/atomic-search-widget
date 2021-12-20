@@ -4,7 +4,7 @@ import '../styles/styles.scss';
 
 // To use real values, the administrator is expected to place an
 // atomicSearchConfig object above this code with their account and tool IDs.
-var atomicSearchConfig = window.atomicSearchConfig || {
+const atomicSearchConfig = window.atomicSearchConfig || {
   accountId: null,
   externalToolId: null,
 };
@@ -260,7 +260,7 @@ function buildBigScreenWidget(toolUrl) {
     insertAfter = '.ic-app-crumbs';
     cssClass = 'ajas-search-widget--files';
   } else { // Any course page.
-    insertAfter = '.ic-app-crumbs';
+    insertAfter = '.right-of-crumbs';
     cssClass = 'ajas-search-widget--course';
   }
 
@@ -281,17 +281,11 @@ function buildBigScreenWidget(toolUrl) {
 }
 
 function buildSmallScreenWidget(toolUrl) {
-  const appendTo = '#mobile-header';
+  const insertAfter = '.mobile-header-title';
   const parentRelative = true;
-  let cssClass = '';
-  const path = window.location.pathname;
 
-  // Add a class if it's the Dashboard, All Courses, or Course Files pages.
-  if (path === '/' || path.match(/^\/courses\/?$/i) || path.match(/^\/courses\/[\d]+\/files\/?$/i)) {
-    cssClass = 'ajas-search-widget--dashboard-small';
-  }
-
-  const html = `<div class="ajas-search-widget ajas-search-widget--small ${cssClass}">
+  const html = `<div class="ajas-search-widget ajas-search-widget--small">
+    <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
     <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
       <input type="text" placeholder="Search..." id="ajas-search02" />
@@ -299,11 +293,10 @@ function buildSmallScreenWidget(toolUrl) {
         ${searchSVG()}
       </button>
     </form>
-    <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
   </div>`;
 
   return {
-    appendTo,
+    insertAfter,
     html,
     parentRelative,
   };
@@ -323,10 +316,15 @@ function addWidget() {
         return;
       }
 
-      $(bigScreenWidget.html).insertAfter(bigScreenWidget.insertAfter);
-      $(smallScreenWidget.appendTo).append(smallScreenWidget.html);
+      if (bigScreenWidget.insertAfter === '.right-of-crumbs') {
+        $(bigScreenWidget.insertAfter).append(bigScreenWidget.html);
+      } else {
+        $(bigScreenWidget.html).insertAfter(bigScreenWidget.insertAfter);
+      }
 
-      if (smallScreenWidget.parentRelative) { $(smallScreenWidget.appendTo).css('position', 'relative'); }
+      $(smallScreenWidget.html).insertAfter(smallScreenWidget.insertAfter);
+
+      if (smallScreenWidget.parentRelative) { $(smallScreenWidget.insertAfter).parent().css('position', 'relative'); }
 
       $('.ajas-search-widget__form').submit((e) => {
         e.preventDefault();
