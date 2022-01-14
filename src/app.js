@@ -303,6 +303,11 @@ function buildSmallScreenWidget(toolUrl) {
 }
 
 function addWidget() {
+  // widget already exists
+  if ($('.ajas-search-widget').length) {
+    return;
+  }
+
   if (window.location.pathname.match(/^\/(accounts|courses)/i) ||
     window.location.pathname === '/'
   ) {
