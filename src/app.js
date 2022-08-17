@@ -252,46 +252,47 @@ function closeSVG() {
   </svg>`;
 }
 
-function buildBigScreenWidget(toolUrl) {
-  let insertAfter;
-  let cssClass = '';
-  const path = window.location.pathname;
+const BIG_WIDGET_ID = 'ajas-search-widget';
 
-  if (path === '/') { // Dashboard page.
-    insertAfter = '.ic-Dashboard-header__title';
-    cssClass = 'ajas-search-widget--dashboard';
-  } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
-    insertAfter = '.header-bar';
-    cssClass = 'ajas-search-widget--all-courses';
-  } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) { // Course files page. Not individual file pages though.
-    insertAfter = '.ic-app-crumbs';
-    cssClass = 'ajas-search-widget--files';
-  } else { // Any course page.
-    insertAfter = '.right-of-crumbs';
-    cssClass = 'ajas-search-widget--course';
+function addBigWidget(toolUrl) {
+  function buildHTML(cssClass) {
+    return `<div class="ajas-search-widget ${cssClass}" id="${BIG_WIDGET_ID}">
+      <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
+        <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
+        <input type="text" placeholder="Search..." id="ajas-search01" />
+        <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
+          ${searchSVG()}
+        </button>
+      </form>
+    </div>`;
   }
 
-  const html = `<div class="ajas-search-widget ${cssClass}">
-    <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
-      <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
-      <input type="text" placeholder="Search..." id="ajas-search01" />
-      <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
-        ${searchSVG()}
-      </button>
-    </form>
-  </div>`;
+  const path = window.location.pathname;
+  let node;
 
-  return {
-    insertAfter,
-    html,
-  };
+  if (path === '/') { // Dashboard page.
+    const html = buildHTML('ajas-search-widget--dashboard');
+    node = $(html).insertAfter('.ic-Dashboard-header__title');
+  } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
+    const html = buildHTML('ajas-search-widget--all-courses');
+    node = $(html).insertAfter('.header-bar');
+  } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) { // Course files page. Not individual file pages though.
+    // NOTE This one is not working at the moment. It seems that the parent node
+    // is removed, and the mutation observer never fires
+    const html = buildHTML('ajas-search-widget--files');
+    node = $(html).insertAfter('.ic-app-crumbs');
+  } else { // Any course page.
+    const html = buildHTML('ajas-search-widget--files');
+    node = $(html).appendTo('.right-of-crumbs');
+  }
+
+  return [node, BIG_WIDGET_ID];
 }
 
-function buildSmallScreenWidget(toolUrl) {
-  const insertAfter = '.mobile-header-title';
-  const parentRelative = true;
+const SMALL_WIDGET_ID = 'ajas-search-widget-mobile';
 
-  const html = `<div class="ajas-search-widget ajas-search-widget--small">
+function addSmallWidget(toolUrl) {
+  const html = `<div class="ajas-search-widget ajas-search-widget--small" id="${SMALL_WIDGET_ID}">
     <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
     <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
@@ -302,74 +303,88 @@ function buildSmallScreenWidget(toolUrl) {
     </form>
   </div>`;
 
-  return {
-    insertAfter,
-    html,
-    parentRelative,
-  };
+  const node = $(html).insertAfter('.mobile-header-title');
+  node.parent().css('position', 'relative');
+
+  $('.ajas-search-toggle').on('click', () => {
+    if ($('.ajas-search-widget--small.is-active').length > 0) {
+      $('.ajas-search-widget--small').removeClass('is-active');
+      $('.ajas-search-toggle').html(searchSVG());
+    } else {
+      $('.ajas-search-widget--small').addClass('is-active');
+      $('.ajas-search-toggle').html(closeSVG());
+    }
+  });
+
+  return [node, SMALL_WIDGET_ID];
 }
 
-function addWidget() {
-  // widget already exists
-  if ($('.ajas-search-widget').length) {
+function addWidget(addToDOM, attemptNumber) {
+  // Cap the number of times we re-add the widget in case we end up in a loop
+  // with canvas
+  if (attemptNumber >= 5) return;
+
+  const isSearchableLocation = window.location.pathname.match(/^\/(accounts|courses)/i)
+    || window.location.pathname === '/';
+
+  if (!isSearchableLocation) return;
+
+  const toolUrl = getToolUrl();
+
+  if (!toolUrl) return;
+
+  const [widget, id] = addToDOM(toolUrl);
+  if (widget.length === 0) {
+    // not incrementing attemptNumber here because repeating this isn't too
+    // bad
+    setTimeout(() => addWidget(addToDOM, attemptNumber), 50);
     return;
   }
 
-  if (window.location.pathname.match(/^\/(accounts|courses)/i) ||
-    window.location.pathname === '/'
-  ) {
-    const toolUrl = getToolUrl();
+  $(`${id} .ajas-search-widget__form`).on('submit', e => {
+    e.preventDefault();
+    const searchVal = $(e.target).find('input').val();
+    if (APP_IFRAME) {
+      const queryHash = getQueryHash();
+      queryHash.ajsearch = encodeURIComponent(searchVal);
+      queryHash.ajpage = '1';
 
-    if (toolUrl) {
-      const bigScreenWidget = buildBigScreenWidget(toolUrl);
-      const smallScreenWidget = buildSmallScreenWidget(toolUrl);
-      if ($(bigScreenWidget.insertAfter).length === 0) {
-        setTimeout(addWidget, 50);
-        return;
-      }
-
-      if (bigScreenWidget.insertAfter === '.right-of-crumbs') {
-        $(bigScreenWidget.insertAfter).append(bigScreenWidget.html);
-      } else {
-        $(bigScreenWidget.html).insertAfter(bigScreenWidget.insertAfter);
-      }
-
-      $(smallScreenWidget.html).insertAfter(smallScreenWidget.insertAfter);
-
-      if (smallScreenWidget.parentRelative) { $(smallScreenWidget.insertAfter).parent().css('position', 'relative'); }
-
-      $('.ajas-search-widget__form').submit((e) => {
-        e.preventDefault();
-        const searchVal = $(e.target).find('input').val();
-        if (APP_IFRAME) {
-          const queryHash = getQueryHash();
-          queryHash.ajsearch = encodeURIComponent(searchVal);
-          queryHash.ajpage = '1';
-
-          window.history.pushState(
-            null,
-            '',
-            `?${toQuery(queryHash)}`,
-          );
-          sendQueryVariables(APP_IFRAME);
-        } else {
-          const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
-          window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`;
-        }
-      });
-
-      $('.ajas-search-toggle').click((e) => {
-        if ($('.ajas-search-widget--small.is-active').length > 0) {
-          $('.ajas-search-widget--small').removeClass('is-active');
-          $('.ajas-search-toggle').html(searchSVG());
-        } else {
-          $('.ajas-search-widget--small').addClass('is-active');
-          $('.ajas-search-toggle').html(closeSVG());
-        }
-      });
+      window.history.pushState(
+        null,
+        '',
+        `?${toQuery(queryHash)}`,
+      );
+      sendQueryVariables(APP_IFRAME);
+    } else {
+      const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
+      window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`;
     }
-  }
+  });
+
+  const observer = new MutationObserver(mutations => {
+    let wasRemoved = false;
+    mutations.forEach(mutation => {
+      const searchNode = Array.from(mutation.removedNodes).find(
+        node => node.id === id
+      );
+      if (searchNode) {
+        wasRemoved = true;
+      }
+
+    });
+    if (wasRemoved) {
+      observer.disconnect();
+      addWidget(addToDOM, attemptNumber + 1);
+    }
+  });
+
+  observer.observe(widget.parent()[0], { childList: true });
 }
 
-ajEnableListener();
-addWidget();
+// an instance of the script is already running
+if (!atomicSearchConfig.locked) {
+  atomicSearchConfig.locked = true;
+  ajEnableListener();
+  addWidget(addBigWidget, 0);
+  addWidget(addSmallWidget, 0);
+}
