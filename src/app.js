@@ -252,7 +252,7 @@ function closeSVG() {
   </svg>`;
 }
 
-function buildBigScreenWidget(toolUrl) {
+function buildBigScreenWidget(toolUrl, placeholder) {
   let insertAfter;
   let cssClass = '';
   const path = window.location.pathname;
@@ -274,7 +274,7 @@ function buildBigScreenWidget(toolUrl) {
   const html = `<div class="ajas-search-widget ${cssClass}">
     <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
-      <input type="text" placeholder="Search..." id="ajas-search01" />
+      <input type="text" placeholder="${placeholder}." id="ajas-search01" />
       <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
         ${searchSVG()}
       </button>
@@ -287,7 +287,7 @@ function buildBigScreenWidget(toolUrl) {
   };
 }
 
-function buildSmallScreenWidget(toolUrl) {
+function buildSmallScreenWidget(toolUrl, placeholder) {
   const insertAfter = '.mobile-header-title';
   const parentRelative = true;
 
@@ -295,7 +295,7 @@ function buildSmallScreenWidget(toolUrl) {
     <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
     <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
-      <input type="text" placeholder="Search..." id="ajas-search02" />
+      <input type="text" placeholder="${placeholder}" id="ajas-search02" />
       <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
         ${searchSVG()}
       </button>
@@ -315,14 +315,30 @@ function addWidget() {
     return;
   }
 
+  const Placeholders = {
+    ACCOUNTS: 'Search this account',
+    COURSES: 'Search this course',
+    DASHBOARD: 'Search my courses',
+  }
+
   if (window.location.pathname.match(/^\/(accounts|courses)/i) ||
     window.location.pathname === '/'
   ) {
     const toolUrl = getToolUrl();
+    let placeholder = Placeholders.DASHBOARD;
+
+    if (window.location.pathname.match(/^\/(accounts)/i)) {
+      placeholder = Placeholders.ACCOUNTS
+    }
+
+    if (window.location.pathname.match(/^\/(courses)/i)) {
+      placeholder = Placeholders.COURSES
+    }
+
 
     if (toolUrl) {
-      const bigScreenWidget = buildBigScreenWidget(toolUrl);
-      const smallScreenWidget = buildSmallScreenWidget(toolUrl);
+      const bigScreenWidget = buildBigScreenWidget(toolUrl, placeholder);
+      const smallScreenWidget = buildSmallScreenWidget(toolUrl, placeholder);
       if ($(bigScreenWidget.insertAfter).length === 0) {
         setTimeout(addWidget, 50);
         return;
