@@ -254,12 +254,12 @@ function closeSVG() {
 
 const BIG_WIDGET_ID = 'ajas-search-widget';
 
-function addBigWidget(toolUrl) {
+function addBigWidget(toolUrl, placeholder) {
   function buildHTML(cssClass) {
     return `<div class="ajas-search-widget ${cssClass}" id="${BIG_WIDGET_ID}">
       <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
         <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
-        <input type="text" placeholder="Search..." id="ajas-search01" />
+        <input type="text" placeholder="${placeholder}" id="ajas-search01" />
         <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
           ${searchSVG()}
         </button>
@@ -291,12 +291,12 @@ function addBigWidget(toolUrl) {
 
 const SMALL_WIDGET_ID = 'ajas-search-widget-mobile';
 
-function addSmallWidget(toolUrl) {
+function addSmallWidget(toolUrl, placeholder) {
   const html = `<div class="ajas-search-widget ajas-search-widget--small" id="${SMALL_WIDGET_ID}">
     <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
     <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
       <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
-      <input type="text" placeholder="Search..." id="ajas-search02" />
+      <input type="text" placeholder="${placeholder}" id="ajas-search02" />
       <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
         ${searchSVG()}
       </button>
@@ -319,6 +319,12 @@ function addSmallWidget(toolUrl) {
   return [node, SMALL_WIDGET_ID];
 }
 
+const Placeholders = {
+  ACCOUNTS: 'Search this account',
+  COURSES: 'Search this course',
+  DASHBOARD: 'Search my courses',
+}
+
 function addWidget(addToDOM, attemptNumber) {
   // Cap the number of times we re-add the widget in case we end up in a loop
   // with canvas
@@ -333,7 +339,17 @@ function addWidget(addToDOM, attemptNumber) {
 
   if (!toolUrl) return;
 
-  const [widget, id] = addToDOM(toolUrl);
+  let placeholder = Placeholders.DASHBOARD;
+
+  if (window.location.pathname.match(/^\/(accounts)/i)) {
+    placeholder = Placeholders.ACCOUNTS
+  }
+
+  if (window.location.pathname.match(/^\/(courses)/i)) {
+    placeholder = Placeholders.COURSES
+  }
+
+  const [widget, id] = addToDOM(toolUrl, placeholder);
   if (widget.length === 0) {
     // not incrementing attemptNumber here because repeating this isn't too
     // bad
