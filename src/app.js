@@ -398,8 +398,8 @@ function addWidget(addToDOM, attemptNumber) {
 }
 
 // an instance of the script is already running
-if (!atomicSearchConfig.locked) {
-  atomicSearchConfig.locked = true;
+if (!window.ATOMIC_SEARCH_LOCKED) {
+  window.ATOMIC_SEARCH_LOCKED = true;
   ajEnableListener();
   addWidget(addBigWidget, 0);
   addWidget(addSmallWidget, 0);
