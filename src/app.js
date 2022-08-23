@@ -323,7 +323,7 @@ const Placeholders = {
   ACCOUNTS: 'Search this account',
   COURSES: 'Search this course',
   DASHBOARD: 'Search my courses',
-}
+};
 
 function addWidget(addToDOM, attemptNumber) {
   // Cap the number of times we re-add the widget in case we end up in a loop
@@ -342,11 +342,11 @@ function addWidget(addToDOM, attemptNumber) {
   let placeholder = Placeholders.DASHBOARD;
 
   if (window.location.pathname.match(/^\/(accounts)/i)) {
-    placeholder = Placeholders.ACCOUNTS
+    placeholder = Placeholders.ACCOUNTS;
   }
 
   if (window.location.pathname.match(/^\/(courses)/i)) {
-    placeholder = Placeholders.COURSES
+    placeholder = Placeholders.COURSES;
   }
 
   const [widget, id] = addToDOM(toolUrl, placeholder);
@@ -357,7 +357,7 @@ function addWidget(addToDOM, attemptNumber) {
     return;
   }
 
-  $(`${id} .ajas-search-widget__form`).on('submit', e => {
+  $(`#${id} .ajas-search-widget__form`).on('submit', e => {
     e.preventDefault();
     const searchVal = $(e.target).find('input').val();
     if (APP_IFRAME) {
