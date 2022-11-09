@@ -125,6 +125,10 @@
   transition: all 0.3s ease;
   margin: 0;
 
+  .ajas-close-svg {
+    display: none;
+  }
+
   .ajas-search-widget__btn--search {
     width: 35px;
     height: 35px;
@@ -162,6 +166,14 @@
   }
 
   &.is-active {
+    .ajas-search-toggle {
+      .ajas-search-svg {
+        display: none;
+      }
+      .ajas-close-svg {
+        display: block;
+      }
+    }
     .ajas-search-widget__btn--search,
     input {
       display: block;
