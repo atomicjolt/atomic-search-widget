@@ -6,8 +6,8 @@
   "license": "MIT",
   "homepage": "https://github.com/atomicjolt/react_client_starter_app",
   "scripts": {
-    "build": "webpack-cli",
-    "hot": "webpack-dev-server",
+    "build": "node ./esbuild.js prod",
+    "hot": "node ./esbuild.js dev",
     "lint": "eslint src",
     "release": "yarn build && node ./bin/deploy.js"
   },
@@ -20,20 +20,12 @@
     "jquery": "^3.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.5",
-    "@babel/preset-env": "^7.7.6",
     "aws-sdk": "^2.592.0",
-    "babel-loader": "^8.0.6",
-    "css-loader": "^3.4.0",
     "dotenv": "^8.2.0",
+    "esbuild": "^0.15.13",
+    "esbuild-sass-plugin": "^2.4.0",
     "eslint": "^6.7.2",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.19.1",
-    "sass": "^1.56.1",
-    "sass-loader": "^10.0",
-    "style-loader": "^1.0.2",
-    "webpack": "^4.41.3",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.0"
+    "eslint-plugin-import": "^2.19.1"
   }
 }
