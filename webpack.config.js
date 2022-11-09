@@ -28,7 +28,7 @@ module.exports = {
   },
   devServer: {
     contentBase: buildPath('dev'),
-    port: process.env.ASSET_PORT,
+    port: process.env.ASSETS_PORT,
     disableHostCheck: true
   }
 };

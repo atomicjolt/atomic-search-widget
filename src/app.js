@@ -1,4 +1,7 @@
 import $ from 'jquery';
+import './desktop_widget';
+import './mobile_widget';
+import { SEARCH_EVENT } from './widget_common';
 
 import '../styles/styles.scss';
 
@@ -254,17 +257,15 @@ function closeSVG() {
 
 const BIG_WIDGET_ID = 'ajas-search-widget';
 
-function addBigWidget(toolUrl, placeholder) {
+function addBigWidget(placeholder) {
   function buildHTML(cssClass) {
-    return `<div class="ajas-search-widget ${cssClass}" id="${BIG_WIDGET_ID}">
-      <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
-        <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
-        <input type="text" placeholder="${placeholder}" id="ajas-search01" />
-        <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
-          ${searchSVG()}
-        </button>
-      </form>
-    </div>`;
+    return `
+      <atomic-search-desktop-widget
+        id="${BIG_WIDGET_ID}"
+        data-css-class="${cssClass}"
+        data-placeholder="${placeholder}"
+      ></atomic-search-widget>
+    `;
   }
 
   const path = window.location.pathname;
@@ -291,17 +292,13 @@ function addBigWidget(toolUrl, placeholder) {
 
 const SMALL_WIDGET_ID = 'ajas-search-widget-mobile';
 
-function addSmallWidget(toolUrl, placeholder) {
-  const html = `<div class="ajas-search-widget ajas-search-widget--small" id="${SMALL_WIDGET_ID}">
-    <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
-    <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
-      <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
-      <input type="text" placeholder="${placeholder}" id="ajas-search02" />
-      <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
-        ${searchSVG()}
-      </button>
-    </form>
-  </div>`;
+function addSmallWidget(placeholder) {
+  const html = `
+    <atomic-search-mobile-widget
+      id="${BIG_WIDGET_ID}"
+      data-placeholder="${placeholder}"
+    ></atomic-search-widget>
+  `;
 
   const node = $(html).insertAfter('.mobile-header-title');
   node.parent().css('position', 'relative');
@@ -349,7 +346,7 @@ function addWidget(addToDOM, attemptNumber) {
     placeholder = Placeholders.COURSES;
   }
 
-  const [widget, id] = addToDOM(toolUrl, placeholder);
+  const [widget, id] = addToDOM(placeholder);
   if (widget.length === 0) {
     // not incrementing attemptNumber here because repeating this isn't too
     // bad
@@ -357,12 +354,11 @@ function addWidget(addToDOM, attemptNumber) {
     return;
   }
 
-  $(`#${id} .ajas-search-widget__form`).on('submit', e => {
-    e.preventDefault();
-    const searchVal = $(e.target).find('input').val();
+  widget[0].addEventListener(SEARCH_EVENT, e => {
+    const { searchText } = e.detail;
     if (APP_IFRAME) {
       const queryHash = getQueryHash();
-      queryHash.ajsearch = encodeURIComponent(searchVal);
+      queryHash.ajsearch = encodeURIComponent(searchText);
       queryHash.ajpage = '1';
 
       window.history.pushState(
@@ -373,7 +369,7 @@ function addWidget(addToDOM, attemptNumber) {
       sendQueryVariables(APP_IFRAME);
     } else {
       const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
-      window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`;
+      window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchText)}&ajpage=1`;
     }
   });
 
