@@ -1,4 +1,4 @@
-import { SEARCH_SVG, initWidget } from './widget_common';
+import { SEARCH_SVG, initWidget, BaseWidget } from './widget_common';
 
 function html(cssClass, placeholder) {
   return `<div class="ajas-search-widget ${cssClass}">
@@ -12,7 +12,7 @@ function html(cssClass, placeholder) {
     </div>`;
 }
 
-export default class AtomicSearchDesktopWidget extends HTMLElement {
+export default class AtomicSearchDesktopWidget extends BaseWidget {
   connectedCallback() {
     const { cssClass, placeholder } = this.dataset;
     const htmlText = html(cssClass, placeholder);
