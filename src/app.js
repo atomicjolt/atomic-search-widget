@@ -285,7 +285,7 @@ const SMALL_WIDGET_ID = 'ajas-search-widget-mobile';
 function addSmallWidget(placeholder) {
   const html = `
     <atomic-search-mobile-widget
-      id="${BIG_WIDGET_ID}"
+      id="${SMALL_WIDGET_ID}"
       data-placeholder="${placeholder}"
     ></atomic-search-widget>
   `;

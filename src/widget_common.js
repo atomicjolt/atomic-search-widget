@@ -39,7 +39,9 @@ export function initWidget(widget, htmlText) {
 }
 
 export class BaseWidget extends HTMLElement {
-  updateSearchText(newText) {
-    this.shadowRoot.querySelector('input').value = newText;
+  updateSearchText(newValue) {
+    // undefined will get turned into text, so ignore all falsey values
+    const text = newValue || '';
+    this.shadowRoot.querySelector('input').value = text;
   }
 }
