@@ -10,7 +10,7 @@ const buckets = {
 };
 
 function uploadFile(bucket, filePath) {
-  const fileContent = fs.readFileSync(`build/prod/${filePath}`);
+  const fileContent = fs.readFileSync(`build/${filePath}`);
 
   const params = {
     Body: fileContent,

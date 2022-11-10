@@ -1,6 +1,7 @@
 import $ from 'jquery';
-
-import '../styles/styles.scss';
+import './desktop_widget';
+import './mobile_widget';
+import { SEARCH_EVENT } from './widget_common';
 
 // To use real values, the administrator is expected to place an
 // atomicSearchConfig object above this code with their account and tool IDs.
@@ -10,6 +11,12 @@ const atomicSearchConfig = window.atomicSearchConfig || {
 };
 
 let APP_IFRAME;
+
+function updateSearchWidgetText(newText) {
+  document.querySelectorAll('atomic-search-desktop-widget,atomic-search-mobile-widget').forEach(widget => {
+    widget.updateSearchText(newText);
+  });
+}
 
 function getQueryHash() {
   const query = window.location.search.substring(1);
@@ -51,7 +58,7 @@ function sendQueryVariables(source) {
     }),
     '*'
   );
-  $('#ajas-search01').val(ajsearch);
+  updateSearchWidgetText(ajsearch);
 }
 
 function cacheResults(results) {
@@ -162,7 +169,7 @@ function ajHandleComm(event) {
             '',
             newState
           );
-          $('#ajas-search01').val(message.search);
+          updateSearchWidgetText(message.search);
           break;
         } case 'atomicjolt.requestModuleProgress': {
           // Send a 'ping' back immediately. If the app doesn't receive it, it
@@ -238,33 +245,17 @@ function getToolUrl() {
   return url;
 }
 
-function searchSVG() {
-  return `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="-515 337 48 48" enable-background="new -515 337 48 48">
-    <path d="M-484,365h-1.6l-0.5-0.5c2-2.3,3.1-5.2,3.1-8.5c0-7.2-5.8-13-13-13s-13,5.8-13,13s5.8,13,13,13c3.2,0,6.2-1.2,8.5-3.1 l0.5,0.5v1.6l10,10l3-3L-484,365z M-496,365c-5,0-9-4-9-9s4-9,9-9s9,4,9,9S-491,365-496,365z"/>
-    <path fill="none" d="M-515,337h48v48h-48V337z" />
-  </svg>`;
-}
-
-function closeSVG() {
-  return `<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-    <path d="M38 12.83L35.17 10 24 21.17 12.83 10 10 12.83 21.17 24 10 35.17 12.83 38 24 26.83 35.17 38 38 35.17 26.83 24z"/>
-    <path d="M0 0h48v48H0z" fill="none"/>
-  </svg>`;
-}
-
 const BIG_WIDGET_ID = 'ajas-search-widget';
 
-function addBigWidget(toolUrl, placeholder) {
+function addBigWidget(placeholder) {
   function buildHTML(cssClass) {
-    return `<div class="ajas-search-widget ${cssClass}" id="${BIG_WIDGET_ID}">
-      <form id="ajas-search-form" class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
-        <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
-        <input type="text" placeholder="${placeholder}" id="ajas-search01" />
-        <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
-          ${searchSVG()}
-        </button>
-      </form>
-    </div>`;
+    return `
+      <atomic-search-desktop-widget
+        id="${BIG_WIDGET_ID}"
+        data-css-class="${cssClass}"
+        data-placeholder="${placeholder}"
+      ></atomic-search-widget>
+    `;
   }
 
   const path = window.location.pathname;
@@ -291,30 +282,16 @@ function addBigWidget(toolUrl, placeholder) {
 
 const SMALL_WIDGET_ID = 'ajas-search-widget-mobile';
 
-function addSmallWidget(toolUrl, placeholder) {
-  const html = `<div class="ajas-search-widget ajas-search-widget--small" id="${SMALL_WIDGET_ID}">
-    <button class="ajas-search-toggle" type="button" aria-label="toggle search">${searchSVG()}</button>
-    <form class="ajas-search-widget__form" action="${toolUrl}" method="get" role="search">
-      <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
-      <input type="text" placeholder="${placeholder}" id="ajas-search02" />
-      <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
-        ${searchSVG()}
-      </button>
-    </form>
-  </div>`;
+function addSmallWidget(placeholder) {
+  const html = `
+    <atomic-search-mobile-widget
+      id="${SMALL_WIDGET_ID}"
+      data-placeholder="${placeholder}"
+    ></atomic-search-widget>
+  `;
 
   const node = $(html).insertAfter('.mobile-header-title');
   node.parent().css('position', 'relative');
-
-  $('.ajas-search-toggle').on('click', () => {
-    if ($('.ajas-search-widget--small.is-active').length > 0) {
-      $('.ajas-search-widget--small').removeClass('is-active');
-      $('.ajas-search-toggle').html(searchSVG());
-    } else {
-      $('.ajas-search-widget--small').addClass('is-active');
-      $('.ajas-search-toggle').html(closeSVG());
-    }
-  });
 
   return [node, SMALL_WIDGET_ID];
 }
@@ -349,7 +326,7 @@ function addWidget(addToDOM, attemptNumber) {
     placeholder = Placeholders.COURSES;
   }
 
-  const [widget, id] = addToDOM(toolUrl, placeholder);
+  const [widget, id] = addToDOM(placeholder);
   if (widget.length === 0) {
     // not incrementing attemptNumber here because repeating this isn't too
     // bad
@@ -357,12 +334,11 @@ function addWidget(addToDOM, attemptNumber) {
     return;
   }
 
-  $(`#${id} .ajas-search-widget__form`).on('submit', e => {
-    e.preventDefault();
-    const searchVal = $(e.target).find('input').val();
+  widget[0].addEventListener(SEARCH_EVENT, e => {
+    const { searchText } = e.detail;
     if (APP_IFRAME) {
       const queryHash = getQueryHash();
-      queryHash.ajsearch = encodeURIComponent(searchVal);
+      queryHash.ajsearch = encodeURIComponent(searchText);
       queryHash.ajpage = '1';
 
       window.history.pushState(
@@ -373,7 +349,7 @@ function addWidget(addToDOM, attemptNumber) {
       sendQueryVariables(APP_IFRAME);
     } else {
       const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
-      window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchVal)}&ajpage=1`;
+      window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchText)}&ajpage=1`;
     }
   });
 
