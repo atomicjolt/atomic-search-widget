@@ -19,7 +19,7 @@ set +a
 #bin/bootstrap
 
 # Create config file for the app / site.
-cat > "/usr/local/etc/nginx/servers/$ASSETS_SUBDOMAIN.conf" <<-EOF
+cat > "$(brew --prefix)/etc/nginx/servers/${ASSETS_SUBDOMAIN}.conf" <<-EOF
 server {
     listen *:443;
     server_name $ASSETS_SUBDOMAIN.atomicjolt.xyz;
