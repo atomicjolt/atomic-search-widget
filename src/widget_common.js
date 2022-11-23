@@ -36,6 +36,13 @@ export function initWidget(widget, htmlText) {
     const searchText = shadow.querySelector('input').value;
     widget.dispatchEvent(new CustomEvent(SEARCH_EVENT, { detail: { searchText } }));
   });
+
+  // canvas has global keyboard shortcuts. Normally they don't apply when you're
+  // in an input, but since this is a shadow DOM their check doesn't work. So we
+  // just stop the event from bubbling here.
+  shadow.querySelector('input').addEventListener('keydown', e => {
+    e.stopPropagation();
+  });
 }
 
 export class BaseWidget extends HTMLElement {
