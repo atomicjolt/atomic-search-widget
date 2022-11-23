@@ -348,7 +348,7 @@ function addWidget(addToDOM, attemptNumber) {
       );
       sendQueryVariables(APP_IFRAME);
     } else {
-      const ajFilterParam = window.location.pathname.match(/\/(discussion_topics)/i) ? '&ajfilters=discussion_posts' : '';
+      const ajFilterParam = window.location.pathname.match(/\/(discussion_topics)/i) ? '&ajfilters=discussion_replies' : '';
 
       const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
 
