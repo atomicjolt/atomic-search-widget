@@ -348,8 +348,11 @@ function addWidget(addToDOM, attemptNumber) {
       );
       sendQueryVariables(APP_IFRAME);
     } else {
+      const ajFilterParam = window.location.pathname.match(/\/(discussion_topics)/i) ? '&ajfilters=discussion_replies' : '';
+
       const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
-      window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchText)}&ajpage=1`;
+
+      window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchText)}${ajFilterParam}&ajpage=1`;
     }
   });
 
