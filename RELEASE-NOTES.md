@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.0.2
+
+* When searching from a discussions page, default to filtering by discussion
+  replies
+
 ## 2.0.1
 
 * Stop keydown event propagation, because it triggers canvas keyboard shortcuts
