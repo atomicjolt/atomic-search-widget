@@ -23,6 +23,7 @@
     "@testing-library/cypress": "^8.0.7",
     "aws-sdk": "^2.592.0",
     "cypress": "^11.2.0",
+    "cypress-iframe": "^1.0.1",
     "dotenv": "^8.2.0",
     "esbuild": "^0.15.13",
     "esbuild-sass-plugin": "^2.4.0",

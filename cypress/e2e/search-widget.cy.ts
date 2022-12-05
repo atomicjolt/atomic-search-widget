@@ -13,13 +13,15 @@ describe('Search Widget', () => {
       cy.findByLabelText(/submit search/i).click();
     })
 
-    cy.findByLabelText(/search bar/i).should('have.value', 'test')
+    cy.iframe('#tool_content').findByLabelText(/search bar/i).should('have.value', 'test')
 
     /**
      * Type and press enter
      */
-    cy.findSearchWidget().findByPlaceholderText(/Search this course/i).clear().type("example{enter}");
+    cy.findSearchWidget().within(() => {
+      cy.findByPlaceholderText(/Search this course/i).type("{selectall}example{enter}");
+    })
 
-    cy.findByLabelText(/search bar/i).should('have.value', 'example')
+    cy.iframe('#tool_content').findByLabelText(/search bar/i).should('have.value', 'example')
   })
 })
