@@ -1,15 +1,12 @@
-#Atomic Search Widget [![Build Status](https://travis-ci.org/atomicjolt/react_client_starter_app.svg?branch=master)](https://travis-ci.org/atomicjolt/react_client_starter_app) [![Coverage Status](https://coveralls.io/repos/github/atomicjolt/react_client_starter_app/badge.svg?branch=coveralls)](https://coveralls.io/github/atomicjolt/react_client_starter_app?branch=coveralls)
------------------------
+# Atomic Search Widget [![Build Status](https://travis-ci.org/atomicjolt/react_client_starter_app.svg?branch=master)](https://travis-ci.org/atomicjolt/react_client_starter_app) [![Coverage Status](https://coveralls.io/repos/github/atomicjolt/react_client_starter_app/badge.svg?branch=coveralls)](https://coveralls.io/github/atomicjolt/react_client_starter_app?branch=coveralls)
 This application adds a search widget to Canvas.
 
 
-#Install into Canvas:
------------------------
+## Install into Canvas:
 [Follow these instructions to install into Canvas](Installation_Instructions.md)
 
 
-#Getting Started with Development:
------------------------
+## Getting Started with Development:
 
 Make sure to install git, npm and yarn before you start then:
 
@@ -29,32 +26,37 @@ Make sure to install git, npm and yarn before you start then:
    subaccount or on test or beta canvas). It's a small
    snippet that simply loads the js from the webpack server.
 
-#Check for updates
------------
+## Check for updates
 Inside the client directory run:
 
   `yarn upgrade-interactive`
 
 
-#Scripts:
------------------------
+## Scripts:
 Run webpack hot reload server:
   `yarn hot`
 
 Release a production build to the S3 website bucket
-env is dev, beta, or prod
+env is dev, beta, or prod:
   `yarn release [env]`
 
 Run a linter over the project:
   `yarn lint`
 
-#Deploy
------------------------
+Run a linter over the project:
+  `yarn lint`
+
+Run Cypress tests:
+  `yarn test`
+
+Cypress has many command line options to choose from, if you want to use those,
+run it directly, for example: `yarn cypress run --help`
+
+## Deploy
 If you have multiple aws profiles and need to use a specific one you can do so by setting the AWS_PROFILE
 i.e.
 AWS_PROFILE=atomicjolt yarn release dev
 
 
-License and attribution
------------------------
+## License and attribution
 MIT

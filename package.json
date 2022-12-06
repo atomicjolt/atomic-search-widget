@@ -9,7 +9,8 @@
     "build": "node ./esbuild.js prod",
     "hot": "node ./esbuild.js dev",
     "lint": "eslint src",
-    "release": "yarn build && node ./bin/deploy.js"
+    "release": "yarn build && node ./bin/deploy.js",
+    "test": "cypress run"
   },
   "repository": {
     "type": "git",

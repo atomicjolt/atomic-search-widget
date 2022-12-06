@@ -52,3 +52,11 @@ export class BaseWidget extends HTMLElement {
     this.shadowRoot.querySelector('input').value = text;
   }
 }
+
+// multiple instances of the script can be running in some cases, this prevents
+// that from throwing an error
+export function registerWidget(name, klass) {
+  if (!customElements.get(name)) {
+    customElements.define(name, klass);
+  }
+}
