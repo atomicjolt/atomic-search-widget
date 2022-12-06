@@ -37,11 +37,20 @@ Run webpack hot reload server:
   `yarn hot`
 
 Release a production build to the S3 website bucket
-env is dev, beta, or prod
+env is dev, beta, or prod:
   `yarn release [env]`
 
 Run a linter over the project:
   `yarn lint`
+
+Run a linter over the project:
+  `yarn lint`
+
+Run Cypress tests:
+  `yarn test`
+
+Cypress has many command line options to choose from, if you want to use those,
+run it directly, for example: `yarn cypress run --help`
 
 ## Deploy
 If you have multiple aws profiles and need to use a specific one you can do so by setting the AWS_PROFILE
