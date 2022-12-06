@@ -7,8 +7,6 @@ export default defineConfig({
     },
     env: {
       canvasUrl: 'https://atomicjolt.beta.instructure.com',
-      email: 'matt.wallentiny@atomicjolt.com',
-      password: 'abc123ABC!@#'
     },
     chromeWebSecurity: false
   },

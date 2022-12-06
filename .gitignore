@@ -28,3 +28,5 @@ npm-debug.log
 /build
 
 coverage/
+
+cypress.env.json
