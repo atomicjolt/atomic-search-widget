@@ -3,6 +3,7 @@ import {
   SEARCH_SVG,
   CLOSE_SVG,
   BaseWidget,
+  registerWidget,
 } from './widget_common';
 
 function html(placeholder) {
@@ -37,4 +38,4 @@ export default class AtomicSearchMobileWidget extends BaseWidget {
   }
 }
 
-customElements.define('atomic-search-mobile-widget', AtomicSearchMobileWidget);
+registerWidget('atomic-search-mobile-widget', AtomicSearchMobileWidget);

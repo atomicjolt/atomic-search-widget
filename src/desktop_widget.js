@@ -1,4 +1,9 @@
-import { SEARCH_SVG, initWidget, BaseWidget } from './widget_common';
+import {
+  SEARCH_SVG,
+  initWidget,
+  BaseWidget,
+  registerWidget,
+} from './widget_common';
 
 function html(cssClass, placeholder) {
   return `<div class="ajas-search-widget ${cssClass}">
@@ -21,4 +26,4 @@ export default class AtomicSearchDesktopWidget extends BaseWidget {
   }
 }
 
-customElements.define('atomic-search-desktop-widget', AtomicSearchDesktopWidget);
+registerWidget('atomic-search-desktop-widget', AtomicSearchDesktopWidget);
