@@ -2,6 +2,7 @@ import $ from 'jquery';
 import './desktop_widget';
 import './mobile_widget';
 import { SEARCH_EVENT } from './widget_common';
+import handleTrayExpand from './expand_lti_launch';
 
 // To use real values, the administrator is expected to place an
 // atomicSearchConfig object above this code with their account and tool IDs.
@@ -184,6 +185,9 @@ function ajHandleComm(event) {
               progress => sendModuleProgress(event.source, progress)
             );
           }
+          break;
+        } case 'atomicjolt.expandCanvasTray': {
+          handleTrayExpand(event);
           break;
         } default:
           break;
