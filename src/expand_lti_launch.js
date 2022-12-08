@@ -4,5 +4,7 @@ export default function handleTrayExpand(event) {
   const sender = iframes.find(
     iframe => iframe.contentWindow === event.source
   );
-  sender.closest('[role=dialog]').parentElement.style.width = '900px';
+  if (sender) {
+    sender.closest('[role=dialog]').parentElement.style.width = '900px';
+  }
 }
