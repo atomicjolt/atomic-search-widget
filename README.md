@@ -46,12 +46,6 @@ Run a linter over the project:
 Run a linter over the project:
   `yarn lint`
 
-Run Cypress tests:
-  `yarn test`
-
-Cypress has many command line options to choose from, if you want to use those,
-run it directly, for example: `yarn cypress run --help`
-
 ## Deploy
 If you have multiple aws profiles and need to use a specific one you can do so by setting the AWS_PROFILE
 i.e.
