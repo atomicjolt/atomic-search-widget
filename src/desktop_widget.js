@@ -3,6 +3,7 @@ import {
   initWidget,
   BaseWidget,
   registerWidget,
+  CARET_SVG,
 } from './widget_common';
 
 function html(cssClass, placeholder) {
@@ -10,9 +11,16 @@ function html(cssClass, placeholder) {
       <form id="ajas-search-form" class="ajas-search-widget__form" action="javascript:void(0);" method="get" role="search">
         <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
         <input type="text" placeholder="${placeholder}" id="ajas-search01" />
-        <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
+        <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
           ${SEARCH_SVG}
         </button>
+        <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--caret">
+          ${CARET_SVG}
+        </button>
+        <div id="menu-overlay" class="ajas-search-widget__overlay hidden"></div>
+        <div id="menu-dropdown" class="ajas-search-widget__dropdown hidden">
+          <button type="button">Search openEquella content</button>
+        </div>
       </form>
     </div>`;
 }

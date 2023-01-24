@@ -12,9 +12,16 @@ const CLOSE_SVG = `<svg class="ajas-close-svg" aria-hidden="true" xmlns="http://
     <path d="M0 0h48v48H0z" fill="none"/>
   </svg>`;
 
+const CARET_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="body_1" width="9" height="4">
+    <g transform="matrix(0.28571433 0 0 0.28571433 0.35714287 -0)">
+      <path d="M0.15 0L14.5 14.35L28.85 0L0.15 0" stroke="none" fill="#333333" fill-rule="nonzero" />
+    </g>
+  </svg>`;
+
 export {
   SEARCH_SVG,
   CLOSE_SVG,
+  CARET_SVG,
   SEARCH_EVENT,
 };
 
@@ -36,6 +43,24 @@ export function initWidget(widget, htmlText) {
     const searchText = shadow.querySelector('input').value;
     widget.dispatchEvent(new CustomEvent(SEARCH_EVENT, { detail: { searchText } }));
   });
+
+  const menuTarget = shadow.getElementById('menu-target');
+  const menuOverlay = shadow.getElementById('menu-overlay');
+  const menuDropdown = shadow.getElementById('menu-dropdown');
+
+  if (menuTarget && menuOverlay && menuDropdown) {
+    menuTarget.addEventListener('click', () => {
+      menuOverlay.classList.remove("hidden")
+      menuDropdown.classList.remove("hidden")
+    });
+
+    [menuOverlay, menuDropdown].forEach(element => {
+      element.addEventListener('click', () => {
+        menuOverlay.classList.add("hidden")
+        menuDropdown.classList.add("hidden")
+      })
+    })
+  }
 
   // canvas has global keyboard shortcuts. Normally they don't apply when you're
   // in an input, but since this is a shadow DOM their check doesn't work. So we
