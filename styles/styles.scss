@@ -71,10 +71,14 @@
   background: none;
   position: absolute;
   top: 4px;
-  right: 24px;
+  right: 4px;
   transition: transform 0.1s ease;
   border: none;
   padding: 0;
+}
+
+.ajas-search-widget__btn--search--equella {
+  right: 24px;
 }
 
 .ajas-search-widget__btn--search svg {
