@@ -3,26 +3,16 @@ import {
   initWidget,
   BaseWidget,
   registerWidget,
-  CARET_SVG,
+  getEquellaDomData
 } from './widget_common';
-import atomicSearchConfig from './config'
-
 function html(cssClass, placeholder) {
-  const dropdownHtml = atomicSearchConfig.hasEquella ? `
-    <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--caret">
-      ${CARET_SVG}
-    </button>
-    <div id="menu-overlay" class="ajas-search-widget__overlay hidden"></div>
-    <div id="menu-dropdown" class="ajas-search-widget__dropdown hidden">
-      <button type="button">Search openEquella content</button>
-    </div>
-  ` : ''
+  const { dropdownHtml, searchButtonClass } = getEquellaDomData()
 
   return `<div class="ajas-search-widget ${cssClass}">
       <form id="ajas-search-form" class="ajas-search-widget__form" action="javascript:void(0);" method="get" role="search">
         <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
         <input type="text" placeholder="${placeholder}" id="ajas-search01" />
-        <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--search ${atomicSearchConfig.hasEquella ? 'ajas-search-widget__btn--search--equella' : ''}" type="submit">
+        <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--search ${searchButtonClass}" type="submit">
           ${SEARCH_SVG}
         </button>
         ${dropdownHtml}

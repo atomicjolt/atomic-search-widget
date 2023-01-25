@@ -1,4 +1,5 @@
 import styles from '../styles/styles.scss';
+import atomicSearchConfig from './config'
 
 const SEARCH_EVENT = 'ATOMIC_SEARCH';
 
@@ -84,4 +85,20 @@ export function registerWidget(name, klass) {
   if (!customElements.get(name)) {
     customElements.define(name, klass);
   }
+}
+
+export const getEquellaDomData = () => {
+  const dropdownHtml = atomicSearchConfig.hasEquella ? `
+    <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--caret">
+      ${CARET_SVG}
+    </button>
+    <div id="menu-overlay" class="ajas-search-widget__overlay hidden"></div>
+    <div id="menu-dropdown" class="ajas-search-widget__dropdown hidden">
+      <button type="button">Search openEquella content</button>
+    </div>
+  ` : ''
+
+  const searchButtonClass = atomicSearchConfig.hasEquella ? 'ajas-search-widget__btn--search--equella' : ''
+
+  return { dropdownHtml, searchButtonClass }
 }
