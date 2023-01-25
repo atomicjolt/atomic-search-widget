@@ -1,3 +1,5 @@
+$canvas-header-height: 79px;
+
 // Search widget on Large screens
 .ajas-search-widget {
   max-width: 200px;
@@ -121,8 +123,8 @@
   position: fixed;
   top: 0;
   right: 0;
-  bottom: 0;
-  left: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 100;
 }
 
@@ -213,6 +215,11 @@
     display: none;
   }
 
+  .ajas-search-widget__overlay {
+    top: -$canvas-header-height;
+    left: 0;
+  }
+
   .ajas-search-widget__btn--search--equella {
     right: 35px;
   }
@@ -235,7 +242,7 @@
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
     position: absolute;
     left: 0;
-    top: 100%;
+    top: $canvas-header-height;
     appearance: none;
     opacity: 0;
     transform-origin: center top;
