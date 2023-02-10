@@ -207,11 +207,14 @@ function ajEnableListener() {
   eventer(Window.messageEvent, ajHandleComm, false);
 }
 
+// in consortium searches, the id might be something like 4346~2848
+const pathRegex = /^\/(courses|accounts)\/[0-9~]+/i;
+
 function getToolUrl() {
   if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
     const toolPath = `external_tools/${atomicSearchConfig.externalToolId}`;
 
-    const contextMatch = window.location.pathname.match(/^\/(courses|accounts)\/[0-9]+/i);
+    const contextMatch = window.location.pathname.match(pathRegex);
     if (contextMatch) {
       return `${contextMatch[0]}/${toolPath}`;
     }
@@ -235,7 +238,7 @@ function getToolUrl() {
     }
     if (globalNavElement.attr('href') && globalNavElement.find('.menu-item__text').text().trim() === word) {
       const toolPath = globalNavElement.attr('href').match(/\/(external_tools)\/[0-9]+/i);
-      const contextMatch = window.location.pathname.match(/^\/(courses|accounts)\/[0-9]+/i);
+      const contextMatch = window.location.pathname.match(pathRegex);
       if (contextMatch && toolPath) {
         url = `${contextMatch[0]}${toolPath[0]}`;
       } else {
