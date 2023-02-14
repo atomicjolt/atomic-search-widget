@@ -94,7 +94,7 @@ export const getEquellaDomData = () => {
     </button>
     <div id="menu-overlay" class="ajas-search-widget__overlay hidden"></div>
     <div id="menu-dropdown" class="ajas-search-widget__dropdown hidden">
-      <button type="button">Search openEquella content</button>
+      <button type="button">Search openEQUELLA content</button>
     </div>
   ` : ''
 
