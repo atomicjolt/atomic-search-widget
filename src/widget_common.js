@@ -1,5 +1,5 @@
 import styles from '../styles/styles.scss';
-import atomicSearchConfig from './config'
+import atomicSearchConfig from './config';
 
 const SEARCH_EVENT = 'ATOMIC_SEARCH';
 
@@ -51,16 +51,16 @@ export function initWidget(widget, htmlText) {
 
   if (menuTarget && menuOverlay && menuDropdown) {
     menuTarget.addEventListener('click', () => {
-      menuOverlay.classList.remove("hidden")
-      menuDropdown.classList.remove("hidden")
+      menuOverlay.classList.remove('hidden');
+      menuDropdown.classList.remove('hidden');
     });
 
     [menuOverlay, menuDropdown].forEach(element => {
       element.addEventListener('click', () => {
-        menuOverlay.classList.add("hidden")
-        menuDropdown.classList.add("hidden")
-      })
-    })
+        menuOverlay.classList.add('hidden');
+        menuDropdown.classList.add('hidden');
+      });
+    });
   }
 
   // canvas has global keyboard shortcuts. Normally they don't apply when you're
@@ -96,9 +96,9 @@ export const getEquellaDomData = () => {
     <div id="menu-dropdown" class="ajas-search-widget__dropdown hidden">
       <button type="button">Search openEQUELLA content</button>
     </div>
-  ` : ''
+  ` : '';
 
-  const searchButtonClass = atomicSearchConfig.hasEquella ? 'ajas-search-widget__btn--search--equella' : ''
+  const equellaClass = atomicSearchConfig.hasEquella ? 'ajas-search-widget--equella' : '';
 
-  return { dropdownHtml, searchButtonClass }
-}
+  return { dropdownHtml, equellaClass };
+};
