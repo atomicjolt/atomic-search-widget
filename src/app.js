@@ -1,9 +1,9 @@
 import $ from 'jquery';
 import './desktop_widget';
 import './mobile_widget';
-import { SEARCH_EVENT } from './widget_common';
+import { SEARCH_EVENT, EQUELLA_SEARCH } from './widget_common';
 import handleTrayExpand from './expand_lti_launch';
-import atomicSearchConfig from './config'
+import atomicSearchConfig from './config';
 
 let APP_IFRAME;
 
@@ -333,7 +333,7 @@ function addWidget(addToDOM, attemptNumber) {
   }
 
   widget[0].addEventListener(SEARCH_EVENT, e => {
-    const { searchText } = e.detail;
+    const { searchText, searchType } = e.detail;
     if (APP_IFRAME) {
       const queryHash = getQueryHash();
       queryHash.ajsearch = encodeURIComponent(searchText);
@@ -346,11 +346,18 @@ function addWidget(addToDOM, attemptNumber) {
       );
       sendQueryVariables(APP_IFRAME);
     } else {
-      const ajFilterParam = window.location.pathname.match(/\/(discussion_topics)/i) ? '&ajfilters=discussion_replies' : '';
-
-      const ajParam = toolUrl.match(/\?/) ? '&ajsearch=' : '?ajsearch=';
-
-      window.location.href = `${toolUrl}${ajParam}${encodeURIComponent(searchText)}${ajFilterParam}&ajpage=1`;
+      const query = new URLSearchParams({
+        ajsearch: searchText,
+        ajpage: '1'
+      });
+      if (window.location.pathname.match(/\/(discussion_topics)/i)) {
+        query.set('ajfilters', 'discussion_replies');
+      }
+      if (searchType === EQUELLA_SEARCH) {
+        query.set('ajcontext', 'OPEN_EQUELLA');
+      }
+      const queryChar = toolUrl.match(/\?/) ? '&' : '?';
+      window.location.href = `${toolUrl}${queryChar}${query.toString()}`;
     }
   });
 
