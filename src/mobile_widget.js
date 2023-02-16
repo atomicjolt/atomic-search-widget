@@ -4,10 +4,13 @@ import {
   CLOSE_SVG,
   BaseWidget,
   registerWidget,
+  getEquellaDomData
 } from './widget_common';
 
 function html(placeholder) {
-  return `<div class="ajas-search-widget ajas-search-widget--small">
+  const { dropdownHtml, equellaClass } = getEquellaDomData();
+
+  return `<div class="ajas-search-widget ajas-search-widget--small ${equellaClass}">
     <button class="ajas-search-toggle" type="button" aria-label="toggle search">
       ${SEARCH_SVG}
       ${CLOSE_SVG}
@@ -15,9 +18,10 @@ function html(placeholder) {
     <form class="ajas-search-widget__form" action="javascript:void(0);" method="get" role="search">
       <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
       <input type="text" placeholder="${placeholder}" id="ajas-search02" />
-      <button aria-label="submit search" class="ajas-search-widget__btn--search" type="submit">
+      <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--search">
         ${SEARCH_SVG}
       </button>
+      ${dropdownHtml}
     </form>
   </div>`;
 }
