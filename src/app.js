@@ -13,47 +13,26 @@ function updateSearchWidgetText(newText) {
   });
 }
 
-function getQueryHash() {
+function getQuery() {
   const query = window.location.search.substring(1);
-  const vars = query.split('&');
-  const hash = {};
-
-  vars.forEach((singleVar) => {
-    const pair = singleVar.split('=');
-    hash[pair[0]] = pair[1];
-  });
-
-  return hash;
-}
-
-function getQueryVariable(variable) {
-  const queryHash = getQueryHash();
-
-  return queryHash[variable];
-}
-
-function toQuery(hash) {
-  return $.map(hash, (value, key) => `${key}=${value}`).join('&');
+  return new URLSearchParams(query);
 }
 
 function sendQueryVariables(source) {
-  const rawValue = getQueryVariable('ajsearch');
+  const query = getQuery();
+
   // only decode uri if the value is not undefined.
-  const ajsearch = rawValue ? decodeURIComponent(rawValue) : rawValue;
-  const ajpage = getQueryVariable('ajpage');
-  const ajcontext = getQueryVariable('ajcontext');
-  const ajfilters = getQueryVariable('ajfilters');
   source.postMessage(
     JSON.stringify({
       subject: 'atomicjolt.searchParams',
-      search: ajsearch,
-      page: ajpage,
-      context: ajcontext,
-      filters: ajfilters,
+      search: query.get('ajsearch'),
+      page: query.get('ajpage'),
+      context: query.get('ajcontext'),
+      filters: query.get('ajfilters'),
     }),
     '*'
   );
-  updateSearchWidgetText(ajsearch);
+  updateSearchWidgetText(query.get('ajsearch'));
 }
 
 function cacheResults(results) {
@@ -147,18 +126,18 @@ function ajHandleComm(event) {
           sendQueryVariables(APP_IFRAME);
           break;
         } case 'atomicjolt.updateSearchParams': {
-          const queryHash = getQueryHash();
-          queryHash.ajsearch = message.search;
-          queryHash.ajpage = message.page;
-          queryHash.ajcontext = message.context;
+          const query = getQuery();
+          query.set('ajsearch', message.search);
+          query.set('ajpage', message.page);
+          query.set('ajcontext', message.context);
 
           if (message.filters && message.filters !== '') {
-            queryHash.ajfilters = message.filters;
+            query.set('ajfilters', message.filters);
           } else {
-            delete queryHash.ajfilters;
+            query.delete('ajfilters');
           }
 
-          const newState = `?${toQuery(queryHash)}`;
+          const newState = `?${query.toString()}`;
           window.history.pushState(
             null,
             '',
@@ -335,14 +314,18 @@ function addWidget(addToDOM, attemptNumber) {
   widget[0].addEventListener(SEARCH_EVENT, e => {
     const { searchText, searchType } = e.detail;
     if (APP_IFRAME) {
-      const queryHash = getQueryHash();
-      queryHash.ajsearch = encodeURIComponent(searchText);
-      queryHash.ajpage = '1';
+      const query = getQuery();
+      query.set('ajsearch', searchText);
+      query.set('ajpage', '1');
+
+      if (searchType === EQUELLA_SEARCH) {
+        query.set('ajcontext', 'OPEN_EQUELLA');
+      }
 
       window.history.pushState(
         null,
         '',
-        `?${toQuery(queryHash)}`,
+        `?${query.toString()}`,
       );
       sendQueryVariables(APP_IFRAME);
     } else {
