@@ -92,8 +92,20 @@ export function registerWidget(name, klass) {
   }
 }
 
+const equellaRoles = ['teacher', 'admin', 'root_admin'];
+
+function userHasEquella() {
+  if (!atomicSearchConfig.hasEquella) return false;
+
+  // These roles don't seem to change based on the current course/account, so it
+  // may not always be accurate
+  const roles = window.ENV.current_user_roles || [];
+  return roles.some(role => equellaRoles.includes(role));
+}
+
 export const getEquellaDomData = () => {
-  const dropdownHtml = atomicSearchConfig.hasEquella ? `
+  const withEquella = userHasEquella();
+  const dropdownHtml = withEquella ? `
     <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--caret">
       ${CARET_SVG}
     </button>
@@ -103,7 +115,7 @@ export const getEquellaDomData = () => {
     </div>
   ` : '';
 
-  const equellaClass = atomicSearchConfig.hasEquella ? 'ajas-search-widget--equella' : '';
+  const equellaClass = withEquella ? 'ajas-search-widget--equella' : '';
 
   return { dropdownHtml, equellaClass };
 };

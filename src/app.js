@@ -4,6 +4,7 @@ import './mobile_widget';
 import { SEARCH_EVENT, EQUELLA_SEARCH } from './widget_common';
 import handleTrayExpand from './expand_lti_launch';
 import atomicSearchConfig from './config';
+import { getQuery, receiveQueryVariables, sendQueryVariables } from './query_params';
 
 let APP_IFRAME;
 
@@ -11,28 +12,6 @@ function updateSearchWidgetText(newText) {
   document.querySelectorAll('atomic-search-desktop-widget,atomic-search-mobile-widget').forEach(widget => {
     widget.updateSearchText(newText);
   });
-}
-
-function getQuery() {
-  const query = window.location.search.substring(1);
-  return new URLSearchParams(query);
-}
-
-function sendQueryVariables(source) {
-  const query = getQuery();
-
-  // only decode uri if the value is not undefined.
-  source.postMessage(
-    JSON.stringify({
-      subject: 'atomicjolt.searchParams',
-      search: query.get('ajsearch'),
-      page: query.get('ajpage'),
-      context: query.get('ajcontext'),
-      filters: query.get('ajfilters'),
-    }),
-    '*'
-  );
-  updateSearchWidgetText(query.get('ajsearch'));
 }
 
 function cacheResults(results) {
@@ -111,6 +90,12 @@ function sendModuleProgress(source, progress) {
   );
 }
 
+// sends the current query parameters to the search widget, and to Search
+function pushQuery(sourceFrame) {
+  sendQueryVariables(sourceFrame);
+  updateSearchWidgetText(getQuery().get('ajsearch'));
+}
+
 function ajHandleComm(event) {
   if (typeof event.data === 'string') {
     try {
@@ -121,28 +106,12 @@ function ajHandleComm(event) {
           if (!APP_IFRAME) {
             APP_IFRAME = event.source;
             // catch the back button and re-search down below.
-            window.addEventListener('popstate', () => sendQueryVariables(APP_IFRAME));
+            window.addEventListener('popstate', () => pushQuery(APP_IFRAME));
           }
-          sendQueryVariables(APP_IFRAME);
+          pushQuery(APP_IFRAME);
           break;
         } case 'atomicjolt.updateSearchParams': {
-          const query = getQuery();
-          query.set('ajsearch', message.search);
-          query.set('ajpage', message.page);
-          query.set('ajcontext', message.context);
-
-          if (message.filters && message.filters !== '') {
-            query.set('ajfilters', message.filters);
-          } else {
-            query.delete('ajfilters');
-          }
-
-          const newState = `?${query.toString()}`;
-          window.history.pushState(
-            null,
-            '',
-            newState
-          );
+          receiveQueryVariables(message);
           updateSearchWidgetText(message.search);
           break;
         } case 'atomicjolt.requestModuleProgress': {
@@ -330,7 +299,7 @@ function addWidget(addToDOM, attemptNumber) {
         '',
         `?${query.toString()}`,
       );
-      sendQueryVariables(APP_IFRAME);
+      pushQuery(APP_IFRAME);
     } else {
       const query = new URLSearchParams({
         ajsearch: searchText,
