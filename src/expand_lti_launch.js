@@ -8,7 +8,8 @@ export default function handleTrayExpand(event) {
     const dialog = sender.closest('[role=dialog]');
     
     if (dialog.getAttribute('aria-label') === 'Atomic Author') {
-      dialog.parentElement.style.width = 'width: 888px; max-width: 100%;';
+      dialog.parentElement.style.width = '888px';
+      dialog.parentElement.style.maxWidth = '100%';
     }
   }
 }
