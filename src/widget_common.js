@@ -17,7 +17,7 @@ const CLOSE_SVG = `<svg class="ajas-close-svg" aria-hidden="true" xmlns="http://
 
 const CARET_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="body_1" width="9" height="4">
     <g transform="matrix(0.28571433 0 0 0.28571433 0.35714287 -0)">
-      <path d="M0.15 0L14.5 14.35L28.85 0L0.15 0" stroke="none" fill="#333333" fill-rule="nonzero" />
+      <path d="M0.15 0L14.5 14.35L28.85 0L0.15 0" stroke="none" fill="currentFill" fill-rule="nonzero" />
     </g>
   </svg>`;
 
@@ -106,7 +106,7 @@ function userHasEquella() {
 export const getEquellaDomData = () => {
   const withEquella = userHasEquella();
   const dropdownHtml = withEquella ? `
-    <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--caret">
+    <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--new-caret">
       ${CARET_SVG}
     </button>
     <div id="menu-overlay" class="ajas-search-widget__overlay hidden"></div>
