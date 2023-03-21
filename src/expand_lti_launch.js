@@ -5,6 +5,11 @@ export default function handleTrayExpand(event) {
     iframe => iframe.contentWindow === event.source
   );
   if (sender) {
-    sender.closest('[role=dialog]').parentElement.style.width = '900px';
+    const dialog = sender.closest('[role=dialog]');
+    
+    if (dialog.getAttribute('aria-label') === 'Atomic Author') {
+      dialog.parentElement.style.width = '888px';
+      dialog.parentElement.style.maxWidth = '100%';
+    }
   }
 }
