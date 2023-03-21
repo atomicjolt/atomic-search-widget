@@ -14,7 +14,7 @@ function html(cssClass, placeholder) {
         <label for="ajas-search01" class="ajas-search-widget-hidden">Search</label>
         <input type="text" placeholder="${placeholder}" id="ajas-search01" />
         <div class="ajas-search-widget__btn-group">
-          <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--new-search">
+          <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--search">
             ${SEARCH_SVG}
           </button>
           ${dropdownHtml}

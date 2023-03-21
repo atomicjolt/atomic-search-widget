@@ -106,7 +106,7 @@ function userHasEquella() {
 export const getEquellaDomData = () => {
   const withEquella = userHasEquella();
   const dropdownHtml = withEquella ? `
-    <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--new-caret">
+    <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--caret">
       ${CARET_SVG}
     </button>
     <div id="menu-overlay" class="ajas-search-widget__overlay hidden"></div>
