@@ -49,14 +49,6 @@ $canvas-header-height: 79px;
   outline: 1px solid #01579b;
 }
 
-.ajas-search-widget__form input:focus+.ajas-search-widget__btn--search {
-  background: #69e2ff;
-}
-
-.ajas-search-widget__form input:focus+.ajas-search-widget__btn--search svg {
-  fill: #01579b;
-}
-
 .ajas-search-widget-hidden {
   position: absolute;
   left: -10000px;
@@ -66,44 +58,9 @@ $canvas-header-height: 79px;
   overflow: hidden;
 }
 
-.ajas-search-widget__btn--search {
-  width: 30px;
-  height: 30px;
-  border-radius: 3px;
-  background: none;
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  transition: transform 0.1s ease;
-  border: none;
-  padding: 0;
-}
-
-.ajas-search-widget__btn--search svg {
-  width: 18px;
-  fill: #595959;
-  margin-top: 5px;
-  height: 18px;
-}
-
-.ajas-search-widget__btn--caret {
-  position: absolute;
-  background: none;
-  border: none;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  right: 0px;
-  top: 4px;
-  cursor: pointer;
-}
-
 .ajas-search-widget__dropdown {
   position: absolute;
-  right: 4px;
+  right: 0;
   top: 32px;
   border: 1px solid var(---e5e7eb);
   box-shadow: 0px 3px 6px #00000029;
@@ -139,24 +96,6 @@ $canvas-header-height: 79px;
 .ajas-search-widget__dropdown button:hover {
   cursor: pointer;
   background-color: #eee;
-}
-
-.ajas-search-widget__btn--search:hover {
-  cursor: pointer;
-  background-color: #eee;
-}
-
-.ajas-search-widget__btn--search:active {
-  transform: scale(0.95);
-}
-
-.ajas-search-widget__btn--search:focus {
-  outline: 2px solid #222;
-  background: #69e2ff;
-}
-
-.ajas-search-widget__btn--search:focus svg {
-  fill: #01579b;
 }
 
 @media (max-width: 767px) {
@@ -200,13 +139,15 @@ $canvas-header-height: 79px;
   .ajas-close-svg {
     display: none;
   }
+  
+  .ajas-search-widget__btn-group {
+    right: 16px;
+    top: 15px;
+  }
 
   .ajas-search-widget__btn--search {
     width: 35px;
     height: 35px;
-    top: 15px;
-    right: 15px;
-    display: none;
   }
 
   .ajas-search-widget__overlay {
@@ -215,14 +156,10 @@ $canvas-header-height: 79px;
   }
 
   .ajas-search-widget__btn--caret {
-    width: 35px;
     height: 35px;
-    right: 15px;
-    top: 15px;
   }
 
   .ajas-search-widget__dropdown {
-    right: 15px;
     top: 43px;
   }
 
@@ -285,17 +222,100 @@ $canvas-header-height: 79px;
     padding-right: 70px;
   }
 
-  .ajas-search-widget__btn--search {
-    right: 35px;
-  }
-
   &.ajas-search-widget--small {
     input {
       padding-right: 85px;
     }
-    .ajas-search-widget__btn--search {
-      right: 55px;
+  }
+}
+
+.ajas-search-widget--equella {
+  .ajas-search-widget__btn-group {
+    &:focus-within {
+      .ajas-search-widget__btn--search {
+        border-right: 1px solid #4FCAE8;
+      }
+
+      .ajas-search-widget__btn--search:hover {
+        border-radius: 4px 0 0 4px;
+      }
+    }
+
+    &:hover:not(:focus-within) {
+      .ajas-search-widget__btn--search {
+        border-right: 1px solid #DDDDDD;
+      }
     }
   }
 }
 
+.ajas-search-widget__btn-group {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  right: 4px;
+  top: 4px;
+  border-radius: 3px;
+
+  &:focus-within {
+    background: #69E2FF;
+
+    .ajas-search-widget__btn--search:hover {
+      background: #4FCAE8;
+      border-radius: 4px;
+    }
+
+    .ajas-search-widget__btn--caret:hover {
+      background: #4FCAE8;
+      border-radius: 0 4px 4px 0;
+    }
+  }
+
+  &:hover:not(:focus-within) {
+    background: #F5F5F5;
+  }
+}
+
+.ajas-search-widget__btn--search {
+  width: 29px;
+  height: 30px;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-right: 1px solid transparent;
+
+  &:focus {
+    outline: none;
+  }
+
+  svg {
+    width: 18px;
+    fill: #595959;
+    height: 18px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.ajas-search-widget__btn--caret {
+  width: 24px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  svg {
+    fill: #595959;
+  }
+}
