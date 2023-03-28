@@ -5,7 +5,7 @@ const { sassPlugin } = require('esbuild-sass-plugin');
 const [env] = process.argv.slice(2);
 
 const baseConfig = {
-  entryPoints: ['src/app.js'],
+  entryPoints: ['src/d2l.js'],
   bundle: true,
   logLevel: 'info',
   plugins: [
