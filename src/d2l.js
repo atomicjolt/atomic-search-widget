@@ -4,25 +4,58 @@
 // global nav
 // https://atomicj.brightspacedemo.com/d2l/common/dialogs/quickLink/quickLink.d2l?ou=6606&type=lti&rcode=9ADACE5F-1B93-48C6-8E76-09AE53984D7F-1238&srcou=6606
 
-async function getUserID() {
-  const response = await fetch('/d2l/api/lp/1.0/users/whoami');
-  const body = await response.json();
-  return body.Identifier;
+// TODO pull this from widget code
+function buildLink(ou) {
+  return `https://atomicj.brightspacedemo.com/d2l/common/dialogs/quickLink/quickLink.d2l?ou=${ou}&type=lti&rcode=9ADACE5F-1B93-48C6-8E76-09AE53984D7F-1243&srcou=6606`;
 }
 
-function redirectToSearch() {
-  window.location.href = 'https://atomicj.brightspacedemo.com/d2l/common/dialogs/quickLink/quickLink.d2l?ou=6803&type=lti&rcode=9ADACE5F-1B93-48C6-8E76-09AE53984D7F-1235&srcou=6803&launchFramed=1&framedName=Search';
+function modalHtml(iframeSrc) {
+  return `
+<div id="atomic-search-widget">
+  <button id="atomic-search-widget-close">Close</button>
+  <iframe src="${iframeSrc}">
+  </iframe>
+</div>
+`;
 }
 
-async function onSearch(e) {
+const STYLES = `
+#atomic-search-widget {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 10;
+}
+
+#atomic-search-widget iframe {
+  width: 100%;
+  height: 100%;
+}
+`;
+
+const destroyModal = modal => e => {
   e.preventDefault();
-  const form = e.target;
-  const query = form.elements.query.value;
-  const userID = await getUserID();
+  modal.parentNode.removeChild(modal);
+};
 
-  console.log('search params:', { query, userID });
+function addStyles() {
+  const styleSheet = document.createElement('style');
+  styleSheet.innerText = STYLES;
+  document.head.appendChild(styleSheet);
+}
 
-  redirectToSearch();
+function onSearch(e) {
+  e.preventDefault();
+
+  const modal = document.createElement('div');
+  // TODO get course id from current location
+  modal.innerHTML = modalHtml(buildLink(6803));
+  document.body.appendChild(modal);
+
+  const closeButton = document.getElementById('atomic-search-widget-close');
+  closeButton.addEventListener('click', destroyModal(modal));
 }
 
 const WIDGET_HTML = `
@@ -40,6 +73,7 @@ function addWidget() {
 }
 
 function main() {
+  addStyles();
   addWidget();
 }
 
