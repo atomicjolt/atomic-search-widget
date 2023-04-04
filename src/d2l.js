@@ -46,8 +46,11 @@ function addStyles() {
   document.head.appendChild(styleSheet);
 }
 
-function onSearch(e) {
+const onSearch = setSearchTerm => e => {
   e.preventDefault();
+
+  const query = e.target.elements.query.value;
+  setSearchTerm(query);
 
   const modal = document.createElement('div');
   // TODO get course id from current location
@@ -56,7 +59,7 @@ function onSearch(e) {
 
   const closeButton = document.getElementById('atomic-search-widget-close');
   closeButton.addEventListener('click', destroyModal(modal));
-}
+};
 
 const WIDGET_HTML = `
 <form>
@@ -65,16 +68,28 @@ const WIDGET_HTML = `
 </form>
 `;
 
-function addWidget() {
+function addWidget(setSearchTerm) {
   const parent = document.getElementById('atomic-jolt-search-widget');
   parent.innerHTML = WIDGET_HTML;
   const form = parent.querySelector('form');
-  form.addEventListener('submit', onSearch);
+  form.addEventListener('submit', onSearch(setSearchTerm));
+}
+
+function listenToPostMessages(getSearchTerm) {
+  window.addEventListener('message', e => {
+    if (typeof e.data === 'object' && e.data.subject === 'atomicjolt.fetchsearchterm') {
+      e.source.postMessage({ subject: 'atomicjolt.setsearchterm', term: getSearchTerm() }, '*');
+    }
+  });
 }
 
 function main() {
   addStyles();
-  addWidget();
+
+  let searchTerm = '';
+
+  addWidget(term => { searchTerm = term; });
+  listenToPostMessages(() => searchTerm);
 }
 
 main();
