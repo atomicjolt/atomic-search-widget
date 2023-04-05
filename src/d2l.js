@@ -11,27 +11,59 @@ function buildLink(ou) {
 
 function modalHtml(iframeSrc) {
   return `
-<div id="atomic-search-widget">
-  <button id="atomic-search-widget-close">Close</button>
-  <iframe src="${iframeSrc}">
-  </iframe>
+<div id="atomic-search-modal">
+  <div id="atomic-search-modal-body">
+    <button id="atomic-search-modal-close">&times;</button>
+    <iframe src="${iframeSrc}">
+    </iframe>
+  </div>
 </div>
 `;
 }
 
 const STYLES = `
-#atomic-search-widget {
+#atomic-search-modal {
   position: fixed;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  z-index: 10;
-}
-
-#atomic-search-widget iframe {
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  overflow: auto;
+  z-index: 1;
+  background-color: rgba(0,0,0,0.4);
+}
+
+#atomic-search-modal-body {
+  background-color: #fefefe;
+  margin: 15px auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  height: 80%;
+}
+
+#atomic-search-modal-close {
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: inherit;
+}
+
+#atomic-search-modal-close:hover,
+#atomic-search-modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#atomic-search-modal iframe {
+  width: 100%;
 }
 `;
 
@@ -57,7 +89,7 @@ const onSearch = setSearchTerm => e => {
   modal.innerHTML = modalHtml(buildLink(6803));
   document.body.appendChild(modal);
 
-  const closeButton = document.getElementById('atomic-search-widget-close');
+  const closeButton = document.getElementById('atomic-search-modal-close');
   closeButton.addEventListener('click', destroyModal(modal));
 };
 
