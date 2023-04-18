@@ -115,6 +115,17 @@ function listenToPostMessages(getSearchTerm) {
   });
 }
 
+function iframeResize() {
+  console.log('w');
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('x');
+    setTimeout(() => {
+    console.log('y');
+      window.top.postMessage({ subject: 'lti.frameResize', height: 500 }, '*');
+    }, 0);
+  });
+}
+
 function main() {
   addStyles();
 
