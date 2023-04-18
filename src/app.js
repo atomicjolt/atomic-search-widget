@@ -212,7 +212,7 @@ function addBigWidget(placeholder) {
 
   if (path === '/') { // Dashboard page.
     const html = buildHTML('ajas-search-widget--dashboard');
-    node = $(html).insertAfter('.ic-Dashboard-header__title');
+    node = $(html).prependTo('.ic-Dashboard-header__actions');
   } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
     const html = buildHTML('ajas-search-widget--all-courses');
     node = $(html).insertAfter('.header-bar');
