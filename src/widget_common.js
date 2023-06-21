@@ -92,15 +92,8 @@ export function registerWidget(name, klass) {
   }
 }
 
-const equellaRoles = ['teacher', 'admin', 'root_admin'];
-
 function userHasEquella() {
-  if (!atomicSearchConfig.hasEquella) return false;
-
-  // These roles don't seem to change based on the current course/account, so it
-  // may not always be accurate
-  const roles = window.ENV.current_user_roles || [];
-  return roles.some(role => equellaRoles.includes(role));
+  return atomicSearchConfig.hasEquella;
 }
 
 export const getEquellaDomData = () => {
