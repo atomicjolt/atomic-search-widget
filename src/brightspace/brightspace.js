@@ -20,7 +20,7 @@ function modalHtml(iframeSrc) {
 <div id="atomic-search-modal">
   <div id="atomic-search-modal-body">
     <button id="atomic-search-modal-close">&times;</button>
-    <iframe src="${iframeSrc}">
+    <iframe src="${iframeSrc}" height="1000px">
     </iframe>
   </div>
 </div>
@@ -77,9 +77,19 @@ function addWidget(setSearchTerm) {
 }
 
 function listenToPostMessages(getSearchTerm) {
-  window.addEventListener('message', e => {
-    if (typeof e.data === 'object' && e.data.subject === 'atomicjolt.fetchsearchterm') {
-      e.source.postMessage({ subject: 'atomicjolt.setsearchterm', term: getSearchTerm() }, '*');
+  window.addEventListener('message', event => {
+    let message = {};
+    if (typeof event.data === 'string') {
+      try {
+        message = JSON.parse(event.data);
+      } catch (_err) {
+        // This is some other message we don't need to worry about
+      }
+    }
+
+    if (message.subject === 'atomicjolt.requestSearchParams') {
+      const iframe = event.source;
+      iframe.postMessage({ subject: 'atomicjolt.searchParams', search: getSearchTerm() }, '*');
     }
   });
 }
