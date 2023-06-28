@@ -20,15 +20,17 @@ function modalHtml(iframeSrc) {
 <div id="atomic-search-modal">
   <div id="atomic-search-modal-body">
     <button id="atomic-search-modal-close">&times;</button>
-    <iframe src="${iframeSrc}" height="1000px">
+    <iframe
+      src="${iframeSrc}"
+      frameborder="0"
+    >
     </iframe>
   </div>
 </div>
 `;
 }
 
-const destroyModal = modal => e => {
-  e.preventDefault();
+const destroyModal = modal => {
   modal.parentNode.removeChild(modal);
 };
 
@@ -46,6 +48,13 @@ function getCourseID() {
   throw 'No Course id found';
 }
 
+function startIframeResize(modal) {
+  setInterval(() => {
+    const height = modal.querySelector('#atomic-search-modal-body').clientHeight - 80;
+    modal.querySelector('iframe').height = height;
+  }, 100);
+}
+
 const onSearch = setSearchTerm => e => {
   e.preventDefault();
 
@@ -53,13 +62,20 @@ const onSearch = setSearchTerm => e => {
   setSearchTerm(query);
 
   const modal = document.createElement('div');
-  // TODO get course id from current location
   const courseID = getCourseID();
   modal.innerHTML = modalHtml(buildLink(courseID));
   document.body.appendChild(modal);
 
   const closeButton = document.getElementById('atomic-search-modal-close');
-  closeButton.addEventListener('click', destroyModal(modal));
+
+  const resizeIframeInterval = startIframeResize(modal);
+
+  closeButton.addEventListener('click', event => {
+    event.preventDefault();
+    destroyModal(modal);
+    clearInterval(resizeIframeInterval);
+  });
+
 };
 
 const WIDGET_HTML = `
