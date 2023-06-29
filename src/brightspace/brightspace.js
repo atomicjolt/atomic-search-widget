@@ -3,6 +3,7 @@
 // }
 
 import styles from './styles.scss';
+import { SEARCH_SVG } from '../canvas/widget_common';
 
 function buildLink(ou) {
   const config = window.atomicSearchConfig;
@@ -53,7 +54,7 @@ function getCourseID() {
 
 function startIframeResize(modal) {
   setInterval(() => {
-    const height = modal.querySelector('#atomic-search-modal-body').clientHeight - 80;
+    const height = modal.querySelector('#atomic-search-modal-body').clientHeight - 120;
     modal.querySelector('iframe').height = height;
   }, 100);
 }
@@ -82,10 +83,17 @@ const onSearch = setSearchTerm => e => {
 };
 
 const WIDGET_HTML = `
-<form>
-  <input name="query" type="text">
-  <button type="submit">Search</button>
-</form>
+  <div id="atomic-search-widget">
+    <form role="search">
+      <label for="atomic-search-text" class="atomic-search-hidden">Search</label>
+      <input type="text" name="query" placeholder="Search this course" id="atomic-search-text" />
+      <div class="atomic-search-button">
+        <button type="submit" aria-label="submit search">
+          ${SEARCH_SVG}
+        </button>
+      </div>
+    </form>
+  </div>
 `;
 
 function addWidget(setSearchTerm) {
