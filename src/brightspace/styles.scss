@@ -10,12 +10,32 @@
 }
 
 #atomic-search-modal-body {
+  box-sizing: border-box;
   background-color: #fefefe;
   margin: 15px auto;
-  padding: 20px;
   border: 1px solid #888;
-  width: 80%;
-  height: 80%;
+  max-width: 1230px;
+  width: 98%;
+  height: 90%;
+  
+  @media (min-width: 1230px) {
+    height: 80%;
+  }
+
+  @media (max-width: 615px) {
+    height: 90%;
+  }
+
+  header {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    h2 {
+      flex: 1;
+    }
+  }
 }
 
 #atomic-search-modal-close {

@@ -19,7 +19,10 @@ function modalHtml(iframeSrc) {
   return `
 <div id="atomic-search-modal">
   <div id="atomic-search-modal-body">
-    <button id="atomic-search-modal-close">&times;</button>
+    <header>
+      <h2>Atomic Search</h2>
+      <button id="atomic-search-modal-close">&times;</button>
+    </header>
     <iframe
       src="${iframeSrc}"
       frameborder="0"
@@ -80,8 +83,8 @@ const onSearch = setSearchTerm => e => {
 
 const WIDGET_HTML = `
 <form>
-<input name="query" type="text">
-<button type="submit">Search</button>
+  <input name="query" type="text">
+  <button type="submit">Search</button>
 </form>
 `;
 
