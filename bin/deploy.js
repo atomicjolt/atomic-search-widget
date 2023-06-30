@@ -38,4 +38,5 @@ if (!bucket) {
   process.exit(1);
 } else {
   uploadFile(bucket, 'atomic_search_widget.js');
+  uploadFile(bucket, 'brightspace.js');
 }
