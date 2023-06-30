@@ -1,7 +1,3 @@
-// window.atomicSearchConfig = {
-//   link: "/d2l/common/dialogs/quickLink/quickLink.d2l?ou={orgUnitId}&type=lti&rcode=9ADACE5F-1B93-48C6-8E76-09AE53984D7F-1307&srcou=6606&launchFramed=1&framedName=Search+(Local)"
-// }
-
 import styles from './styles.scss';
 import { SEARCH_SVG } from '../canvas/widget_common';
 
@@ -120,17 +116,6 @@ function listenToPostMessages(getSearchTerm) {
     }
   });
 }
-
-// function iframeResize() {
-//   console.log('w');
-//   document.addEventListener('DOMContentLoaded', () => {
-//     console.log('x');
-//     setTimeout(() => {
-//     console.log('y');
-//       window.top.postMessage({ subject: 'lti.frameResize', height: 500 }, '*');
-//     }, 0);
-//   });
-// }
 
 function main() {
   addStyles();
