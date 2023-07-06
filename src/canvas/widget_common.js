@@ -1,4 +1,4 @@
-import styles from '../styles/styles.scss';
+import styles from '../../styles/styles.scss';
 import atomicSearchConfig from './config';
 
 const SEARCH_EVENT = 'ATOMIC_SEARCH';

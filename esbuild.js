@@ -5,7 +5,7 @@ const { sassPlugin } = require('esbuild-sass-plugin');
 const [env] = process.argv.slice(2);
 
 const baseConfig = {
-  entryPoints: ['src/app.js'],
+  entryPoints: ['src/atomic_search_widget.js', 'src/brightspace.js'],
   bundle: true,
   logLevel: 'info',
   plugins: [
@@ -19,7 +19,7 @@ if (env === 'dev') {
     {
       ...baseConfig,
       sourcemap: 'inline',
-      outfile: 'atomic_search_widget.js',
+      // outfile: 'atomic_search_widget.js',
     }
   ).then(_server => {
     console.log(`serving on ${process.env.ASSETS_PORT}`);
@@ -29,7 +29,7 @@ if (env === 'dev') {
 } else {
   esbuild.build({
     ...baseConfig,
-    outfile: 'build/atomic_search_widget.js',
+    outdir: 'build',
     minify: true
   });
 }
