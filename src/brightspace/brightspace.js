@@ -1,18 +1,44 @@
 import styles from './styles.scss';
 import { SEARCH_SVG } from '../canvas/widget_common';
 
-function buildLink(ou) {
+function getConfig(key) {
   const config = window.atomicSearchConfig;
   if (!config) {
     throw 'No Atomic Search config provided';
   }
-  if (!config.link) {
-    throw 'No Atomic Search launch link provided';
+  if (!config[key]) {
+    throw `Atomic Search config value missing ${key}`;
   }
-  return config.link.replace('{orgUnitId}', ou);
+  return config[key];
 }
 
-function modalHtml(iframeSrc) {
+function placeholderText() {
+  if (window.location.pathname === '/d2l/home') {
+    return 'Search my courses';
+  } if (getConfig('orgTypeId') === '3') {
+    return 'Search this course';
+  }
+
+  return 'Search this organization';
+}
+
+function widgetHTML() {
+  return `
+  <div id="atomic-search-widget">
+    <form role="search">
+      <label for="atomic-search-text" class="atomic-search-hidden">Search</label>
+      <input type="text" name="query" placeholder="${placeholderText()}" id="atomic-search-text" />
+      <div class="atomic-search-button">
+        <button type="submit" aria-label="submit search">
+          ${SEARCH_SVG}
+        </button>
+      </div>
+    </form>
+  </div>
+  `;
+}
+
+function modalHtml() {
   return `
 <div id="atomic-search-modal">
   <div id="atomic-search-modal-body">
@@ -21,7 +47,7 @@ function modalHtml(iframeSrc) {
       <button id="atomic-search-modal-close">&times;</button>
     </header>
     <iframe
-      src="${iframeSrc}"
+      src="${getConfig('link')}"
       frameborder="0"
     >
     </iframe>
@@ -40,14 +66,6 @@ function addStyles() {
   document.head.appendChild(styleSheet);
 }
 
-function getCourseID() {
-  const match = window.location.pathname.match(/^\/d2l\/home\/(\d+)/);
-  if (match && match.length === 2) {
-    return match[1];
-  }
-  throw 'No Course id found';
-}
-
 function startIframeResize(modal) {
   setInterval(() => {
     const height = modal.querySelector('#atomic-search-modal-body').clientHeight - 120;
@@ -62,8 +80,7 @@ const onSearch = setSearchTerm => e => {
   setSearchTerm(query);
 
   const modal = document.createElement('div');
-  const courseID = getCourseID();
-  modal.innerHTML = modalHtml(buildLink(courseID));
+  modal.innerHTML = modalHtml();
   document.body.appendChild(modal);
 
   const closeButton = document.getElementById('atomic-search-modal-close');
@@ -75,26 +92,11 @@ const onSearch = setSearchTerm => e => {
     destroyModal(modal);
     clearInterval(resizeIframeInterval);
   });
-
 };
-
-const WIDGET_HTML = `
-  <div id="atomic-search-widget">
-    <form role="search">
-      <label for="atomic-search-text" class="atomic-search-hidden">Search</label>
-      <input type="text" name="query" placeholder="Search this course" id="atomic-search-text" />
-      <div class="atomic-search-button">
-        <button type="submit" aria-label="submit search">
-          ${SEARCH_SVG}
-        </button>
-      </div>
-    </form>
-  </div>
-`;
 
 function addWidget(setSearchTerm) {
   const parent = document.getElementById('atomic-jolt-search-widget');
-  parent.innerHTML = WIDGET_HTML;
+  parent.innerHTML = widgetHTML();
   const form = parent.querySelector('form');
   form.addEventListener('submit', onSearch(setSearchTerm));
 }
