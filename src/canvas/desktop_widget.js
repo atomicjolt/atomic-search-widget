@@ -1,5 +1,5 @@
+import { SEARCH_SVG } from '../common/html';
 import {
-  SEARCH_SVG,
   initWidget,
   BaseWidget,
   registerWidget,

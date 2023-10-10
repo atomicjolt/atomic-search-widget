@@ -1,5 +1,5 @@
 import styles from './styles.scss';
-import { SEARCH_SVG } from '../canvas/widget_common';
+import { SEARCH_SVG } from '../common/html';
 
 function getConfig(key) {
   const config = window.atomicSearchConfig;

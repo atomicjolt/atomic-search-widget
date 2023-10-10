@@ -5,7 +5,11 @@ const { sassPlugin } = require('esbuild-sass-plugin');
 const [env] = process.argv.slice(2);
 
 const baseConfig = {
-  entryPoints: ['src/atomic_search_widget.js', 'src/brightspace.js'],
+  entryPoints: [
+    'src/atomic_search_widget.js',
+    'src/brightspace.js',
+    'src/brightspace-enhanced.js'
+  ],
   bundle: true,
   logLevel: 'info',
   plugins: [
