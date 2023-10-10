@@ -1,5 +1,5 @@
 import { COURSE, ORG } from './org_types';
-import Widget from './widget';
+import Widget, {SEARCH_EVENT} from './widget';
 
 console.log('[AJ] global JS attached');
 
@@ -11,11 +11,15 @@ function canInjectWidget() {
   return !!document.querySelector('.d2l-navigation-header-right');
 }
 
-function addWidget(orgType) {
+function addWidget(orgType, orgId) {
   const widget = document.createElement('atomic-search-widget');
   widget.dataset.orgType = orgType;
   const parent = document.querySelector('.d2l-navigation-header-right');
   parent.appendChild(widget);
+
+  widget.addEventListener(SEARCH_EVENT, e => {
+    console.log(e);
+  });
 }
 
 function orgData() {
@@ -47,7 +51,7 @@ function init() {
   const [orgType, orgId] = orgData();
   console.log({orgType, orgId});
 
-  addWidget(orgType);
+  addWidget(orgType, orgId);
 }
 
 init();

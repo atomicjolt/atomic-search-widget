@@ -17,6 +17,8 @@ function widgetHtml(orgType) {
   `;
 }
 
+export const SEARCH_EVENT = 'ATOMIC_SEARCH';
+
 export default class Widget extends HTMLElement {
   connectedCallback() {
     const { orgType } = this.dataset;
@@ -26,5 +28,10 @@ export default class Widget extends HTMLElement {
     style.textContent = styles;
     shadow.append(style, htmlToElement(widgetHtml(orgType)));
 
+    shadow.querySelector('form').addEventListener('submit', e => {
+      e.preventDefault();
+      const searchText = shadow.querySelector('input').value;
+      this.dispatchEvent(new CustomEvent(SEARCH_EVENT, { detail: { searchText } }));
+    });
   }
 }
