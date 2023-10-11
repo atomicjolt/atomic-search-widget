@@ -14,18 +14,19 @@ function canInjectWidget() {
   return !!document.querySelector('.d2l-navigation-header-right');
 }
 
-function addWidget(orgType, orgId, setSearchTerm) {
+function addWidget(orgType, orgId) {
   const widget = document.createElement('atomic-search-widget');
   widget.dataset.orgType = orgType;
   const parent = document.querySelector('.d2l-navigation-header-right');
   parent.appendChild(widget);
 
   widget.addEventListener(SEARCH_EVENT, e => {
-    setSearchTerm(e.detail.searchText);
+    const { searchText } = e.detail;
 
-    const linkTemplate = getConfig('link');
-    const link = linkTemplate.replace('{orgUnitId}', orgId);
-    console.log('SEARCHED', link, e.detail.searchText)
+    let link = getConfig('link');
+    link = link.replace('{orgUnitId}', orgId);
+    link = link.concat(`&ajsearch=${encodeURIComponent(searchText)}`);
+    window.location.href = link;
   });
 }
 
@@ -38,6 +39,37 @@ function orgData() {
 
   const orgId = JSON.parse(document.querySelector('html').dataset.heContext).orgUnitId;
   return [ORG, orgId];
+}
+
+function getSearchTerm() {
+  return new URLSearchParams(window.location.search).get('ajsearch');
+}
+
+function listenToMessages() {
+  if (document.getElementById('atomic-jolt-search-widget')) return;
+
+  window.addEventListener('message', event => {
+    let message = {};
+    if (typeof event.data === 'string') {
+      try {
+        message = JSON.parse(event.data);
+      } catch (_err) {
+        return;
+      }
+    }
+
+    switch (message.subject) {
+      case 'atomicjolt.requestSearchParams': {
+        const searchFrame = event.source;
+        const searchTerm = getSearchTerm();
+        if (!searchTerm) return;
+
+        searchFrame.postMessage({ subject: 'atomicjolt.searchParams', search: searchTerm }, '*');
+        break;
+      }
+      default:
+    }
+  });
 }
 
 function init() {
@@ -57,9 +89,9 @@ function init() {
 
   const [orgType, orgId] = orgData();
 
-  let searchTerm = '';
+  addWidget(orgType, orgId);
 
-  addWidget(orgType, orgId, term => { searchTerm = term; });
+  listenToMessages();
 }
 
 init();
