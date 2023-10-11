@@ -1,10 +1,10 @@
 import {
-  SEARCH_SVG,
   initWidget,
   BaseWidget,
   registerWidget,
   getEquellaDomData
 } from './widget_common';
+import { SEARCH_SVG } from '../common/html';
 
 function html(cssClass, placeholder) {
   const { dropdownHtml, equellaClass } = getEquellaDomData();

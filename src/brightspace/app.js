@@ -1,16 +1,8 @@
 import styles from './styles.scss';
-import { SEARCH_SVG } from '../canvas/widget_common';
+import { SEARCH_SVG } from '../common/html';
+import getBrightspaceConfig from '../common/brightspace_config';
 
-function getConfig(key) {
-  const config = window.atomicSearchConfig;
-  if (!config) {
-    throw 'No Atomic Search config provided';
-  }
-  if (!config[key]) {
-    throw `Atomic Search config value missing ${key}`;
-  }
-  return config[key];
-}
+const getConfig = getBrightspaceConfig('atomicSearchConfig');
 
 function placeholderText() {
   if (window.location.pathname === '/d2l/home') {
