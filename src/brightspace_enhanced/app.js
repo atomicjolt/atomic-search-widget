@@ -1,7 +1,11 @@
+import getBrightspaceConfig from '../common/brightspace_config';
+import { createModal, listenForSearchPostMessages } from '../common/brightspace_modal';
 import { COURSE, ORG } from './org_types';
-import Widget, {SEARCH_EVENT} from './widget';
+import Widget, { SEARCH_EVENT } from './widget';
 
 console.log('[AJ] global JS attached');
+
+const getConfig = getBrightspaceConfig('atomicSearchCustomConfig');
 
 function registerWidget() {
   customElements.define('atomic-search-widget', Widget);
@@ -11,14 +15,18 @@ function canInjectWidget() {
   return !!document.querySelector('.d2l-navigation-header-right');
 }
 
-function addWidget(orgType, orgId) {
+function addWidget(orgType, orgId, setSearchTerm) {
   const widget = document.createElement('atomic-search-widget');
   widget.dataset.orgType = orgType;
   const parent = document.querySelector('.d2l-navigation-header-right');
   parent.appendChild(widget);
 
   widget.addEventListener(SEARCH_EVENT, e => {
-    console.log(e);
+    setSearchTerm(e.detail.searchText);
+
+    const linkTemplate = getConfig('link');
+    const link = linkTemplate.replace('{orgUnitId}', orgId);
+    createModal(link);
   });
 }
 
@@ -49,9 +57,11 @@ function init() {
   }
 
   const [orgType, orgId] = orgData();
-  console.log({orgType, orgId});
 
-  addWidget(orgType, orgId);
+  let searchTerm = '';
+
+  addWidget(orgType, orgId, term => { searchTerm = term; });
+  listenForSearchPostMessages(() => searchTerm);
 }
 
 init();

@@ -1,16 +1,9 @@
 import styles from './styles.scss';
 import { SEARCH_SVG } from '../common/html';
+import { createModal, listenForSearchPostMessages } from '../common/brightspace_modal';
+import getBrightspaceConfig from '../common/brightspace_config';
 
-function getConfig(key) {
-  const config = window.atomicSearchConfig;
-  if (!config) {
-    throw 'No Atomic Search config provided';
-  }
-  if (!config[key]) {
-    throw `Atomic Search config value missing ${key}`;
-  }
-  return config[key];
-}
+const getConfig = getBrightspaceConfig('atomicSearchConfig');
 
 function placeholderText() {
   if (window.location.pathname === '/d2l/home') {
@@ -38,28 +31,6 @@ function widgetHTML() {
   `;
 }
 
-function modalHtml() {
-  return `
-<div id="atomic-search-modal">
-  <div id="atomic-search-modal-body">
-    <header>
-      <h2>Atomic Search</h2>
-      <button id="atomic-search-modal-close">&times;</button>
-    </header>
-    <iframe
-      src="${getConfig('link')}"
-      frameborder="0"
-    >
-    </iframe>
-  </div>
-</div>
-`;
-}
-
-const destroyModal = modal => {
-  modal.parentNode.removeChild(modal);
-};
-
 function addStyles() {
   const styleSheet = document.createElement('style');
   styleSheet.innerText = styles;
@@ -72,16 +43,7 @@ const onSearch = setSearchTerm => e => {
   const query = e.target.elements.query.value;
   setSearchTerm(query);
 
-  const modal = document.createElement('div');
-  modal.innerHTML = modalHtml();
-  document.body.appendChild(modal);
-
-  const closeButton = document.getElementById('atomic-search-modal-close');
-
-  closeButton.addEventListener('click', event => {
-    event.preventDefault();
-    destroyModal(modal);
-  });
+  createModal(getConfig('link'));
 };
 
 function addWidget(setSearchTerm) {
@@ -91,31 +53,13 @@ function addWidget(setSearchTerm) {
   form.addEventListener('submit', onSearch(setSearchTerm));
 }
 
-function listenToPostMessages(getSearchTerm) {
-  window.addEventListener('message', event => {
-    let message = {};
-    if (typeof event.data === 'string') {
-      try {
-        message = JSON.parse(event.data);
-      } catch (_err) {
-        // This is some other message we don't need to worry about
-      }
-    }
-
-    if (message.subject === 'atomicjolt.requestSearchParams') {
-      const iframe = event.source;
-      iframe.postMessage({ subject: 'atomicjolt.searchParams', search: getSearchTerm() }, '*');
-    }
-  });
-}
-
 function main() {
   addStyles();
 
   let searchTerm = '';
 
   addWidget(term => { searchTerm = term; });
-  listenToPostMessages(() => searchTerm);
+  listenForSearchPostMessages(() => searchTerm);
 }
 
 main();
