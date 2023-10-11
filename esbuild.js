@@ -8,7 +8,7 @@ const baseConfig = {
   entryPoints: [
     'src/atomic_search_widget.js',
     'src/brightspace.js',
-    'src/brightspace-enhanced.js'
+    'src/brightspace_enhanced.js'
   ],
   bundle: true,
   logLevel: 'info',
