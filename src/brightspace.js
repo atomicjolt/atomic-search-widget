@@ -1,1 +1,1 @@
-import './brightspace/brightspace';
+import './brightspace/app';
