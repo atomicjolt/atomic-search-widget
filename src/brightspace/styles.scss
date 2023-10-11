@@ -19,6 +19,8 @@
   max-width: 1230px;
   width: 98%;
   height: 90%;
+  display: flex;
+  flex-direction: column;
   
   @media (min-width: 1230px) {
     height: 80%;
@@ -62,6 +64,7 @@
 
 #atomic-search-modal iframe {
   width: 100%;
+  flex: 1;
 }
 
 #atomic-search-widget {

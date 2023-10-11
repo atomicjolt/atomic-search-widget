@@ -66,13 +66,6 @@ function addStyles() {
   document.head.appendChild(styleSheet);
 }
 
-function startIframeResize(modal) {
-  setInterval(() => {
-    const height = modal.querySelector('#atomic-search-modal-body').clientHeight - 120;
-    modal.querySelector('iframe').height = height;
-  }, 100);
-}
-
 const onSearch = setSearchTerm => e => {
   e.preventDefault();
 
@@ -85,12 +78,9 @@ const onSearch = setSearchTerm => e => {
 
   const closeButton = document.getElementById('atomic-search-modal-close');
 
-  const resizeIframeInterval = startIframeResize(modal);
-
   closeButton.addEventListener('click', event => {
     event.preventDefault();
     destroyModal(modal);
-    clearInterval(resizeIframeInterval);
   });
 };
 
