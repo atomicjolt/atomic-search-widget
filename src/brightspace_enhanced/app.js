@@ -40,6 +40,25 @@ function addTopWidget(orgType, orgId) {
   addSearchListener(widget, orgId);
 }
 
+function addNavWidget(orgType, orgId) {
+  const widget = document.createElement(WIDGET_ELEMENT_NAME);
+  widget.dataset.orgType = orgType;
+  const parent = document.querySelector('.d2l-navigation-s-main-wrapper');
+  parent.appendChild(widget);
+
+  addSearchListener(widget, orgId);
+}
+
+function addMobileWidget(orgType, orgId) {
+  const widget = document.createElement(WIDGET_ELEMENT_NAME);
+  widget.dataset.orgType = orgType;
+  widget.dataset.isMobile = true;
+  const parent = document.querySelector('.d2l-navigation-s-mobile-menu-nav');
+  parent.prepend(widget);
+
+  addSearchListener(widget, orgId);
+}
+
 function orgData() {
   const courseTitleTag = document.querySelector('header nav .d2l-navigation-s-title-container a');
   if (courseTitleTag) {
@@ -70,6 +89,8 @@ function init() {
   const [orgType, orgId] = orgData();
 
   addTopWidget(orgType, orgId);
+  addNavWidget(orgType, orgId);
+  addMobileWidget(orgType, orgId);
 }
 
 init();
