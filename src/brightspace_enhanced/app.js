@@ -9,16 +9,12 @@ const MODAL_ELEMENT_NAME = 'atomic-search-enhanced-modal';
 
 const getConfig = getBrightspaceConfig('atomicSearchCustomConfig');
 
+const PARENT_SELECTOR = '.d2l-navigation-s-notifications-wrapper';
 function canInjectWidget() {
-  return !!document.querySelector('.d2l-navigation-header-right');
+  return !!document.querySelector(PARENT_SELECTOR);
 }
 
-function addWidget(orgType, orgId) {
-  const widget = document.createElement(WIDGET_ELEMENT_NAME);
-  widget.dataset.orgType = orgType;
-  const parent = document.querySelector('.d2l-navigation-header-right');
-  parent.appendChild(widget);
-
+function addSearchListener(widget, orgId) {
   widget.addEventListener(SEARCH_EVENT, e => {
     const { searchText } = e.detail;
 
@@ -31,6 +27,17 @@ function addWidget(orgType, orgId) {
     modal.dataset.query = searchText;
     document.body.appendChild(modal);
   });
+}
+
+function addTopWidget(orgType, orgId) {
+  const widget = document.createElement(WIDGET_ELEMENT_NAME);
+  widget.dataset.orgType = orgType;
+  const parent = document.querySelector(PARENT_SELECTOR);
+  parent.appendChild(widget);
+  widget.classList.add('d2l-navigation-s-notification');
+  widget.style.verticalAlign = 'top';
+
+  addSearchListener(widget, orgId);
 }
 
 function orgData() {
@@ -62,7 +69,7 @@ function init() {
 
   const [orgType, orgId] = orgData();
 
-  addWidget(orgType, orgId);
+  addTopWidget(orgType, orgId);
 }
 
 init();
