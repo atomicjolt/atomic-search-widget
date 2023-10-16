@@ -1,21 +1,20 @@
+import registerModal from '../brightspace_common/modal';
 import getBrightspaceConfig from '../common/brightspace_config';
 import { COURSE, ORG } from './org_types';
-import Widget, { SEARCH_EVENT } from './widget';
+import { SEARCH_EVENT, WIDGET_ELEMENT_NAME, registerWidget } from './widget';
 
 console.log('[AJ] global JS attached');
 
-const getConfig = getBrightspaceConfig('atomicSearchCustomConfig');
+const MODAL_ELEMENT_NAME = 'atomic-search-enhanced-modal';
 
-function registerWidget() {
-  customElements.define('atomic-search-enhanced-widget', Widget);
-}
+const getConfig = getBrightspaceConfig('atomicSearchCustomConfig');
 
 function canInjectWidget() {
   return !!document.querySelector('.d2l-navigation-header-right');
 }
 
 function addWidget(orgType, orgId) {
-  const widget = document.createElement('atomic-search-enhanced-widget');
+  const widget = document.createElement(WIDGET_ELEMENT_NAME);
   widget.dataset.orgType = orgType;
   const parent = document.querySelector('.d2l-navigation-header-right');
   parent.appendChild(widget);
@@ -26,7 +25,11 @@ function addWidget(orgType, orgId) {
     let link = getConfig('link');
     link = link.replace('{orgUnitId}', orgId);
     link = link.concat(`&ajsearch=${encodeURIComponent(searchText)}`);
-    window.location.href = link;
+
+    const modal = document.createElement(MODAL_ELEMENT_NAME);
+    modal.dataset.frameSrc = link;
+    modal.dataset.query = searchText;
+    document.body.appendChild(modal);
   });
 }
 
@@ -41,37 +44,6 @@ function orgData() {
   return [ORG, orgId];
 }
 
-function getSearchTerm() {
-  return new URLSearchParams(window.location.search).get('ajsearch');
-}
-
-function listenToMessages() {
-  if (document.getElementById('atomic-jolt-search-widget')) return;
-
-  window.addEventListener('message', event => {
-    let message = {};
-    if (typeof event.data === 'string') {
-      try {
-        message = JSON.parse(event.data);
-      } catch (_err) {
-        return;
-      }
-    }
-
-    switch (message.subject) {
-      case 'atomicjolt.requestSearchParams': {
-        const searchFrame = event.source;
-        const searchTerm = getSearchTerm();
-        if (!searchTerm) return;
-
-        searchFrame.postMessage({ subject: 'atomicjolt.searchParams', search: searchTerm }, '*');
-        break;
-      }
-      default:
-    }
-  });
-}
-
 function init() {
   if (window.ATOMIC_SEARCH_ENHANCED_LOCKED) {
     console.log('[AJ] global JS loaded twice');
@@ -81,6 +53,7 @@ function init() {
   window.ATOMIC_SEARCH_ENHANCED_LOCKED = true;
 
   registerWidget();
+  registerModal(MODAL_ELEMENT_NAME);
 
   if (!canInjectWidget()) {
     console.log('[AJ] page does not have injection location');
@@ -90,8 +63,6 @@ function init() {
   const [orgType, orgId] = orgData();
 
   addWidget(orgType, orgId);
-
-  listenToMessages();
 }
 
 init();

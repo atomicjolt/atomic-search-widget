@@ -19,7 +19,7 @@ function widgetHtml(orgType) {
 
 export const SEARCH_EVENT = 'ATOMIC_SEARCH';
 
-export default class Widget extends HTMLElement {
+class Widget extends HTMLElement {
   connectedCallback() {
     const { orgType } = this.dataset;
 
@@ -34,4 +34,10 @@ export default class Widget extends HTMLElement {
       this.dispatchEvent(new CustomEvent(SEARCH_EVENT, { detail: { searchText } }));
     });
   }
+}
+
+export const WIDGET_ELEMENT_NAME = 'atomic-search-enhanced-widget';
+
+export function registerWidget() {
+  customElements.define(WIDGET_ELEMENT_NAME, Widget);
 }
