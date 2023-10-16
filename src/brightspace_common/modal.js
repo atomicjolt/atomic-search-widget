@@ -1,10 +1,13 @@
+import { htmlToElement } from '../common/html';
+import styles from './modal.scss';
+
 function modalHTML(frameSrc) {
   return `
-<div id="atomic-search-modal">
-  <div id="atomic-search-modal-body">
+<div class="background">
+  <div class="modal">
     <header>
       <h2>Atomic Search</h2>
-      <button id="atomic-search-modal-close">&times;</button>
+      <button class="close">&times;</button>
     </header>
     <iframe
       src="${frameSrc}"
@@ -16,19 +19,22 @@ function modalHTML(frameSrc) {
 `;
 }
 
-const destroyModal = modal => {
-  modal.parentNode.removeChild(modal);
-};
+class Modal extends HTMLElement {
+  connectedCallback() {
+    const { frameSrc } = this.dataset;
 
-export default function openModal(frameSrc) {
-  const modal = document.createElement('div');
-  modal.innerHTML = modalHTML(frameSrc);
-  document.body.appendChild(modal);
+    const shadow = this.attachShadow({ mode: 'open' });
+    const style = document.createElement('style');
+    style.textContent = styles;
+    shadow.append(style, htmlToElement(modalHTML(frameSrc)));
 
-  const closeButton = document.getElementById('atomic-search-modal-close');
+    shadow.querySelector('button').addEventListener('click', e => {
+      e.preventDefault();
+      this.remove();
+    });
+  }
+}
 
-  closeButton.addEventListener('click', event => {
-    event.preventDefault();
-    destroyModal(modal);
-  });
+export default function registerModal(name) {
+  customElements.define(name, Modal);
 }

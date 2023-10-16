@@ -1,9 +1,10 @@
-import styles from './styles.scss';
-import { SEARCH_SVG } from '../common/html';
 import getBrightspaceConfig from '../common/brightspace_config';
-import openModal from '../brightspace_common/modal';
+import registerModal from '../brightspace_common/modal';
+import { SEARCH_EVENT, registerWidget } from './widget';
 
 const getConfig = getBrightspaceConfig('atomicSearchConfig');
+
+const FRAME_ELEMENT_NAME = 'atomic-search-modal';
 
 function placeholderText() {
   if (window.location.pathname === '/d2l/home') {
@@ -15,42 +16,21 @@ function placeholderText() {
   return 'Search this organization';
 }
 
-function widgetHTML() {
-  return `
-  <div id="atomic-search-widget">
-    <form role="search">
-      <label for="atomic-search-text" class="atomic-search-hidden">Search</label>
-      <input type="text" name="query" placeholder="${placeholderText()}" id="atomic-search-text" />
-      <div class="atomic-search-button">
-        <button type="submit" aria-label="submit search">
-          ${SEARCH_SVG}
-        </button>
-      </div>
-    </form>
-  </div>
-  `;
-}
-
-function addStyles() {
-  const styleSheet = document.createElement('style');
-  styleSheet.innerText = styles;
-  document.head.appendChild(styleSheet);
-}
-
-const onSearch = setSearchTerm => e => {
-  e.preventDefault();
-
-  const query = e.target.elements.query.value;
-  setSearchTerm(query);
-
-  openModal(getConfig('link'));
-};
-
 function addWidget(setSearchTerm) {
+  const widget = document.createElement('atomic-search-widget');
+  widget.dataset.placeholderText = placeholderText();
+
+  widget.addEventListener(SEARCH_EVENT, e => {
+    const query = e.detail.searchText;
+    setSearchTerm(query);
+
+    const modal = document.createElement(FRAME_ELEMENT_NAME);
+    modal.dataset.frameSrc = getConfig('link');
+    document.body.appendChild(modal);
+  });
+
   const parent = document.getElementById('atomic-jolt-search-widget');
-  parent.innerHTML = widgetHTML();
-  const form = parent.querySelector('form');
-  form.addEventListener('submit', onSearch(setSearchTerm));
+  parent.appendChild(widget);
 }
 
 function listenToPostMessages(getSearchTerm) {
@@ -72,7 +52,8 @@ function listenToPostMessages(getSearchTerm) {
 }
 
 function main() {
-  addStyles();
+  registerWidget();
+  registerModal(FRAME_ELEMENT_NAME);
 
   let searchTerm = '';
 

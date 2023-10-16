@@ -1,0 +1,67 @@
+.widget {
+  width: 100%;
+  position: relative;
+
+  input {
+    box-sizing: border-box;
+    height: 38px;
+    font-family: "Lato Extended", "Lato", "Helvetica Neue", Helvetica, Arial,
+      sans-serif;
+    font-weight: normal;
+    font-size: 14px;
+    color: #333;
+    width: 100%;
+    padding: 0 40px 0 10px;
+    outline: 0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    line-height: 38px;
+    margin: 0;
+
+    &:focus {
+      border-color: #01579b;
+    }
+  }
+
+  .button {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    right: 4px;
+    top: 4px;
+    border-radius: 3px;
+
+    &:focus-within {
+      background: #69E2FF;
+    }
+  }
+
+  button {
+    width: 29px;
+    height: 30px;
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    border-right: 1px solid transparent;
+
+    &:focus {
+      outline: none;
+    }
+
+    svg {
+      width: 18px;
+      fill: #595959;
+      height: 18px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}

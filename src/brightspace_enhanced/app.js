@@ -7,7 +7,7 @@ console.log('[AJ] global JS attached');
 const getConfig = getBrightspaceConfig('atomicSearchCustomConfig');
 
 function registerWidget() {
-  customElements.define('atomic-search-widget', Widget);
+  customElements.define('atomic-search-enhanced-widget', Widget);
 }
 
 function canInjectWidget() {
@@ -15,7 +15,7 @@ function canInjectWidget() {
 }
 
 function addWidget(orgType, orgId) {
-  const widget = document.createElement('atomic-search-widget');
+  const widget = document.createElement('atomic-search-enhanced-widget');
   widget.dataset.orgType = orgType;
   const parent = document.querySelector('.d2l-navigation-header-right');
   parent.appendChild(widget);
