@@ -16,16 +16,16 @@ function placeholderText() {
   return 'Search this organization';
 }
 
-function addWidget(setSearchTerm) {
+function addWidget() {
   const widget = document.createElement('atomic-search-widget');
   widget.dataset.placeholderText = placeholderText();
 
   widget.addEventListener(SEARCH_EVENT, e => {
     const query = e.detail.searchText;
-    setSearchTerm(query);
 
     const modal = document.createElement(FRAME_ELEMENT_NAME);
     modal.dataset.frameSrc = getConfig('link');
+    modal.dataset.query = query;
     document.body.appendChild(modal);
   });
 
@@ -33,32 +33,12 @@ function addWidget(setSearchTerm) {
   parent.appendChild(widget);
 }
 
-function listenToPostMessages(getSearchTerm) {
-  window.addEventListener('message', event => {
-    let message = {};
-    if (typeof event.data === 'string') {
-      try {
-        message = JSON.parse(event.data);
-      } catch (_err) {
-        // This is some other message we don't need to worry about
-      }
-    }
-
-    if (message.subject === 'atomicjolt.requestSearchParams') {
-      const iframe = event.source;
-      iframe.postMessage({ subject: 'atomicjolt.searchParams', search: getSearchTerm() }, '*');
-    }
-  });
-}
 
 function main() {
   registerWidget();
   registerModal(FRAME_ELEMENT_NAME);
 
-  let searchTerm = '';
-
-  addWidget(term => { searchTerm = term; });
-  listenToPostMessages(() => searchTerm);
+  addWidget();
 }
 
 main();
