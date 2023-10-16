@@ -1,6 +1,7 @@
 import styles from './styles.scss';
 import { SEARCH_SVG } from '../common/html';
 import getBrightspaceConfig from '../common/brightspace_config';
+import openModal from '../brightspace_common/modal';
 
 const getConfig = getBrightspaceConfig('atomicSearchConfig');
 
@@ -30,28 +31,6 @@ function widgetHTML() {
   `;
 }
 
-function modalHtml() {
-  return `
-<div id="atomic-search-modal">
-  <div id="atomic-search-modal-body">
-    <header>
-      <h2>Atomic Search</h2>
-      <button id="atomic-search-modal-close">&times;</button>
-    </header>
-    <iframe
-      src="${getConfig('link')}"
-      frameborder="0"
-    >
-    </iframe>
-  </div>
-</div>
-`;
-}
-
-const destroyModal = modal => {
-  modal.parentNode.removeChild(modal);
-};
-
 function addStyles() {
   const styleSheet = document.createElement('style');
   styleSheet.innerText = styles;
@@ -64,16 +43,7 @@ const onSearch = setSearchTerm => e => {
   const query = e.target.elements.query.value;
   setSearchTerm(query);
 
-  const modal = document.createElement('div');
-  modal.innerHTML = modalHtml();
-  document.body.appendChild(modal);
-
-  const closeButton = document.getElementById('atomic-search-modal-close');
-
-  closeButton.addEventListener('click', event => {
-    event.preventDefault();
-    destroyModal(modal);
-  });
+  openModal(getConfig('link'));
 };
 
 function addWidget(setSearchTerm) {
