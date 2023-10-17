@@ -43,8 +43,21 @@ function addTopWidget(orgType, orgId) {
 function addNavWidget(orgType, orgId) {
   const widget = document.createElement(WIDGET_ELEMENT_NAME);
   widget.dataset.orgType = orgType;
+  widget.style.position = 'absolute';
+  widget.style.top = '0';
+
   const parent = document.querySelector('.d2l-navigation-s-main-wrapper');
-  parent.appendChild(widget);
+
+  parent.after(widget);
+
+  if (parent.attributes['has-edit-menu']) {
+    widget.style.right = '80px';
+    parent.style.marginRight = '5rem';
+  } else {
+    widget.style.right = '0px';
+    parent.style.marginRight = '2.5rem';
+    widget.parentElement.style.position = 'relative';
+  }
 
   addSearchListener(widget, orgId);
 }
