@@ -6,7 +6,7 @@ import { SEARCH_EVENT } from './widget_common';
 function widgetHtml(orgType) {
   const placeholderText = orgType === COURSE ? 'Search this course' : 'Search my courses';
   return `
-    <div class="widget">
+    <div class="desktop-widget">
       <button class="icon">${SEARCH_SVG}</button>
       <form class="form" role="search">
         <label for="atomic-search-text" class="hidden">Search</label>
@@ -23,7 +23,7 @@ function widgetHtml(orgType) {
 
 class DesktopWidget extends HTMLElement {
   get widgetEl() {
-    return this.shadowRoot.querySelector('.widget');
+    return this.shadowRoot.querySelector('.desktop-widget');
   }
 
   toggleOpen() {

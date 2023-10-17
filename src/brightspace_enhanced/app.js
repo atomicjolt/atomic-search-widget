@@ -36,6 +36,7 @@ function addDesktopWidget(orgType, orgId) {
   widget.dataset.orgType = orgType;
   widget.style.position = 'absolute';
   widget.style.top = '0';
+  widget.style.height = '100%';
 
   const parent = document.querySelector('.d2l-navigation-s-main-wrapper');
 

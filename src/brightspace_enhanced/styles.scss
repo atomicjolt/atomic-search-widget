@@ -2,12 +2,21 @@
   display: none;
 }
 
-.widget {
+.desktop-widget {
   position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
 
-  .icon svg {
-    height: 30px;
-    width: 30px;
+  .icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    svg {
+      height: 30px;
+      width: 30px;
+    }
   }
 
   .form {
