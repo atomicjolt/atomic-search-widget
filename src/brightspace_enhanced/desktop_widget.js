@@ -1,6 +1,7 @@
 import styles from './styles.scss';
 import { htmlToElement, SEARCH_SVG } from '../common/html';
 import { COURSE } from './org_types';
+import { SEARCH_EVENT } from './widget_common';
 
 function widgetHtml(orgType) {
   const placeholderText = orgType === COURSE ? 'Search this course' : 'Search my courses';
@@ -20,25 +21,7 @@ function widgetHtml(orgType) {
   `;
 }
 
-function mobileHtml(orgType) {
-  const placeholderText = orgType === COURSE ? 'Search this course' : 'Search my courses';
-
-  return `
-    <form class="form" role="search">
-      <label for="atomic-search-text" class="hidden">Search</label>
-      <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" />
-      <div class="atomic-search-button">
-        <button type="submit" aria-label="submit search">
-          ${SEARCH_SVG}
-        </button>
-      </div>
-    </form>
-  `;
-}
-
-export const SEARCH_EVENT = 'ATOMIC_SEARCH';
-
-class Widget extends HTMLElement {
+class DesktopWidget extends HTMLElement {
   get widgetEl() {
     return this.shadowRoot.querySelector('.widget');
   }
@@ -52,37 +35,28 @@ class Widget extends HTMLElement {
   }
 
   connectedCallback() {
-    const { orgType, isMobile } = this.dataset;
+    const { orgType } = this.dataset;
 
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
     style.textContent = styles;
-    const htmlBuilder = isMobile ? mobileHtml : widgetHtml;
-    shadow.append(style, htmlToElement(htmlBuilder(orgType)));
+    shadow.append(style, htmlToElement(widgetHtml(orgType)));
 
     shadow.querySelector('form').addEventListener('submit', e => {
       e.preventDefault();
       const searchText = shadow.querySelector('input').value;
       this.dispatchEvent(new CustomEvent(SEARCH_EVENT, { detail: { searchText } }));
 
-      // TODO make a separate mobile widget?
-      if (isMobile) {
-        document.querySelector('.d2l-navigation-s-mobile-menu-mask').click();
-      } else {
-        this.close();
-      }
+      this.close();
     });
 
-    // TODO make a separate mobile widget?
     const icon = shadow.querySelector('.icon');
-    if (icon) {
-      icon.addEventListener('click', this.toggleOpen.bind(this));
-    }
+    icon.addEventListener('click', this.toggleOpen.bind(this));
   }
 }
 
-export const WIDGET_ELEMENT_NAME = 'atomic-search-enhanced-widget';
+export const DESKTOP_WIDGET_NAME = 'atomic-search-enhanced-desktop-widget';
 
-export function registerWidget() {
-  customElements.define(WIDGET_ELEMENT_NAME, Widget);
+export function registerDesktopWidget() {
+  customElements.define(DESKTOP_WIDGET_NAME, DesktopWidget);
 }

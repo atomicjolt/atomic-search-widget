@@ -1,7 +1,9 @@
 import registerModal from '../brightspace_common/modal';
 import getBrightspaceConfig from '../common/brightspace_config';
 import { COURSE, ORG } from './org_types';
-import { SEARCH_EVENT, WIDGET_ELEMENT_NAME, registerWidget } from './widget';
+import { DESKTOP_WIDGET_NAME, registerDesktopWidget } from './desktop_widget';
+import { SEARCH_EVENT } from './widget_common';
+import { MOBILE_WIDGET_NAME, registerMobileWidget } from './mobile_widget';
 
 console.log('[AJ] global JS attached');
 
@@ -9,7 +11,7 @@ const MODAL_ELEMENT_NAME = 'atomic-search-enhanced-modal';
 
 const getConfig = getBrightspaceConfig('atomicSearchCustomConfig');
 
-const PARENT_SELECTOR = '.d2l-navigation-s-notifications-wrapper';
+const PARENT_SELECTOR = '.d2l-navigation-s-main-wrapper';
 function canInjectWidget() {
   return !!document.querySelector(PARENT_SELECTOR);
 }
@@ -29,19 +31,8 @@ function addSearchListener(widget, orgId) {
   });
 }
 
-function addTopWidget(orgType, orgId) {
-  const widget = document.createElement(WIDGET_ELEMENT_NAME);
-  widget.dataset.orgType = orgType;
-  const parent = document.querySelector(PARENT_SELECTOR);
-  parent.appendChild(widget);
-  widget.classList.add('d2l-navigation-s-notification');
-  widget.style.verticalAlign = 'top';
-
-  addSearchListener(widget, orgId);
-}
-
-function addNavWidget(orgType, orgId) {
-  const widget = document.createElement(WIDGET_ELEMENT_NAME);
+function addDesktopWidget(orgType, orgId) {
+  const widget = document.createElement(DESKTOP_WIDGET_NAME);
   widget.dataset.orgType = orgType;
   widget.style.position = 'absolute';
   widget.style.top = '0';
@@ -63,9 +54,9 @@ function addNavWidget(orgType, orgId) {
 }
 
 function addMobileWidget(orgType, orgId) {
-  const widget = document.createElement(WIDGET_ELEMENT_NAME);
+  const widget = document.createElement(MOBILE_WIDGET_NAME);
   widget.dataset.orgType = orgType;
-  widget.dataset.isMobile = true;
+
   const parent = document.querySelector('.d2l-navigation-s-mobile-menu-nav');
   parent.prepend(widget);
 
@@ -91,7 +82,8 @@ function init() {
 
   window.ATOMIC_SEARCH_ENHANCED_LOCKED = true;
 
-  registerWidget();
+  registerDesktopWidget();
+  registerMobileWidget();
   registerModal(MODAL_ELEMENT_NAME);
 
   if (!canInjectWidget()) {
@@ -101,8 +93,7 @@ function init() {
 
   const [orgType, orgId] = orgData();
 
-  addTopWidget(orgType, orgId);
-  addNavWidget(orgType, orgId);
+  addDesktopWidget(orgType, orgId);
   addMobileWidget(orgType, orgId);
 }
 
