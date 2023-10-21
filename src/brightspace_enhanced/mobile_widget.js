@@ -7,15 +7,15 @@ function widgetHtml(orgType) {
   const placeholderText = orgType === COURSE ? 'Search this course' : 'Search my courses';
 
   return `
-    <form class="form" role="search">
-      <label for="atomic-search-text" class="hidden">Search</label>
-      <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" />
-      <div class="atomic-search-button">
+    <div class="mobile-widget">
+      <form class="form" role="search">
+        <label for="atomic-search-text" class="hidden">Search</label>
+        <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" />
         <button type="submit" aria-label="submit search">
           ${SEARCH_SVG}
         </button>
-      </div>
-    </form>
+      </form>
+    </div>
   `;
 }
 

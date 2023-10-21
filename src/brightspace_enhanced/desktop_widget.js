@@ -1,5 +1,5 @@
 import styles from './styles.scss';
-import { htmlToElement, SEARCH_SVG } from '../common/html';
+import { CLOSE_SVG, htmlToElement, SEARCH_SVG } from '../common/html';
 import { COURSE } from './org_types';
 import { SEARCH_EVENT } from './widget_common';
 
@@ -7,16 +7,18 @@ function widgetHtml(orgType) {
   const placeholderText = orgType === COURSE ? 'Search this course' : 'Search my courses';
   return `
     <div class="desktop-widget">
-      <button class="icon">${SEARCH_SVG}</button>
       <form class="form" role="search">
         <label for="atomic-search-text" class="hidden">Search</label>
         <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" />
-        <div class="atomic-search-button">
-          <button type="submit" aria-label="submit search">
-            ${SEARCH_SVG}
-          </button>
-        </div>
+        <button type="submit" aria-label="submit search">
+          ${SEARCH_SVG}
+        </button>
       </form>
+      <button class="toggle-button"
+        aria-label="toggle search"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >${SEARCH_SVG}${CLOSE_SVG}</button>
     <div>
   `;
 }
@@ -26,12 +28,34 @@ class DesktopWidget extends HTMLElement {
     return this.shadowRoot.querySelector('.desktop-widget');
   }
 
+  get toggleButtonEl() {
+    return this.shadowRoot.querySelector('.toggle-button');
+  }
+
+  get inputEl() {
+    return this.shadowRoot.querySelector('input');
+  }
+
   toggleOpen() {
-    this.widgetEl.classList.toggle('is-open');
+    if (this.widgetEl.classList.contains('is-open')) {
+      this.close();
+    } else {
+      this.open();
+    }
+  }
+
+  open() {
+    this.widgetEl.classList.add('is-open');
+    this.toggleButtonEl.setAttribute('aria-expanded', 'true');
+    // It can't be focused immediately because the element is still hidden I guess
+    setTimeout(() => {
+      this.inputEl.focus();
+    }, 50);
   }
 
   close() {
     this.widgetEl.classList.remove('is-open');
+    this.toggleButtonEl.setAttribute('aria-expanded', 'false');
   }
 
   connectedCallback() {
@@ -50,8 +74,7 @@ class DesktopWidget extends HTMLElement {
       this.close();
     });
 
-    const icon = shadow.querySelector('.icon');
-    icon.addEventListener('click', this.toggleOpen.bind(this));
+    this.toggleButtonEl.addEventListener('click', this.toggleOpen.bind(this));
   }
 }
 
