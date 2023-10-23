@@ -1,0 +1,224 @@
+* {
+  box-sizing: border-box;
+}
+
+.hidden {
+  display: none;
+}
+
+.desktop-widget {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  .toggle-button {
+    display: grid;
+    place-items: center;
+    height: 42px;
+    width: 42px;
+    border-radius: 6px;
+    background: none;
+    border: none;
+    padding: 0;
+    position: relative;
+    z-index: 3;
+    transition: all 100ms ease;
+
+    svg {
+      height: 24px;
+      width: 24px;
+      transition: all 100ms ease;
+      fill: #202122;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: #006fbf;
+
+      svg {
+        fill: #FFF;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #FFF;
+      outline-offset: -4px;
+      background-color: #006fbf;
+
+      svg {
+        fill: #FFF;
+      }
+    }
+
+    .i.ajas-search-svg {
+      display: block;
+    }
+
+    .ajas-close-svg {
+      display: none;
+    }
+  }
+
+  .form {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    right: 50px;
+    z-index: 0;
+    translate: 50px -50%;
+    transition: all 300ms ease;
+    transform-origin: right;
+
+    input {
+      height: 42px;
+      width: 240px;
+      border: 1px solid #CCC;
+      font-size: 16px;
+      padding-inline: 12px 42px;
+      border-radius: 4px;
+      color: #202122;
+
+      &:focus {
+        border-color: #006fbf;
+        outline: 1px solid #006fbf;
+      }
+    }
+
+    button {
+      display: grid;
+      place-items: center;
+      height: 34px;
+      width: 34px;
+      border-radius: 3px;
+      background: none;
+      border: none;
+      padding: 0;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      z-index: 3;
+      transition: all 100ms ease;
+
+      svg {
+        height: 24px;
+        width: 24px;
+        transition: all 100ms ease;
+        fill: #202122;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background-color: #006fbf;
+
+        svg {
+          fill: #FFF;
+        }
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      &:focus-visible {
+        outline: 2px solid #006fbf;
+        outline-offset: 2px;
+        background-color: #006fbf;
+
+        svg {
+          fill: #FFF;
+        }
+      }
+    }
+  }
+
+  &.is-open {
+    .form {
+      align-items: center;
+      visibility: visible;
+      opacity: 1;
+      translate: 0 -50%;
+    }
+
+    .toggle-button .ajas-search-svg {
+      display: none;
+    }
+
+    .toggle-button .ajas-close-svg {
+      display: block;
+    }
+  }
+}
+
+.mobile-widget {
+  .form {
+    position: relative;
+    margin: 10px 20px;
+
+    input {
+      height: 42px;
+      width: 100%;
+      border: 1px solid #CCC;
+      font-size: 16px;
+      padding-inline: 12px 42px;
+      border-radius: 4px;
+      color: #202122;
+
+      &:focus {
+        border-color: #006fbf;
+        outline: 1px solid #006fbf;
+      }
+    }
+
+    button {
+      display: grid;
+      place-items: center;
+      height: 34px;
+      width: 34px;
+      border-radius: 3px;
+      background: none;
+      border: none;
+      padding: 0;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      z-index: 3;
+      transition: all 100ms ease;
+
+      svg {
+        height: 24px;
+        width: 24px;
+        transition: all 100ms ease;
+        fill: #202122;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background-color: #006fbf;
+
+        svg {
+          fill: #FFF;
+        }
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      &:focus-visible {
+        outline: 2px solid #006fbf;
+        outline-offset: 2px;
+        background-color: #006fbf;
+
+        svg {
+          fill: #FFF;
+        }
+      }
+    }
+  }
+}

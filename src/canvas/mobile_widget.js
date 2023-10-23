@@ -1,11 +1,10 @@
 import {
   initWidget,
-  SEARCH_SVG,
-  CLOSE_SVG,
   BaseWidget,
   registerWidget,
   getEquellaDomData
 } from './widget_common';
+import { SEARCH_SVG, CLOSE_SVG } from '../common/html';
 
 function html(placeholder) {
   const { dropdownHtml, equellaClass } = getEquellaDomData();
