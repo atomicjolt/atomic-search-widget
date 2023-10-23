@@ -2,6 +2,7 @@ import styles from './styles.scss';
 import { CLOSE_SVG, htmlToElement, SEARCH_SVG } from '../common/html';
 import { COURSE } from './org_types';
 import { SEARCH_EVENT } from './widget_common';
+import watchWidgetSize from './widget_size_watcher';
 
 function widgetHtml(orgType) {
   const placeholderText = orgType === COURSE ? 'Search this course' : 'Search my courses';
@@ -58,6 +59,15 @@ class DesktopWidget extends HTMLElement {
     this.toggleButtonEl.setAttribute('aria-expanded', 'false');
   }
 
+  // if there's enough space, we show the form and hide the button
+  openPermanently() {
+    this.widgetEl.classList.add('is-always-open');
+  }
+
+  closePermanently() {
+    this.widgetEl.classList.remove('is-always-open');
+  }
+
   connectedCallback() {
     const { orgType } = this.dataset;
 
@@ -75,6 +85,7 @@ class DesktopWidget extends HTMLElement {
     });
 
     this.toggleButtonEl.addEventListener('click', this.toggleOpen.bind(this));
+    watchWidgetSize(this);
   }
 }
 
