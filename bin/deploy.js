@@ -39,4 +39,5 @@ if (!bucket) {
 } else {
   uploadFile(bucket, 'atomic_search_widget.js');
   uploadFile(bucket, 'brightspace.js');
+  uploadFile(bucket, 'brightspace_enhanced.js');
 }

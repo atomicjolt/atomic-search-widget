@@ -153,6 +153,20 @@
       display: block;
     }
   }
+
+  &.is-always-open {
+    .toggle-button {
+      display: none;
+    }
+
+    .form {
+      align-items: center;
+      visibility: visible;
+      opacity: 1;
+      translate: 0 -50%;
+      right: 0;
+    }
+  }
 }
 
 .mobile-widget {
