@@ -1,15 +1,17 @@
-import styles from './widget.scss';
-import { htmlToElement, SEARCH_SVG } from '../common/html';
+import styles from '../brightspace_common/styles.scss';
+
+import { htmlToElement, NEW_SVG } from '../common/html';
 
 function widgetHtml(placeholderText) {
   return `
-    <div class="widget">
-      <form role="search">
+    <div class="mobile-widget">
+      <form class="form" role="search">
         <label for="atomic-search-text" class="hidden">Search</label>
-        <input type="text" name="query" placeholder="${placeholderText}" />
+        <input type="text" name="query" placeholder="${placeholderText}" aria-describedby="powered-by" />
+        <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
         <div class="button">
           <button type="submit" aria-label="submit search">
-            ${SEARCH_SVG}
+            ${NEW_SVG}
           </button>
         </div>
       </form>
