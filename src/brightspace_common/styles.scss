@@ -3,7 +3,12 @@
 }
 
 .hidden {
-  display: none;
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 .desktop-widget {
@@ -103,7 +108,7 @@
       height: 36px;
       width: 240px;
       border: 1px solid #CCC;
-      font-size: 16px;
+      font-size: 14px;
       padding-inline: 12px 42px;
       border-radius: 4px;
       color: #202122;
