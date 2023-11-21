@@ -1,5 +1,5 @@
 import styles from '../brightspace_common/styles.scss';
-import { CLOSE_SVG, htmlToElement, NEW_SVG } from '../common/html';
+import { CLOSE_SVG, htmlToElement, SEARCH_SVG } from '../common/html';
 import { COURSE } from './org_types';
 import { SEARCH_EVENT } from './widget_common';
 import watchWidgetSize from './widget_size_watcher';
@@ -13,7 +13,7 @@ function widgetHtml(orgType) {
         <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" aria-describedby="powered-by" />
         <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
         <button type="submit" aria-label="submit search">
-          ${NEW_SVG}
+          ${SEARCH_SVG}
         </button>
       </form>
       <div style="position: relative">
@@ -22,7 +22,7 @@ function widgetHtml(orgType) {
           aria-haspopup="true"
           aria-expanded="false"
           aria-describedby="search-tooltip"
-        >${NEW_SVG}${CLOSE_SVG}</button>
+        >${SEARCH_SVG}${CLOSE_SVG}</button>
         <p id="search-tooltip" class="tooltip">Explore educational materials throughout all your courses using Atomic Search</p>
       </div>
     <div>

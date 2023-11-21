@@ -1,6 +1,6 @@
 import styles from '../brightspace_common/styles.scss';
 
-import { htmlToElement, NEW_SVG } from '../common/html';
+import { htmlToElement, SEARCH_SVG } from '../common/html';
 
 function widgetHtml(placeholderText) {
   return `
@@ -11,7 +11,7 @@ function widgetHtml(placeholderText) {
         <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
         <div class="button">
           <button type="submit" aria-label="submit search">
-            ${NEW_SVG}
+            ${SEARCH_SVG}
           </button>
         </div>
       </form>

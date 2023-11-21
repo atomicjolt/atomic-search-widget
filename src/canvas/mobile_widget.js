@@ -4,14 +4,14 @@ import {
   registerWidget,
   getEquellaDomData
 } from './widget_common';
-import { CLOSE_SVG, NEW_SVG } from '../common/html';
+import { CLOSE_SVG, SEARCH_SVG } from '../common/html';
 
 function html(placeholder) {
   const { dropdownHtml, equellaClass } = getEquellaDomData();
 
   return `<div class="ajas-search-widget ajas-search-widget--small ${equellaClass}">
     <button class="ajas-search-toggle" type="button" aria-label="toggle search">
-      ${NEW_SVG}
+      ${SEARCH_SVG}
       ${CLOSE_SVG}
     </button>
     <form class="ajas-search-widget__form" action="javascript:void(0);" method="get" role="search">
@@ -20,7 +20,7 @@ function html(placeholder) {
       <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
       <div class="ajas-search-widget__btn-group">
         <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--search">
-          ${NEW_SVG}
+          ${SEARCH_SVG}
         </button>
         ${dropdownHtml}
       </div>

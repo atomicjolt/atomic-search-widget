@@ -1,6 +1,6 @@
 import styles from '../brightspace_common/styles.scss';
 import { COURSE } from './org_types';
-import { NEW_SVG, htmlToElement } from '../common/html';
+import { SEARCH_SVG, htmlToElement } from '../common/html';
 import { SEARCH_EVENT } from './widget_common';
 
 function widgetHtml(orgType) {
@@ -13,7 +13,7 @@ function widgetHtml(orgType) {
         <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" aria-describedby="powered-by" />
         <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
         <button type="submit" aria-label="submit search">
-          ${NEW_SVG}
+          ${SEARCH_SVG}
         </button>
       </form>
     </div>

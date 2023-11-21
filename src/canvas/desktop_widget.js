@@ -4,7 +4,7 @@ import {
   registerWidget,
   getEquellaDomData
 } from './widget_common';
-import { NEW_SVG } from '../common/html';
+import { SEARCH_SVG } from '../common/html';
 
 function html(cssClass, placeholder) {
   const { dropdownHtml, equellaClass } = getEquellaDomData();
@@ -16,7 +16,7 @@ function html(cssClass, placeholder) {
         <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
         <div class="ajas-search-widget__btn-group">
           <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--search">
-            ${NEW_SVG}
+            ${SEARCH_SVG}
           </button>
           ${dropdownHtml}
         </div>
