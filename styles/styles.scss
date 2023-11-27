@@ -138,12 +138,12 @@ $canvas-header-height: 55px;
     height: 24px;
     width: 24px;
 
-    .a {
+    .logo-path {
       transition: all 100ms ease;
       fill: var(--close-fill);
     }
 
-    .b {
+    .logo-rect {
       fill: none;
     }
   }
@@ -288,12 +288,12 @@ $canvas-header-height: 55px;
     height: 24px;
     width: 24px;
 
-    .a {
+    .logo-path {
       transition: all 100ms ease;
       fill: var(--svg-fill);
     }
 
-    .b {
+    .logo-rect {
       fill: none;
     }
   }

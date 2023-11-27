@@ -36,12 +36,12 @@
       height: 32px;
       width: 32px;
 
-      .a {
+      .logo-path {
         transition: all 100ms ease;
         fill: var(--svg-fill);
       }
 
-      .b {
+      .logo-rect {
         fill: none;
       }
     }
@@ -149,12 +149,12 @@
         height: 24px;
         width: 24px;
 
-        .a {
+        .logo-path {
           transition: all 100ms ease;
           fill: var(--svg-fill);
         }
 
-        .b {
+        .logo-rect {
           fill: none;
         }
       }
@@ -296,12 +296,12 @@
         height: 28px;
         width: 28px;
 
-        .a {
+        .logo-path {
           transition: all 100ms ease;
           fill: var(--svg-fill);
         }
 
-        .b {
+        .logo-rect {
           fill: none;
         }
       }
