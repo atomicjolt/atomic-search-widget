@@ -1,4 +1,4 @@
-import styles from './styles.scss';
+import styles from '../brightspace_common/styles.scss';
 import { COURSE } from './org_types';
 import { SEARCH_SVG, htmlToElement } from '../common/html';
 import { SEARCH_EVENT } from './widget_common';
@@ -8,9 +8,10 @@ function widgetHtml(orgType) {
 
   return `
     <div class="mobile-widget">
-      <form class="form" role="search">
+      <form class="form u-margin" role="search">
         <label for="atomic-search-text" class="hidden">Search</label>
-        <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" />
+        <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" aria-describedby="powered-by" />
+        <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
         <button type="submit" aria-label="submit search">
           ${SEARCH_SVG}
         </button>

@@ -1,4 +1,4 @@
-import styles from './styles.scss';
+import styles from '../brightspace_common/styles.scss';
 import { CLOSE_SVG, htmlToElement, SEARCH_SVG } from '../common/html';
 import { COURSE } from './org_types';
 import { SEARCH_EVENT } from './widget_common';
@@ -10,16 +10,21 @@ function widgetHtml(orgType) {
     <div class="desktop-widget">
       <form class="form" role="search">
         <label for="atomic-search-text" class="hidden">Search</label>
-        <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" />
+        <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" aria-describedby="powered-by" />
+        <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
         <button type="submit" aria-label="submit search">
           ${SEARCH_SVG}
         </button>
       </form>
-      <button class="toggle-button"
-        aria-label="toggle search"
-        aria-haspopup="true"
-        aria-expanded="false"
-      >${SEARCH_SVG}${CLOSE_SVG}</button>
+      <div style="position: relative">
+        <button class="toggle-button"
+          aria-label="toggle search"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-describedby="search-tooltip"
+        >${SEARCH_SVG}${CLOSE_SVG}</button>
+        <p id="search-tooltip" class="tooltip">Explore educational materials throughout all your courses using Atomic Search</p>
+      </div>
     <div>
   `;
 }
