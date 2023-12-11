@@ -1,7 +1,7 @@
-const AWS = require('aws-sdk');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 
-const s3 = new AWS.S3();
+const s3 = new S3Client();
 
 const buckets = {
   dev: 'jsdev.atomicsearchwidget.com',
@@ -18,13 +18,13 @@ function uploadFile(bucket, filePath) {
     Key: filePath,
   };
 
-  s3.putObject(params, (err, data) => {
-    if (err) {
-      console.error(err, err.stack);
-      process.exit(1);
-    } else {
-      console.log('success!', data);
-    }
+  const put = new PutObjectCommand(params);
+
+  s3.send(put).then(data => {
+    console.log('success!', data);
+  }, err => {
+    console.error(err, err.stack);
+    process.exit(1);
   });
 }
 
