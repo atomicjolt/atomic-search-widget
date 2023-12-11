@@ -1,6 +1,8 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 
+const [, , version, env] = process.argv;
+
 const s3 = new S3Client();
 
 const buckets = {
@@ -16,6 +18,7 @@ function uploadFile(bucket, filePath) {
     Body: fileContent,
     Bucket: bucket,
     Key: filePath,
+    Tagging: `VERSION=${version}`,
   };
 
   const put = new PutObjectCommand(params);
@@ -28,10 +31,12 @@ function uploadFile(bucket, filePath) {
   });
 }
 
-const env = process.argv[2];
 const bucket = buckets[env];
 if (!bucket) {
   console.error('environment (dev, beta or prod) must be provided as an argument');
+  process.exit(1);
+} else if (!version) {
+  console.error('you must deploy from a tagged commit');
   process.exit(1);
 } else if (!s3.config.credentials) {
   console.error('AWS credentials must be provided as environment variables');
