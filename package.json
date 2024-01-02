@@ -9,7 +9,7 @@
     "build": "node ./esbuild.js prod",
     "hot": "node ./esbuild.js dev",
     "lint": "eslint src",
-    "release": "yarn build && node ./bin/deploy.js"
+    "release": "yarn build && node ./bin/deploy.js \"$(git tag --points-at HEAD)\""
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "jquery": "^3.6.0"
   },
   "devDependencies": {
-    "aws-sdk": "^2.592.0",
+    "@aws-sdk/client-s3": "^3.470.0",
     "dotenv": "^8.2.0",
     "esbuild": "^0.15.13",
     "esbuild-sass-plugin": "^2.4.0",
