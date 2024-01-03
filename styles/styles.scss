@@ -34,6 +34,9 @@ $canvas-header-height: 55px;
   margin: 0;
 
   p {
+    // People are complaining about our branding. We'll hide it until we have a
+    // way to make it hide when a setting in Atomic Search is changed
+    display: none;
     position: absolute;
     right: 0;
     bottom: -16px;
