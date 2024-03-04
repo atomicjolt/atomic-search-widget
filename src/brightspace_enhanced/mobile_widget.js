@@ -2,16 +2,17 @@ import styles from '../brightspace_common/styles.scss';
 import { COURSE } from './org_types';
 import { SEARCH_SVG, htmlToElement } from '../common/html';
 import { SEARCH_EVENT } from './widget_common';
+import t from '../brightspace_common/i18n/translate';
 
 function widgetHtml(orgType) {
-  const placeholderText = orgType === COURSE ? 'Search this course' : 'Search my courses';
+  const placeholderText = orgType === COURSE ? t('Search this course') : t('Search my courses');
 
   return `
     <div class="mobile-widget">
       <form class="form u-margin" role="search">
-        <label for="atomic-search-text" class="hidden">Search</label>
+        <label for="atomic-search-text" class="hidden">${t('Search')}</label>
         <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" aria-describedby="powered-by" />
-        <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
+        <p id="powered-by">${t('Powered by <span>Atomic <b>Search</b></span>')}</p>
         <button type="submit" aria-label="submit search">
           ${SEARCH_SVG}
         </button>
