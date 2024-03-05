@@ -1,6 +1,7 @@
 import getBrightspaceConfig from '../common/brightspace_config';
 import registerModal from '../brightspace_common/modal';
 import { SEARCH_EVENT, registerWidget } from './widget';
+import t from '../brightspace_common/i18n/translate';
 
 const getConfig = getBrightspaceConfig('atomicSearchConfig');
 
@@ -8,12 +9,12 @@ const FRAME_ELEMENT_NAME = 'atomic-search-modal';
 
 function placeholderText() {
   if (window.location.pathname === '/d2l/home') {
-    return 'Search my courses';
+    return t('Search my courses');
   } if (getConfig('orgTypeId') === '3') {
-    return 'Search this course';
+    return t('Search this course');
   }
 
-  return 'Search this organization';
+  return t('Search this organization');
 }
 
 function addWidget() {
@@ -32,7 +33,6 @@ function addWidget() {
   const parent = document.getElementById('atomic-jolt-search-widget');
   parent.appendChild(widget);
 }
-
 
 function main() {
   registerWidget();

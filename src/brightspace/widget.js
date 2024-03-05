@@ -1,3 +1,4 @@
+import t from '../brightspace_common/i18n/translate';
 import styles from '../brightspace_common/styles.scss';
 
 import { htmlToElement, SEARCH_SVG } from '../common/html';
@@ -6,9 +7,9 @@ function widgetHtml(placeholderText) {
   return `
     <div class="mobile-widget">
       <form class="form" role="search">
-        <label for="atomic-search-text" class="hidden">Search</label>
+        <label for="atomic-search-text" class="hidden">${t('Search')}</label>
         <input type="text" name="query" placeholder="${placeholderText}" aria-describedby="powered-by" />
-        <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
+        <p id="powered-by">${t('Powered by <span>Atomic <b>Search</b></span>')}</p>
         <div class="button">
           <button type="submit" aria-label="submit search">
             ${SEARCH_SVG}
