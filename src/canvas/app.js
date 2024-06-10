@@ -151,6 +151,7 @@ function ajEnableListener() {
 
 // in consortium searches, the id might be something like 4346~2848
 const pathRegex = /^\/(courses|accounts)\/[0-9~]+/i;
+const searchWords = ['Search', 'Søk', 'Buscar', 'Rechercher', 'Търсене', 'Cerca', 'Hledat', 'Søg', 'Suche', 'Αναζήτηση', 'Ikastaro', 'Etsi', 'Cuardaigh', 'सभी', 'Keresés', 'Որոնել', 'Cari', 'Cerca', 'Hemî', 'Doorzoek', 'Pesquisar', 'Căutați', 'Поиск', 'Sök', 'Tüm'];
 
 function getToolUrl() {
   if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
@@ -164,34 +165,28 @@ function getToolUrl() {
     return `/accounts/${atomicSearchConfig.accountId}/${toolPath}?launch_type=global_navigation`;
   }
 
-  const searchWords = ['Search', 'Søk', 'Buscar', 'Rechercher', 'Търсене', 'Cerca', 'Hledat', 'Søg', 'Suche', 'Αναζήτηση', 'Ikastaro', 'Etsi', 'Cuardaigh', 'सभी', 'Keresés', 'Որոնել', 'Cari', 'Cerca', 'Hemî', 'Doorzoek', 'Pesquisar', 'Căutați', 'Поиск', 'Sök', 'Tüm'];
-  let url;
-  // the linter doesn't like normal for loops, we use 'some' because returning
-  // true breaks you out early
-  searchWords.some((word) => {
+  for (let i = 0; i < searchWords.length; i++) {
+    const word = searchWords[i];
     const baseSelector = `a:contains("${word}")`;
     // this could be within a course or subaccount
     const localNavElement = $(`#section-tabs ${baseSelector}`);
     const globalNavElement = $(`#menu ${baseSelector}`);
 
     if (localNavElement.attr('href') && localNavElement[0].text.trim() === word) {
-      url = localNavElement.attr('href');
-      return true;
+      return localNavElement.attr('href');
     }
     if (globalNavElement.attr('href') && globalNavElement.find('.menu-item__text').text().trim() === word) {
       const toolPath = globalNavElement.attr('href').match(/\/(external_tools)\/[0-9]+/i);
       const contextMatch = window.location.pathname.match(pathRegex);
       if (contextMatch && toolPath) {
-        url = `${contextMatch[0]}${toolPath[0]}`;
-      } else {
-        url = globalNavElement.attr('href');
+        return `${contextMatch[0]}${toolPath[0]}`;
       }
-      return true;
-    }
-    return false;
-  });
 
-  return url;
+      return globalNavElement.attr('href');
+    }
+  }
+
+  return null;
 }
 
 const BIG_WIDGET_ID = 'ajas-search-widget';
