@@ -150,14 +150,15 @@ function ajEnableListener() {
 }
 
 // in consortium searches, the id might be something like 4346~2848
-const pathRegex = /^\/(courses|accounts)\/[0-9~]+/i;
-const searchWords = ['Search', 'Søk', 'Buscar', 'Rechercher', 'Търсене', 'Cerca', 'Hledat', 'Søg', 'Suche', 'Αναζήτηση', 'Ikastaro', 'Etsi', 'Cuardaigh', 'सभी', 'Keresés', 'Որոնել', 'Cari', 'Cerca', 'Hemî', 'Doorzoek', 'Pesquisar', 'Căutați', 'Поиск', 'Sök', 'Tüm'];
+const PATH_REGEX = /^\/(courses|accounts)\/[0-9~]+/i;
+const EXTERNAL_TOOL_REGEX = /\/external_tools\/[0-9]+/i;
+const SEARCH_WORDS = ['Search', 'Søk', 'Buscar', 'Rechercher', 'Търсене', 'Cerca', 'Hledat', 'Søg', 'Suche', 'Αναζήτηση', 'Ikastaro', 'Etsi', 'Cuardaigh', 'सभी', 'Keresés', 'Որոնել', 'Cari', 'Cerca', 'Hemî', 'Doorzoek', 'Pesquisar', 'Căutați', 'Поиск', 'Sök', 'Tüm'];
 
 function getToolUrl() {
   if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
     const toolPath = `external_tools/${atomicSearchConfig.externalToolId}`;
 
-    const contextMatch = window.location.pathname.match(pathRegex);
+    const contextMatch = window.location.pathname.match(PATH_REGEX);
     if (contextMatch) {
       return `${contextMatch[0]}/${toolPath}`;
     }
@@ -165,19 +166,22 @@ function getToolUrl() {
     return `/accounts/${atomicSearchConfig.accountId}/${toolPath}?launch_type=global_navigation`;
   }
 
-  for (let i = 0; i < searchWords.length; i++) {
-    const word = searchWords[i];
+  for (let i = 0; i < SEARCH_WORDS.length; i++) {
+    const word = SEARCH_WORDS[i];
     const baseSelector = `a:contains("${word}")`;
     // this could be within a course or subaccount
     const localNavElement = $(`#section-tabs ${baseSelector}`);
     const globalNavElement = $(`#menu ${baseSelector}`);
 
-    if (localNavElement.attr('href') && localNavElement[0].text.trim() === word) {
+    if (localNavElement.attr('href')
+      && localNavElement.attr('href').match(EXTERNAL_TOOL_REGEX)
+      && localNavElement[0].text.trim() === word
+    ) {
       return localNavElement.attr('href');
     }
     if (globalNavElement.attr('href') && globalNavElement.find('.menu-item__text').text().trim() === word) {
-      const toolPath = globalNavElement.attr('href').match(/\/(external_tools)\/[0-9]+/i);
-      const contextMatch = window.location.pathname.match(pathRegex);
+      const toolPath = globalNavElement.attr('href').match(EXTERNAL_TOOL_REGEX);
+      const contextMatch = window.location.pathname.match(PATH_REGEX);
       if (contextMatch && toolPath) {
         return `${contextMatch[0]}${toolPath[0]}`;
       }
