@@ -37,3 +37,4 @@ rules:
     - 2
     - as-needed
   import/extensions: 0
+  no-plusplus: 0
