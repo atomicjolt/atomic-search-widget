@@ -60,6 +60,12 @@ export function initWidget(widget, htmlText) {
 }
 
 export class BaseWidget extends HTMLElement {
+  connectedCallback() {
+    if (this._alreadyConnected) return;
+    this._onConnect();
+    this._alreadyConnected = true;
+  }
+
   updateSearchText(newValue) {
     // undefined will get turned into text, so ignore all falsey values
     const text = newValue || '';
