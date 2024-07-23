@@ -29,7 +29,7 @@ function html(placeholder) {
 }
 
 export default class AtomicSearchMobileWidget extends BaseWidget {
-  connectedCallback() {
+  _onConnect() {
     const { placeholder } = this.dataset;
     const htmlText = html(placeholder);
 

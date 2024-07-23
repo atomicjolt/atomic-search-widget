@@ -25,7 +25,7 @@ function html(cssClass, placeholder) {
 }
 
 export default class AtomicSearchDesktopWidget extends BaseWidget {
-  connectedCallback() {
+  _onConnect() {
     const { cssClass, placeholder } = this.dataset;
     const htmlText = html(cssClass, placeholder);
 

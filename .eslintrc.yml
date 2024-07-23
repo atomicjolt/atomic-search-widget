@@ -38,3 +38,6 @@ rules:
     - as-needed
   import/extensions: 0
   no-plusplus: 0
+  # it's useful to prefix custom element attributes with a '_' so they don't
+  # collide with built in functions
+  no-underscore-dangle: 0
