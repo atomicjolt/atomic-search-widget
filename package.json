@@ -22,7 +22,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.470.0",
     "dotenv": "^8.2.0",
-    "esbuild": "^0.15.13",
+    "esbuild": "^0.25.0",
     "esbuild-sass-plugin": "^2.4.0",
     "eslint": "^6.7.2",
     "eslint-config-airbnb-base": "^14.0.0",
