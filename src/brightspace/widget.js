@@ -11,7 +11,7 @@ function widgetHtml(placeholderText, showBranding) {
       <form class="form" role="search">
         <label for="atomic-search-text" class="hidden">${t('Search')}</label>
         <input type="text" name="query" placeholder="${placeholderText}" aria-describedby="powered-by" />
-        <p id="powered-by">${t('Powered by <span>Atomic Search></span>')}</p>
+        <p id="powered-by">${t('Powered by <span>Atomic Search</span>')}</p>
         <div class="button">
           <button type="submit" aria-label="submit search">
             ${SEARCH_SVG}
