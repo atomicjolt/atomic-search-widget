@@ -34,6 +34,7 @@ function addSearchListener(widget, orgId) {
 function addDesktopWidget(orgType, orgId) {
   const widget = document.createElement(DESKTOP_WIDGET_NAME);
   widget.dataset.orgType = orgType;
+  widget.dataset.showBranding = getConfig('showBranding', 'on');
   widget.style.position = 'absolute';
   widget.style.top = '0';
   widget.style.height = '100%';
@@ -57,6 +58,7 @@ function addDesktopWidget(orgType, orgId) {
 function addMobileWidget(orgType, orgId) {
   const widget = document.createElement(MOBILE_WIDGET_NAME);
   widget.dataset.orgType = orgType;
+  widget.dataset.showBranding = getConfig('showBranding', 'on');
 
   const parent = document.querySelector('.d2l-navigation-s-mobile-menu-nav');
   parent.prepend(widget);

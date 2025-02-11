@@ -20,6 +20,7 @@ function placeholderText() {
 function addWidget() {
   const widget = document.createElement('atomic-search-widget');
   widget.dataset.placeholderText = placeholderText();
+  widget.dataset.showBranding = getConfig('showBranding', 'on');
 
   widget.addEventListener(SEARCH_EVENT, e => {
     const query = e.detail.searchText;

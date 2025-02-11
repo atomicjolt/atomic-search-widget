@@ -249,6 +249,20 @@
       right: 0;
     }
   }
+
+  &.no-branding {
+    .form {
+      top: 12px;
+
+      input {
+        border-radius: 4px;
+      }
+    }
+
+    .form p {
+      display: none;
+    }
+  }
 }
 
 .mobile-widget {
@@ -333,6 +347,12 @@
         outline-offset: 2px;
         background-color: #006fbf;
       }
+    }
+  }
+
+  &.no-branding {
+    .form p {
+      display: none;
     }
   }
 }
