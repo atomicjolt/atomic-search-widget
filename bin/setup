@@ -57,6 +57,6 @@ sudo launchctl load /Library/LaunchDaemons/homebrew.mxcl.nginx.plist && echo "ng
 echo "-------------------------------------"
 echo "Your app has been added."
 echo "Your next steps..."
-echo "yarn hot"
+echo "npm run hot"
 echo "Visit your assets here: https://$ASSETS_SUBDOMAIN.atomicjolt.xyz/atomic_search_widget.js"
 echo "-------------------------------------"

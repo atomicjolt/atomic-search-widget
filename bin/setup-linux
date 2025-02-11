@@ -60,6 +60,6 @@ sudo systemctl restart nginx
 echo "-------------------------------------"
 echo "Your app has been added."
 echo "Your next steps..."
-echo "yarn hot"
+echo "npm run hot"
 echo "Visit your assets here: https://$ASSETS_SUBDOMAIN.atomicjolt.xyz/atomic_search_widget.js"
 echo "-------------------------------------"
