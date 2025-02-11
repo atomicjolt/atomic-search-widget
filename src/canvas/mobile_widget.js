@@ -17,7 +17,7 @@ function html(placeholder) {
     <form class="ajas-search-widget__form" action="javascript:void(0);" method="get" role="search">
       <label for="ajas-search02" class="ajas-search-widget-hidden">Search</label>
       <input type="text" placeholder="${placeholder}" id="ajas-search02" aria-describedby="powered-by" />
-      <p id="powered-by">Powered by <span>Atomic <b>Search</b></span></p>
+      <p id="powered-by">Powered by <span>Atomic Search</span></p>
       <div class="ajas-search-widget__btn-group">
         <button type="submit" aria-label="submit search" class="ajas-search-widget__btn--search">
           ${SEARCH_SVG}

@@ -4,15 +4,16 @@ import { SEARCH_SVG, htmlToElement } from '../common/html';
 import { SEARCH_EVENT } from './widget_common';
 import t from '../brightspace_common/i18n/translate';
 
-function widgetHtml(orgType) {
+function widgetHtml(orgType, showBranding) {
   const placeholderText = orgType === COURSE ? t('Search this course') : t('Search my courses');
 
+  const brandingClass = showBranding ? '' : 'no-branding';
   return `
-    <div class="mobile-widget">
+    <div class="mobile-widget ${brandingClass}">
       <form class="form u-margin" role="search">
         <label for="atomic-search-text" class="hidden">${t('Search')}</label>
         <input type="text" name="query" placeholder="${placeholderText}" id="atomic-search-text" aria-describedby="powered-by" />
-        <p id="powered-by">${t('Powered by <span>Atomic <b>Search</b></span>')}</p>
+        <p id="powered-by">${t('Powered by <span>Atomic Search</span>')}</p>
         <button type="submit" aria-label="submit search">
           ${SEARCH_SVG}
         </button>
@@ -39,12 +40,12 @@ class MobileWidget extends HTMLElement {
   }
 
   connectedCallback() {
-    const { orgType } = this.dataset;
+    const { orgType, showBranding } = this.dataset;
 
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
     style.textContent = styles;
-    shadow.append(style, htmlToElement(widgetHtml(orgType)));
+    shadow.append(style, htmlToElement(widgetHtml(orgType, showBranding === 'on')));
 
     shadow.querySelector('form').addEventListener('submit', e => {
       e.preventDefault();

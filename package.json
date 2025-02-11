@@ -9,7 +9,7 @@
     "build": "node ./esbuild.js prod",
     "hot": "node ./esbuild.js dev",
     "lint": "eslint src",
-    "release": "yarn build && node ./bin/deploy.js \"$(git tag --points-at HEAD)\""
+    "release": "npm run build && node ./bin/deploy.js \"$(git tag --points-at HEAD)\""
   },
   "repository": {
     "type": "git",
