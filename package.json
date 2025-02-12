@@ -6,8 +6,8 @@
   "license": "MIT",
   "homepage": "https://github.com/atomicjolt/react_client_starter_app",
   "scripts": {
-    "build": "node ./esbuild.js prod",
-    "hot": "node ./esbuild.js dev",
+    "build": "node ./esbuild.mjs prod",
+    "hot": "node ./esbuild.mjs dev",
     "lint": "eslint src",
     "release": "npm run build && node ./bin/deploy.js \"$(git tag --points-at HEAD)\""
   },
@@ -21,9 +21,9 @@
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.470.0",
-    "dotenv": "^8.2.0",
-    "esbuild": "^0.15.13",
-    "esbuild-sass-plugin": "^2.4.0",
+    "dotenv": "^16.4.7",
+    "esbuild": "^0.25.0",
+    "esbuild-sass-plugin": "^3.3.1",
     "eslint": "^6.7.2",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.19.1",
