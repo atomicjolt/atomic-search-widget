@@ -10,7 +10,8 @@ const FRAME_ELEMENT_NAME = 'atomic-search-modal';
 function placeholderText() {
   if (window.location.pathname === '/d2l/home') {
     return t('Search my courses');
-  } if (getConfig('orgTypeId') === '3') {
+  }
+  if (getConfig('orgTypeId') === '3') {
     return t('Search this course');
   }
 
@@ -22,7 +23,7 @@ function addWidget() {
   widget.dataset.placeholderText = placeholderText();
   widget.dataset.showBranding = getConfig('showBranding', 'on');
 
-  widget.addEventListener(SEARCH_EVENT, e => {
+  widget.addEventListener(SEARCH_EVENT, (e) => {
     const query = e.detail.searchText;
 
     const modal = document.createElement(FRAME_ELEMENT_NAME);

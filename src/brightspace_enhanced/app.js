@@ -17,7 +17,7 @@ function canInjectWidget() {
 }
 
 function addSearchListener(widget, orgId) {
-  widget.addEventListener(SEARCH_EVENT, e => {
+  widget.addEventListener(SEARCH_EVENT, (e) => {
     const { searchText } = e.detail;
 
     let link = getConfig('link');
@@ -67,13 +67,17 @@ function addMobileWidget(orgType, orgId) {
 }
 
 function orgData() {
-  const courseTitleTag = document.querySelector('header nav .d2l-navigation-s-title-container a');
+  const courseTitleTag = document.querySelector(
+    'header nav .d2l-navigation-s-title-container a',
+  );
   if (courseTitleTag) {
     const pathParts = courseTitleTag.href.split('/');
     return [COURSE, pathParts[pathParts.length - 1]];
   }
 
-  const orgId = JSON.parse(document.querySelector('html').dataset.heContext).orgUnitId;
+  const orgId = JSON.parse(
+    document.querySelector('html').dataset.heContext,
+  ).orgUnitId;
   return [ORG, orgId];
 }
 

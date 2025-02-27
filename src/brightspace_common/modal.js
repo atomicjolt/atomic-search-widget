@@ -29,11 +29,11 @@ class Modal extends HTMLElement {
     style.textContent = styles;
     shadow.append(style, htmlToElement(modalHTML(frameSrc)));
 
-    const onMessage = e => listenToPostMessages(e, query);
+    const onMessage = (e) => listenToPostMessages(e, query);
 
     window.addEventListener('message', onMessage);
 
-    shadow.querySelector('button').addEventListener('click', e => {
+    shadow.querySelector('button').addEventListener('click', (e) => {
       e.preventDefault();
       window.removeEventListener('message', onMessage);
       this.remove();

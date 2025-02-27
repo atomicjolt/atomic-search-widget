@@ -2,7 +2,7 @@ import {
   initWidget,
   BaseWidget,
   registerWidget,
-  getEquellaDomData
+  getEquellaDomData,
 } from './widget_common';
 import { SEARCH_SVG } from '../common/html';
 
