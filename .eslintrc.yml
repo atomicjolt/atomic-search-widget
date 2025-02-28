@@ -9,4 +9,12 @@ globals:
   ENV: readonly
 ignorePatterns:
   - esbuild.mjs
-rules: {}
+rules:
+  no-undef: "warn"
+  "@typescript-eslint/no-unused-vars":
+    - "warn"
+    - {
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_",
+      "caughtErrorsIgnorePattern": "^_"
+    }

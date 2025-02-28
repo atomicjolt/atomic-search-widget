@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import './desktop_widget';
 import './mobile_widget';
 import { SEARCH_EVENT, EQUELLA_SEARCH } from './widget_common';
@@ -9,6 +8,7 @@ import {
   receiveQueryVariables,
   sendQueryVariables,
 } from './query_params';
+import { htmlToElement } from '../common/html';
 
 let APP_IFRAME;
 
@@ -73,15 +73,20 @@ function allModuleProgress(courseIds, cb) {
   const promises = courseIds.map(
     (id) =>
       new Promise((resolve) => {
-        $.ajax({
-          url: `/courses/${id}/modules/progressions.json?user_id=${ENV.current_user_id}`,
-          dataType: 'text',
-        })
-          .done((data) => {
+        fetch(
+          `/courses/${id}/modules/progressions.json?user_id=${ENV.current_user_id}`,
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.text();
+          })
+          .then((data) => {
             const json = JSON.parse(data.replace(/^while\(1\);/, ''));
             resolve({ [id]: json });
           })
-          .fail(() => {
+          .catch(() => {
             // sometimes they will get 401's from this call. proceed with modules we
             // did manage to load, otherwise they will be stuck waiting
             resolve({});
@@ -157,7 +162,7 @@ function ajHandleComm(event) {
         default:
           break;
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore errors
     }
   }
@@ -205,6 +210,10 @@ const SEARCH_WORDS = [
   'Tüm',
 ];
 
+function elementMatchesSearchWord(el) {
+  return SEARCH_WORDS.some((word) => el.textContent.trim() === word)
+}
+
 function getToolUrl() {
   if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
     const toolPath = `external_tools/${atomicSearchConfig.externalToolId}`;
@@ -217,32 +226,40 @@ function getToolUrl() {
     return `/accounts/${atomicSearchConfig.accountId}/${toolPath}?launch_type=global_navigation`;
   }
 
-  for (let i = 0; i < SEARCH_WORDS.length; i++) {
-    const word = SEARCH_WORDS[i];
-    const baseSelector = `a:contains("${word}")`;
-    // this could be within a course or subaccount
-    const localNavElement = $(`#section-tabs ${baseSelector}`);
-    const globalNavElement = $(`#menu ${baseSelector}`);
+  // local nav could be within a course or subaccount
+  const localNavLinks = Array.from(
+    document.querySelectorAll('#section-tabs a[href*="/external_tools"]'),
+  );
+  const localNavElement = localNavLinks.find(
+    (link) =>
+      link.href.match(EXTERNAL_TOOL_REGEX) &&
+      elementMatchesSearchWord(link)
+  );
 
-    if (
-      localNavElement.attr('href') &&
-      localNavElement.attr('href').match(EXTERNAL_TOOL_REGEX) &&
-      localNavElement[0].text.trim() === word
-    ) {
-      return localNavElement.attr('href');
-    }
-    if (
-      globalNavElement.attr('href') &&
-      globalNavElement.find('.menu-item__text').text().trim() === word
-    ) {
-      const toolPath = globalNavElement.attr('href').match(EXTERNAL_TOOL_REGEX);
-      const contextMatch = window.location.pathname.match(PATH_REGEX);
-      if (contextMatch && toolPath) {
-        return `${contextMatch[0]}${toolPath[0]}`;
-      }
+  if (localNavElement) {
+    return localNavElement.href;
+  }
 
-      return globalNavElement.attr('href');
+  const globalNavLinks = Array.from(
+    document.querySelectorAll(`#menu a[href*="/external_tools"]`),
+  );
+  const globalNavElement = globalNavLinks.find((link) => {
+    const textEl = link.querySelector('.menu-item__text');
+    return (
+      textEl &&
+      elementMatchesSearchWord(textEl) &&
+      link.href.match(EXTERNAL_TOOL_REGEX)
+    );
+  });
+
+  if (globalNavElement) {
+    const toolPath = globalNavElement.href.match(EXTERNAL_TOOL_REGEX);
+    const contextMatch = window.location.pathname.match(PATH_REGEX);
+    if (contextMatch && toolPath) {
+      return `${contextMatch[0]}${toolPath[0]}`;
     }
+
+    return globalNavElement.href;
   }
 
   return null;
@@ -252,13 +269,14 @@ const BIG_WIDGET_ID = 'ajas-search-widget';
 
 function addBigWidget(placeholder) {
   function buildHTML(cssClass) {
-    return `
+    const htmlText = `
       <atomic-search-desktop-widget
         id="${BIG_WIDGET_ID}"
         data-css-class="${cssClass}"
         data-placeholder="${placeholder}"
       ></atomic-search-widget>
     `;
+    return htmlToElement(htmlText);
   }
 
   const path = window.location.pathname;
@@ -266,22 +284,24 @@ function addBigWidget(placeholder) {
 
   if (path === '/') {
     // Dashboard page.
-    const html = buildHTML('ajas-search-widget--dashboard');
-    node = $(html).prependTo('.ic-Dashboard-header__actions');
+    node = buildHTML('ajas-search-widget--dashboard');
+
+    document.querySelector('.ic-Dashboard-header__actions').appendChild(node);
   } else if (path.match(/^\/courses\/?$/i)) {
     // All courses page.
-    const html = buildHTML('ajas-search-widget--all-courses');
-    node = $(html).insertAfter('.header-bar');
+    node = buildHTML('ajas-search-widget--all-courses');
+
+    document.querySelector('.header-bar').after(node);
   } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) {
     // Course files page. Not individual file pages though.
     // NOTE This one is not working at the moment. It seems that the parent node
     // is removed, and the mutation observer never fires
-    const html = buildHTML('ajas-search-widget--files');
-    node = $(html).insertAfter('.ic-app-crumbs');
+    node = buildHTML('ajas-search-widget--files');
+    document.querySelector('.ic-app-crumbs').after(node);
   } else {
     // Any course page.
-    const html = buildHTML('ajas-search-widget--files');
-    node = $(html).appendTo('.right-of-crumbs');
+    node = buildHTML('ajas-search-widget--files');
+    node = document.querySelector('.right-of-crumbs').appendChild(node);
   }
 
   return [node, BIG_WIDGET_ID];
@@ -290,14 +310,15 @@ function addBigWidget(placeholder) {
 const SMALL_WIDGET_ID = 'ajas-search-widget-mobile';
 
 function addSmallWidget(placeholder) {
-  const html = `
+  const node = htmlToElement(`
     <atomic-search-mobile-widget
       id="${SMALL_WIDGET_ID}"
       data-placeholder="${placeholder}"
     ></atomic-search-widget>
-  `;
+  `);
 
-  const node = $(html).insertAfter('.mobile-header-title');
+
+  document.querySelector('.mobile-header-title').after(node);
   node.parent().css('position', 'relative');
 
   return [node, SMALL_WIDGET_ID];
@@ -335,14 +356,14 @@ function addWidget(addToDOM, attemptNumber) {
   }
 
   const [widget, id] = addToDOM(placeholder);
-  if (widget.length === 0) {
+  if (!widget) {
     // not incrementing attemptNumber here because repeating this isn't too
     // bad
     setTimeout(() => addWidget(addToDOM, attemptNumber), 50);
     return;
   }
 
-  widget[0].addEventListener(SEARCH_EVENT, (e) => {
+  widget.addEventListener(SEARCH_EVENT, (e) => {
     const { searchText, searchType } = e.detail;
     if (APP_IFRAME) {
       const query = getQuery();
@@ -387,7 +408,7 @@ function addWidget(addToDOM, attemptNumber) {
     }
   });
 
-  observer.observe(widget.parent()[0], { childList: true });
+  observer.observe(widget.parentElement, { childList: true });
 }
 
 // an instance of the script is already running
