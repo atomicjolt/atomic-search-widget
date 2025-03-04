@@ -4,7 +4,6 @@ import styles from '../brightspace_common/styles.scss';
 import { htmlToElement, SEARCH_SVG } from '../common/html';
 
 function widgetHtml(placeholderText, showBranding) {
-
   const brandingClass = showBranding ? '' : 'no-branding';
   return `
     <div class="mobile-widget ${brandingClass}">
@@ -31,12 +30,17 @@ class Widget extends HTMLElement {
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
     style.textContent = styles;
-    shadow.append(style, htmlToElement(widgetHtml(placeholderText, showBranding === 'on')));
+    shadow.append(
+      style,
+      htmlToElement(widgetHtml(placeholderText, showBranding === 'on')),
+    );
 
-    shadow.querySelector('form').addEventListener('submit', e => {
+    shadow.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
       const searchText = shadow.querySelector('input').value;
-      this.dispatchEvent(new CustomEvent(SEARCH_EVENT, { detail: { searchText } }));
+      this.dispatchEvent(
+        new CustomEvent(SEARCH_EVENT, { detail: { searchText } }),
+      );
     });
   }
 }

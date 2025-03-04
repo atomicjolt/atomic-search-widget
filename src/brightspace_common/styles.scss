@@ -25,7 +25,7 @@
     height: 42px;
     width: 42px;
     border-radius: 6px;
-    background: #FFF;
+    background: #fff;
     border: none;
     padding: 0;
     position: relative;
@@ -55,12 +55,12 @@
     }
 
     &:hover {
-      --svg-fill: #FFF;
-      --close-fill: #FFF;
+      --svg-fill: #fff;
+      --close-fill: #fff;
       cursor: pointer;
       background-color: #006fbf;
 
-      &+.tooltip {
+      & + .tooltip {
         opacity: 1;
         visibility: visible;
       }
@@ -71,13 +71,13 @@
     }
 
     &:focus-visible {
-      --svg-fill: #FFF;
-      --close-fill: #FFF;
-      outline: 2px solid #FFF;
+      --svg-fill: #fff;
+      --close-fill: #fff;
+      outline: 2px solid #fff;
       outline-offset: -4px;
       background-color: #006fbf;
 
-      &+.tooltip {
+      & + .tooltip {
         opacity: 1;
         visibility: visible;
       }
@@ -107,7 +107,7 @@
     input {
       height: 36px;
       width: 240px;
-      border: 1px solid #CCC;
+      border: 1px solid #ccc;
       font-size: 14px;
       padding-inline: 12px 42px;
       border-radius: 4px 4px 0 4px;
@@ -116,10 +116,10 @@
       &:focus {
         border-color: #006fbf;
         outline: 1px solid #006fbf;
-        box-shadow: 0 0 0 4px #FFF;
+        box-shadow: 0 0 0 4px #fff;
 
-        &+p {
-          box-shadow: 4px 0 0 0 #FFF;
+        & + p {
+          box-shadow: 4px 0 0 0 #fff;
         }
       }
     }
@@ -128,7 +128,7 @@
       position: absolute;
       right: 0;
       top: 100%;
-      background-color: #FFF;
+      background-color: #fff;
       border-radius: 0 0 4px 4px;
       z-index: -1;
       padding: 2px 4px;
@@ -171,7 +171,7 @@
       }
 
       &:hover {
-        --svg-fill: #FFF;
+        --svg-fill: #fff;
         cursor: pointer;
         background-color: #006fbf;
       }
@@ -181,7 +181,7 @@
       }
 
       &:focus-visible {
-        --svg-fill: #FFF;
+        --svg-fill: #fff;
         outline: 2px solid #006fbf;
         outline-offset: 2px;
         background-color: #006fbf;
@@ -195,7 +195,7 @@
     margin-block: 0;
     font-size: 12px;
     line-height: 1.4;
-    color: #FFF;
+    color: #fff;
     background-color: #212121;
     padding: 8px 12px;
     border-radius: 5px;
@@ -207,7 +207,7 @@
     transition: opacity 100ms ease;
 
     &::before {
-      content: "";
+      content: '';
       width: 16px;
       height: 16px;
       border-radius: 3px;
@@ -279,7 +279,7 @@
     input {
       height: 42px;
       width: 100%;
-      border: 1px solid #CCC;
+      border: 1px solid #ccc;
       font-size: 16px;
       padding-inline: 12px 42px;
       border-radius: 4px;
@@ -332,7 +332,7 @@
       }
 
       &:hover {
-        --svg-fill: #FFF;
+        --svg-fill: #fff;
         cursor: pointer;
         background-color: #006fbf;
       }
@@ -342,7 +342,7 @@
       }
 
       &:focus-visible {
-        --svg-fill: #FFF;
+        --svg-fill: #fff;
         outline: 2px solid #006fbf;
         outline-offset: 2px;
         background-color: #006fbf;

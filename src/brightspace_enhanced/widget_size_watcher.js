@@ -1,8 +1,10 @@
 function lastVisibleNavItem() {
-  let items = document.querySelectorAll('.d2l-navigation-s-main-wrapper .d2l-navigation-s-item');
+  let items = document.querySelectorAll(
+    '.d2l-navigation-s-main-wrapper .d2l-navigation-s-item',
+  );
   items = Array.from(items).reverse();
 
-  return items.find(item => !item.dataset.hidden);
+  return items.find((item) => !item.dataset.hidden);
 }
 
 function checkSize(widget) {

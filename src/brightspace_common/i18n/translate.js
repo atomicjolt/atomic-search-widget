@@ -7,8 +7,10 @@ function getSelectedLanguage() {
   // Brightspace adds this attribute to the html tag when the language is set
   switch (document.documentElement.lang) {
     // dutch
-    case 'nl-nl': return 'nl';
-    default: return 'en';
+    case 'nl-nl':
+      return 'nl';
+    default:
+      return 'en';
   }
 }
 
@@ -16,8 +18,10 @@ const selectedLanguage = getSelectedLanguage();
 
 function getTranslatedText(key) {
   switch (selectedLanguage) {
-    case 'nl': return nl[key];
-    default: return en[key];
+    case 'nl':
+      return nl[key];
+    default:
+      return en[key];
   }
 }
 

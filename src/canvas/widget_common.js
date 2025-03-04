@@ -12,12 +12,7 @@ const CARET_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://w
     </g>
   </svg>`;
 
-export {
-  CARET_SVG,
-  SEARCH_EVENT,
-  DEFAULT_SEARCH,
-  EQUELLA_SEARCH,
-};
+export { CARET_SVG, SEARCH_EVENT, DEFAULT_SEARCH, EQUELLA_SEARCH };
 
 export function initWidget(widget, htmlText) {
   const shadow = widget.attachShadow({ mode: 'open' });
@@ -27,10 +22,12 @@ export function initWidget(widget, htmlText) {
 
   shadow.append(style, htmlToElement(htmlText));
 
-  shadow.querySelector('form').addEventListener('submit', e => {
+  shadow.querySelector('form').addEventListener('submit', (e) => {
     const searchText = shadow.querySelector('input').value;
     const searchType = e.submitter.value || DEFAULT_SEARCH;
-    widget.dispatchEvent(new CustomEvent(SEARCH_EVENT, { detail: { searchText, searchType } }));
+    widget.dispatchEvent(
+      new CustomEvent(SEARCH_EVENT, { detail: { searchText, searchType } }),
+    );
   });
 
   const menuTarget = shadow.getElementById('menu-target');
@@ -43,7 +40,7 @@ export function initWidget(widget, htmlText) {
       menuDropdown.classList.remove('hidden');
     });
 
-    [menuOverlay, menuDropdown].forEach(element => {
+    [menuOverlay, menuDropdown].forEach((element) => {
       element.addEventListener('click', () => {
         menuOverlay.classList.add('hidden');
         menuDropdown.classList.add('hidden');
@@ -54,7 +51,7 @@ export function initWidget(widget, htmlText) {
   // canvas has global keyboard shortcuts. Normally they don't apply when you're
   // in an input, but since this is a shadow DOM their check doesn't work. So we
   // just stop the event from bubbling here.
-  shadow.querySelector('input').addEventListener('keydown', e => {
+  shadow.querySelector('input').addEventListener('keydown', (e) => {
     e.stopPropagation();
   });
 }
@@ -87,7 +84,8 @@ function userHasEquella() {
 
 export const getEquellaDomData = () => {
   const withEquella = userHasEquella();
-  const dropdownHtml = withEquella ? `
+  const dropdownHtml = withEquella
+    ? `
     <button id="menu-target" type="button" aria-label="open dropdown" class="ajas-search-widget__btn--caret">
       ${CARET_SVG}
     </button>
@@ -95,7 +93,8 @@ export const getEquellaDomData = () => {
     <div id="menu-dropdown" class="ajas-search-widget__dropdown hidden">
       <button type="submit" value="${EQUELLA_SEARCH}">Search openEQUELLA content</button>
     </div>
-  ` : '';
+  `
+    : '';
 
   const equellaClass = withEquella ? 'ajas-search-widget--equella' : '';
 

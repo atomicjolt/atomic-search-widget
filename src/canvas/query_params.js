@@ -16,7 +16,7 @@ export function sendQueryVariables(source) {
 
   const message = { subject: 'atomicjolt.searchParams' };
 
-  Object.keys(VAR_MAPPING).forEach(queryName => {
+  Object.keys(VAR_MAPPING).forEach((queryName) => {
     const messageName = VAR_MAPPING[queryName];
     const value = query.get(queryName);
     if (value) {
@@ -31,7 +31,7 @@ export function sendQueryVariables(source) {
 export function receiveQueryVariables(message) {
   const query = getQuery();
 
-  Object.keys(VAR_MAPPING).forEach(queryName => {
+  Object.keys(VAR_MAPPING).forEach((queryName) => {
     const messageName = VAR_MAPPING[queryName];
     const value = message[messageName];
     if (value) {
@@ -42,9 +42,5 @@ export function receiveQueryVariables(message) {
   });
 
   const newState = `?${query.toString()}`;
-  window.history.pushState(
-    null,
-    '',
-    newState
-  );
+  window.history.pushState(null, '', newState);
 }

@@ -7,12 +7,14 @@ dotenv.config();
 const [env] = process.argv.slice(2);
 
 const baseConfig = {
-  entryPoints: ['src/atomic_search_widget.js', 'src/brightspace.js', 'src/brightspace_enhanced.js'],
+  entryPoints: [
+    'src/atomic_search_widget.js',
+    'src/brightspace.js',
+    'src/brightspace_enhanced.js',
+  ],
   bundle: true,
   logLevel: 'info',
-  plugins: [
-    sassPlugin({ type: 'css-text' }),
-  ],
+  plugins: [sassPlugin({ type: 'css-text' })],
 };
 
 if (env === 'dev') {
@@ -22,18 +24,13 @@ if (env === 'dev') {
     outdir: 'build/dev',
   });
 
-  console.log("xyz");
-  
-  const x = await ctx.serve(
-    {
-      port: parseInt(process.env.ASSETS_PORT, 10),
-    },
-  )
-  console.log(x)
+  await ctx.serve({
+    port: parseInt(process.env.ASSETS_PORT, 10),
+  });
 } else {
   build({
     ...baseConfig,
     outdir: 'build/prod',
-    minify: true
+    minify: true,
   });
 }

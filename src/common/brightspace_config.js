@@ -1,4 +1,4 @@
-const getBrightspaceConfig = configName => (key, defaultValue) => {
+const getBrightspaceConfig = (configName) => (key, defaultValue) => {
   const config = window[configName];
   if (!config) {
     throw `Atomic Search config missing, expected ${configName}`;
