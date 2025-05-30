@@ -8,6 +8,7 @@ const VAR_MAPPING = {
   ajpage: 'page',
   ajcontext: 'context',
   ajfilters: 'filters',
+  ajsmart: 'semantic',
 };
 
 // sends current query vars to Search, this happens when the app first loads
