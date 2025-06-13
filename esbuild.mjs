@@ -22,14 +22,7 @@ if (env === 'dev') {
     outdir: 'build/dev',
   });
 
-  console.log("xyz");
-  
-  const x = await ctx.serve(
-    {
-      port: parseInt(process.env.ASSETS_PORT, 10),
-    },
-  )
-  console.log(x)
+  await ctx.watch()
 } else {
   build({
     ...baseConfig,
