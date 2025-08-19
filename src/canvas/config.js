@@ -3,5 +3,5 @@
 export default window.atomicSearchConfig || {
   accountId: null,
   externalToolId: null,
-  hasEquella: false
+  hasEquella: false,
 };

@@ -1,45 +1,12 @@
 ---
-extends: airbnb-base
+extends:
+  - "plugin:@typescript-eslint/recommended"
+parser: "@typescript-eslint/parser"
 env:
   browser: true
   es6: true
 globals:
   ENV: readonly
-plugins:
-  - import
 ignorePatterns:
   - esbuild.mjs
-rules:
-  arrow-parens:
-    - warn
-    - as-needed
-  linebreak-style:
-    - error
-    - unix
-  import/no-unresolved: 0
-  import/prefer-default-export: 0
-  no-multi-spaces:
-    - 1
-    - exceptions:
-        VariableDeclarator: true
-        ImportDeclaration: true
-        AssignmentExpression: true
-  comma-dangle:
-    - error
-    - only-multiline
-  import/no-extraneous-dependencies:
-    - error
-    - devDependencies: true
-  padded-blocks: 0
-  key-spacing: 0
-  space-before-function-paren:
-    - 2
-    - never
-  func-names:
-    - 2
-    - as-needed
-  import/extensions: 0
-  no-plusplus: 0
-  # it's useful to prefix custom element attributes with a '_' so they don't
-  # collide with built in functions
-  no-underscore-dangle: 0
+rules: {}

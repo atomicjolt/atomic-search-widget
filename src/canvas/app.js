@@ -4,21 +4,33 @@ import './mobile_widget';
 import { SEARCH_EVENT, EQUELLA_SEARCH } from './widget_common';
 import handleTrayExpand from './expand_lti_launch';
 import atomicSearchConfig from './config';
-import { getQuery, receiveQueryVariables, sendQueryVariables } from './query_params';
+import {
+  getQuery,
+  receiveQueryVariables,
+  sendQueryVariables,
+} from './query_params';
 
 let APP_IFRAME;
 
 function updateSearchWidgetText(newText) {
-  document.querySelectorAll('atomic-search-desktop-widget,atomic-search-mobile-widget').forEach(widget => {
-    widget.updateSearchText(newText);
-  });
+  document
+    .querySelectorAll(
+      'atomic-search-desktop-widget,atomic-search-mobile-widget',
+    )
+    .forEach((widget) => {
+      widget.updateSearchText(newText);
+    });
 }
 
 function cacheResults(results) {
   try {
-    localStorage.setItem('atomicjoltModuleProgress', JSON.stringify({
-      time: Date.now(), data: results
-    }));
+    localStorage.setItem(
+      'atomicjoltModuleProgress',
+      JSON.stringify({
+        time: Date.now(),
+        data: results,
+      }),
+    );
   } catch (e) {
     console.warn('failed to write to localStorage', e);
   }
@@ -30,7 +42,8 @@ function getCachedResults() {
     if (stored) {
       stored = JSON.parse(stored);
 
-      if (Date.now() - stored.time < 3600000) { // one hour
+      if (Date.now() - stored.time < 3600000) {
+        // one hour
         return stored.data;
       }
     }
@@ -57,27 +70,32 @@ function allModuleProgress(courseIds, cb) {
     return;
   }
 
-  const promises = courseIds.map(id =>
-    new Promise((resolve) => {
-      $.ajax({
-        url: `/courses/${id}/modules/progressions.json?user_id=${ENV.current_user_id}`,
-        dataType: 'text',
-      }).done((data) => {
-        const json = JSON.parse(data.replace(/^while\(1\);/, ''));
-        resolve({ [id]: json });
-      }).fail(() => {
-        // sometimes they will get 401's from this call. proceed with modules we
-        // did manage to load, otherwise they will be stuck waiting
-        resolve({});
-      });
-    })
+  const promises = courseIds.map(
+    (id) =>
+      new Promise((resolve) => {
+        $.ajax({
+          url: `/courses/${id}/modules/progressions.json?user_id=${ENV.current_user_id}`,
+          dataType: 'text',
+        })
+          .done((data) => {
+            const json = JSON.parse(data.replace(/^while\(1\);/, ''));
+            resolve({ [id]: json });
+          })
+          .fail(() => {
+            // sometimes they will get 401's from this call. proceed with modules we
+            // did manage to load, otherwise they will be stuck waiting
+            resolve({});
+          });
+      }),
   );
 
-  Promise.all(promises).then((results) => {
-    const progress = results.reduce((acc, pair) => ({ ...acc, ...pair }), {});
-    cb(progress);
-    cacheResults(progress);
-  }).catch(error => console.error(error));
+  Promise.all(promises)
+    .then((results) => {
+      const progress = results.reduce((acc, pair) => ({ ...acc, ...pair }), {});
+      cb(progress);
+      cacheResults(progress);
+    })
+    .catch((error) => console.error(error));
 }
 
 function sendModuleProgress(source, progress) {
@@ -86,7 +104,7 @@ function sendModuleProgress(source, progress) {
       subject: 'atomicjolt.moduleProgress',
       moduleProgress: progress,
     }),
-    '*'
+    '*',
   );
 }
 
@@ -110,28 +128,33 @@ function ajHandleComm(event) {
           }
           pushQuery(APP_IFRAME);
           break;
-        } case 'atomicjolt.updateSearchParams': {
+        }
+        case 'atomicjolt.updateSearchParams': {
           receiveQueryVariables(message);
           updateSearchWidgetText(message.search);
           break;
-        } case 'atomicjolt.requestModuleProgress': {
+        }
+        case 'atomicjolt.requestModuleProgress': {
           // Send a 'ping' back immediately. If the app doesn't receive it, it
           // will assume they don't have global JS enabled.
           event.source.postMessage(
             JSON.stringify({
               subject: 'atomicjolt.ping',
-            }), '*'
+            }),
+            '*',
           );
           if (message.courseIds) {
-            allModuleProgress(message.courseIds,
-              progress => sendModuleProgress(event.source, progress)
+            allModuleProgress(message.courseIds, (progress) =>
+              sendModuleProgress(event.source, progress),
             );
           }
           break;
-        } case 'atomicjolt.expandCanvasTray': {
+        }
+        case 'atomicjolt.expandCanvasTray': {
           handleTrayExpand(event);
           break;
-        } default:
+        }
+        default:
           break;
       }
     } catch (error) {
@@ -142,7 +165,9 @@ function ajHandleComm(event) {
 
 function ajEnableListener() {
   // Create IE + others compatible event handler
-  const eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
+  const eventMethod = window.addEventListener
+    ? 'addEventListener'
+    : 'attachEvent';
   const eventer = window[eventMethod];
   Window.messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message';
   // Listen to message from child window
@@ -152,7 +177,33 @@ function ajEnableListener() {
 // in consortium searches, the id might be something like 4346~2848
 const PATH_REGEX = /^\/(courses|accounts)\/[0-9~]+/i;
 const EXTERNAL_TOOL_REGEX = /\/external_tools\/[0-9]+/i;
-const SEARCH_WORDS = ['Search', 'Søk', 'Buscar', 'Rechercher', 'Търсене', 'Cerca', 'Hledat', 'Søg', 'Suche', 'Αναζήτηση', 'Ikastaro', 'Etsi', 'Cuardaigh', 'सभी', 'Keresés', 'Որոնել', 'Cari', 'Cerca', 'Hemî', 'Doorzoek', 'Pesquisar', 'Căutați', 'Поиск', 'Sök', 'Tüm'];
+const SEARCH_WORDS = [
+  'Search',
+  'Søk',
+  'Buscar',
+  'Rechercher',
+  'Търсене',
+  'Cerca',
+  'Hledat',
+  'Søg',
+  'Suche',
+  'Αναζήτηση',
+  'Ikastaro',
+  'Etsi',
+  'Cuardaigh',
+  'सभी',
+  'Keresés',
+  'Որոնել',
+  'Cari',
+  'Cerca',
+  'Hemî',
+  'Doorzoek',
+  'Pesquisar',
+  'Căutați',
+  'Поиск',
+  'Sök',
+  'Tüm',
+];
 
 function getToolUrl() {
   if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
@@ -173,13 +224,17 @@ function getToolUrl() {
     const localNavElement = $(`#section-tabs ${baseSelector}`);
     const globalNavElement = $(`#menu ${baseSelector}`);
 
-    if (localNavElement.attr('href')
-      && localNavElement.attr('href').match(EXTERNAL_TOOL_REGEX)
-      && localNavElement[0].text.trim() === word
+    if (
+      localNavElement.attr('href') &&
+      localNavElement.attr('href').match(EXTERNAL_TOOL_REGEX) &&
+      localNavElement[0].text.trim() === word
     ) {
       return localNavElement.attr('href');
     }
-    if (globalNavElement.attr('href') && globalNavElement.find('.menu-item__text').text().trim() === word) {
+    if (
+      globalNavElement.attr('href') &&
+      globalNavElement.find('.menu-item__text').text().trim() === word
+    ) {
       const toolPath = globalNavElement.attr('href').match(EXTERNAL_TOOL_REGEX);
       const contextMatch = window.location.pathname.match(PATH_REGEX);
       if (contextMatch && toolPath) {
@@ -209,18 +264,22 @@ function addBigWidget(placeholder) {
   const path = window.location.pathname;
   let node;
 
-  if (path === '/') { // Dashboard page.
+  if (path === '/') {
+    // Dashboard page.
     const html = buildHTML('ajas-search-widget--dashboard');
     node = $(html).prependTo('.ic-Dashboard-header__actions');
-  } else if (path.match(/^\/courses\/?$/i)) { // All courses page.
+  } else if (path.match(/^\/courses\/?$/i)) {
+    // All courses page.
     const html = buildHTML('ajas-search-widget--all-courses');
     node = $(html).insertAfter('.header-bar');
-  } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) { // Course files page. Not individual file pages though.
+  } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) {
+    // Course files page. Not individual file pages though.
     // NOTE This one is not working at the moment. It seems that the parent node
     // is removed, and the mutation observer never fires
     const html = buildHTML('ajas-search-widget--files');
     node = $(html).insertAfter('.ic-app-crumbs');
-  } else { // Any course page.
+  } else {
+    // Any course page.
     const html = buildHTML('ajas-search-widget--files');
     node = $(html).appendTo('.right-of-crumbs');
   }
@@ -255,8 +314,9 @@ function addWidget(addToDOM, attemptNumber) {
   // with canvas
   if (attemptNumber >= 5) return;
 
-  const isSearchableLocation = window.location.pathname.match(/^\/(accounts|courses)/i)
-    || window.location.pathname === '/';
+  const isSearchableLocation =
+    window.location.pathname.match(/^\/(accounts|courses)/i) ||
+    window.location.pathname === '/';
 
   if (!isSearchableLocation) return;
 
@@ -282,7 +342,7 @@ function addWidget(addToDOM, attemptNumber) {
     return;
   }
 
-  widget[0].addEventListener(SEARCH_EVENT, e => {
+  widget[0].addEventListener(SEARCH_EVENT, (e) => {
     const { searchText, searchType } = e.detail;
     if (APP_IFRAME) {
       const query = getQuery();
@@ -293,16 +353,12 @@ function addWidget(addToDOM, attemptNumber) {
         query.set('ajcontext', 'OPEN_EQUELLA');
       }
 
-      window.history.pushState(
-        null,
-        '',
-        `?${query.toString()}`,
-      );
+      window.history.pushState(null, '', `?${query.toString()}`);
       pushQuery(APP_IFRAME);
     } else {
       const query = new URLSearchParams({
         ajsearch: searchText,
-        ajpage: '1'
+        ajpage: '1',
       });
       if (window.location.pathname.match(/\/(discussion_topics)/i)) {
         query.set('ajfilters', 'discussion_replies');
@@ -315,16 +371,15 @@ function addWidget(addToDOM, attemptNumber) {
     }
   });
 
-  const observer = new MutationObserver(mutations => {
+  const observer = new MutationObserver((mutations) => {
     let wasRemoved = false;
-    mutations.forEach(mutation => {
+    mutations.forEach((mutation) => {
       const searchNode = Array.from(mutation.removedNodes).find(
-        node => node.id === id
+        (node) => node.id === id,
       );
       if (searchNode) {
         wasRemoved = true;
       }
-
     });
     if (wasRemoved) {
       observer.disconnect();

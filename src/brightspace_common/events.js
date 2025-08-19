@@ -11,7 +11,10 @@ export default function listenToPostMessages(e, searchTerm) {
   if (message.subject === 'atomicjolt.requestSearchParams') {
     if (searchTerm) {
       const iframe = e.source;
-      iframe.postMessage({ subject: 'atomicjolt.searchParams', search: searchTerm }, '*');
+      iframe.postMessage(
+        { subject: 'atomicjolt.searchParams', search: searchTerm },
+        '*',
+      );
     }
   }
 }

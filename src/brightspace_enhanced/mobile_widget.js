@@ -5,7 +5,8 @@ import { SEARCH_EVENT } from './widget_common';
 import t from '../brightspace_common/i18n/translate';
 
 function widgetHtml(orgType, showBranding) {
-  const placeholderText = orgType === COURSE ? t('Search this course') : t('Search my courses');
+  const placeholderText =
+    orgType === COURSE ? t('Search this course') : t('Search my courses');
 
   const brandingClass = showBranding ? '' : 'no-branding';
   return `
@@ -45,12 +46,17 @@ class MobileWidget extends HTMLElement {
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
     style.textContent = styles;
-    shadow.append(style, htmlToElement(widgetHtml(orgType, showBranding === 'on')));
+    shadow.append(
+      style,
+      htmlToElement(widgetHtml(orgType, showBranding === 'on')),
+    );
 
-    shadow.querySelector('form').addEventListener('submit', e => {
+    shadow.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
       const searchText = shadow.querySelector('input').value;
-      this.dispatchEvent(new CustomEvent(SEARCH_EVENT, { detail: { searchText } }));
+      this.dispatchEvent(
+        new CustomEvent(SEARCH_EVENT, { detail: { searchText } }),
+      );
       closeMobileMenu();
     });
   }
