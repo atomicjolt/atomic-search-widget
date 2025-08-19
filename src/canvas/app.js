@@ -219,15 +219,17 @@ function getToolUrl() {
 
   for (let i = 0; i < SEARCH_WORDS.length; i++) {
     const word = SEARCH_WORDS[i];
-    const baseSelector = `a:contains("${word}")`;
+    const baseSelector = `a:contains("${word}")[href*="/external_tools/"]`;
     // this could be within a course or subaccount
     const localNavElement = $(`#section-tabs ${baseSelector}`);
     const globalNavElement = $(`#menu ${baseSelector}`);
 
     if (
       localNavElement.attr('href') &&
-      localNavElement.attr('href').match(EXTERNAL_TOOL_REGEX) &&
-      localNavElement[0].text.trim() === word
+      (localNavElement[0].text.trim() === word ||
+        // This is a special case to allow the E2E test to hit different search
+        // environments
+        localNavElement[0].text.trim().startsWith(`Search (`))
     ) {
       return localNavElement.attr('href');
     }
