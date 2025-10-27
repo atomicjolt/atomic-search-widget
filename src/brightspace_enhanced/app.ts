@@ -10,7 +10,6 @@ console.log('[AJ] global JS attached');
 
 const MODAL_ELEMENT_NAME = 'atomic-search-enhanced-modal';
 
-window.atomicSearchCustomConfig.supportedOrgs= ["6606"]
 const config = new ConfigWrapper('brightspaceCustom');
 
 const PARENT_SELECTOR = '.d2l-navigation-s-main-wrapper';
