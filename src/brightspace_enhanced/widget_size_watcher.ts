@@ -1,13 +1,15 @@
-function lastVisibleNavItem() {
-  let items = document.querySelectorAll(
+import type { DesktopWidget } from './desktop_widget';
+
+function lastVisibleNavItem(): HTMLElement {
+  const itemElements = document.querySelectorAll<HTMLElement>(
     '.d2l-navigation-s-main-wrapper .d2l-navigation-s-item',
   );
-  items = Array.from(items).reverse();
+  const items = Array.from(itemElements).reverse();
 
-  return items.find((item) => !item.dataset.hidden);
+  return items.find((item) => !item.dataset.hidden)!;
 }
 
-function checkSize(widget) {
+function checkSize(widget: DesktopWidget) {
   const item = lastVisibleNavItem();
 
   const navRightEdge = item.getBoundingClientRect().right;
@@ -20,7 +22,7 @@ function checkSize(widget) {
   }
 }
 
-export default function watchWidgetSize(widget) {
+export default function watchWidgetSize(widget: DesktopWidget) {
   checkSize(widget);
   setInterval(() => checkSize(widget), 100);
 }

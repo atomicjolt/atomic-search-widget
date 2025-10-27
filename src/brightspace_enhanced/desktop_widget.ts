@@ -1,11 +1,11 @@
 import t from '../brightspace_common/i18n/translate';
 import styles from '../brightspace_common/styles.scss';
 import { CLOSE_SVG, htmlToElement, SEARCH_SVG } from '../common/html';
-import { COURSE } from './org_types';
+import { COURSE, ORG_TYPE } from './org_types';
 import { SEARCH_EVENT } from './widget_common';
 import watchWidgetSize from './widget_size_watcher';
 
-function widgetHtml(orgType, showBranding) {
+function widgetHtml(orgType: ORG_TYPE, showBranding: boolean) {
   const placeholderText =
     orgType === COURSE ? t('Search this course') : t('Search my courses');
 
@@ -33,17 +33,22 @@ function widgetHtml(orgType, showBranding) {
   `;
 }
 
-class DesktopWidget extends HTMLElement {
+type WidgetDataset = {
+  orgType: ORG_TYPE;
+  showBranding: 'on' | 'off';
+}
+
+export class DesktopWidget extends HTMLElement {
   get widgetEl() {
-    return this.shadowRoot.querySelector('.desktop-widget');
+    return this.shadowRoot!.querySelector('.desktop-widget')!;
   }
 
   get toggleButtonEl() {
-    return this.shadowRoot.querySelector('.toggle-button');
+    return this.shadowRoot!.querySelector('.toggle-button')!;
   }
 
   get inputEl() {
-    return this.shadowRoot.querySelector('input');
+    return this.shadowRoot!.querySelector('input')!;
   }
 
   toggleOpen() {
@@ -78,7 +83,7 @@ class DesktopWidget extends HTMLElement {
   }
 
   connectedCallback() {
-    const { orgType, showBranding } = this.dataset;
+    const { orgType, showBranding } = this.dataset as WidgetDataset;
 
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
@@ -88,9 +93,9 @@ class DesktopWidget extends HTMLElement {
       htmlToElement(widgetHtml(orgType, showBranding === 'on')),
     );
 
-    shadow.querySelector('form').addEventListener('submit', (e) => {
+    shadow.querySelector('form')!.addEventListener('submit', (e) => {
       e.preventDefault();
-      const searchText = shadow.querySelector('input').value;
+      const searchText = shadow.querySelector('input')!.value;
       this.dispatchEvent(
         new CustomEvent(SEARCH_EVENT, { detail: { searchText } }),
       );

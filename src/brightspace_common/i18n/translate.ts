@@ -1,7 +1,9 @@
 // I chose not to include a translation package since the widget currently has
 // no dependencies. The use is simple enough so far that this is fine.
-import en from './en';
-import nl from './nl';
+import en from './en.json';
+import nl from './nl.json';
+
+type TranslationKey = keyof typeof en;
 
 function getSelectedLanguage() {
   // Brightspace adds this attribute to the html tag when the language is set
@@ -16,7 +18,7 @@ function getSelectedLanguage() {
 
 const selectedLanguage = getSelectedLanguage();
 
-function getTranslatedText(key) {
+function getTranslatedText(key: TranslationKey) {
   switch (selectedLanguage) {
     case 'nl':
       return nl[key];
@@ -25,7 +27,7 @@ function getTranslatedText(key) {
   }
 }
 
-export default function t(key) {
+export default function t(key: TranslationKey) {
   const translated = getTranslatedText(key);
   if (translated) return translated;
 

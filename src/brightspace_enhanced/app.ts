@@ -1,9 +1,9 @@
 import registerModal from '../brightspace_common/modal';
 import getBrightspaceConfig from '../common/brightspace_config';
-import { COURSE, ORG } from './org_types';
-import { DESKTOP_WIDGET_NAME, registerDesktopWidget } from './desktop_widget';
+import { COURSE, ORG, ORG_TYPE } from './org_types';
+import { DESKTOP_WIDGET_NAME, DesktopWidget, registerDesktopWidget } from './desktop_widget';
 import { SEARCH_EVENT } from './widget_common';
-import { MOBILE_WIDGET_NAME, registerMobileWidget } from './mobile_widget';
+import { MOBILE_WIDGET_NAME, MobileWidget, registerMobileWidget } from './mobile_widget';
 
 console.log('[AJ] global JS attached');
 
@@ -16,9 +16,11 @@ function canInjectWidget() {
   return !!document.querySelector(PARENT_SELECTOR);
 }
 
-function addSearchListener(widget, orgId) {
-  widget.addEventListener(SEARCH_EVENT, (e) => {
-    const { searchText } = e.detail;
+type Widget = DesktopWidget | MobileWidget;
+
+function addSearchListener(widget: Widget, orgId: string) {
+  widget.addEventListener(SEARCH_EVENT, (e: Event) => {
+    const searchText = (e as CustomEvent).detail.searchText;
 
     let link = getConfig('link');
     link = link.replace('{orgUnitId}', orgId);
@@ -31,43 +33,43 @@ function addSearchListener(widget, orgId) {
   });
 }
 
-function addDesktopWidget(orgType, orgId) {
-  const widget = document.createElement(DESKTOP_WIDGET_NAME);
+function addDesktopWidget(orgType: ORG_TYPE, orgId: string) {
+  const widget = document.createElement(DESKTOP_WIDGET_NAME) as DesktopWidget;
   widget.dataset.orgType = orgType;
   widget.dataset.showBranding = getConfig('showBranding', 'on');
   widget.style.position = 'absolute';
   widget.style.top = '0';
   widget.style.height = '100%';
 
-  const parent = document.querySelector('.d2l-navigation-s-main-wrapper');
+  const parent = document.querySelector<HTMLElement>('.d2l-navigation-s-main-wrapper')!;
 
   parent.after(widget);
 
-  if (parent.attributes['has-edit-menu']) {
+  if (parent.hasAttribute('has-edit-menu')) {
     widget.style.right = '80px';
     parent.style.marginRight = '5rem';
   } else {
     widget.style.right = '0px';
     parent.style.marginRight = '2.5rem';
-    widget.parentElement.style.position = 'relative';
+    widget.parentElement!.style.position = 'relative';
   }
 
   addSearchListener(widget, orgId);
 }
 
-function addMobileWidget(orgType, orgId) {
-  const widget = document.createElement(MOBILE_WIDGET_NAME);
+function addMobileWidget(orgType: ORG_TYPE, orgId: string) {
+  const widget = document.createElement(MOBILE_WIDGET_NAME) as MobileWidget;
   widget.dataset.orgType = orgType;
   widget.dataset.showBranding = getConfig('showBranding', 'on');
 
-  const parent = document.querySelector('.d2l-navigation-s-mobile-menu-nav');
+  const parent = document.querySelector<HTMLElement>('.d2l-navigation-s-mobile-menu-nav')!;
   parent.prepend(widget);
 
   addSearchListener(widget, orgId);
 }
 
 function orgData() {
-  const courseTitleTag = document.querySelector(
+  const courseTitleTag = document.querySelector<HTMLAnchorElement>(
     'header nav .d2l-navigation-s-title-container a',
   );
   if (courseTitleTag) {
@@ -76,7 +78,7 @@ function orgData() {
   }
 
   const orgId = JSON.parse(
-    document.querySelector('html').dataset.heContext,
+    document.querySelector('html')!.dataset.heContext!,
   ).orgUnitId;
   return [ORG, orgId];
 }
