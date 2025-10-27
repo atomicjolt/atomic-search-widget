@@ -26,8 +26,10 @@ type ModalData = {
 }
 
 class Modal extends HTMLElement {
+  props!: ModalData;
+
   connectedCallback() {
-    const { frameSrc, query } = this.dataset as ModalData;
+    const { frameSrc, query } = this.props;
 
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
@@ -46,6 +48,17 @@ class Modal extends HTMLElement {
   }
 }
 
-export default function registerModal(name: string) {
+export type CreateModal = (props: ModalData) => Modal;
+
+// because this modal is used by both widget scripts, we register it under a
+// unique name and return a factory function to create instances of it
+export default function registerModal(name: string): CreateModal {
   customElements.define(name, Modal);
+
+  return (props: ModalData) => {
+    const widget = document.createElement(name) as Modal;
+    widget.props = props;
+    return widget;
+
+  }
 }

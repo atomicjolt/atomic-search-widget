@@ -1,33 +1,45 @@
 import type {
   BrightspaceCustomWidgetConfig,
   BrightspaceWidgetConfig,
+  CanvasWidgetConfig,
 } from '../global';
 
 type ConfigMap = {
-  atomicSearchCustomConfig: BrightspaceCustomWidgetConfig;
-  atomicSearchConfig: BrightspaceWidgetConfig;
+  brightspaceCustom: BrightspaceCustomWidgetConfig;
+  brightspaceStandard: BrightspaceWidgetConfig;
+  canvasStandard: CanvasWidgetConfig;
 };
+
+const windowNames = {
+  brightspaceCustom: 'atomicSearchCustomConfig',
+  brightspaceStandard: 'atomicSearchConfig',
+  canvasStandard: 'atomicSearchConfig',
+} as const;
 
 type ConfigTypes = keyof ConfigMap;
 
-const getBrightspaceConfig =
-  <T extends ConfigTypes>(configName: T) =>
-  (key: keyof ConfigMap[T], defaultValue?: ConfigMap[T][typeof key]) => {
-    const config = window[configName] as ConfigMap[T];
-    const stringKey = key as string;
+export default class ConfigWrapper<T extends ConfigTypes> {
+  private configName: T;
+  private config: ConfigMap[T];
 
-    if (!config) {
-      throw `Atomic Search config missing, expected ${configName}`;
+  constructor(configName: T) {
+    this.configName = configName;
+    const windowKey = windowNames[configName];
+    this.config = window[windowKey] as ConfigMap[typeof configName];
+    if (!this.config) {
+      throw `Atomic Search config missing, expected ${this.configName}`;
     }
+  }
 
-    if (config[key]) {
-      return config[key];
+  get<K extends keyof ConfigMap[T]>(key: K, defaultValue?: ConfigMap[T][K]) {
+    if (Object.prototype.hasOwnProperty.call(this.config, key) && this.config[key] !== undefined) {
+      return this.config[key];
     }
     if (defaultValue) {
       return defaultValue;
     }
 
-    throw `Atomic Search config value missing ${configName}.${stringKey}`;
-  };
-
-export default getBrightspaceConfig;
+    throw `Atomic Search config value missing ${this.configName}.${key as string}`;
+    
+  }
+}

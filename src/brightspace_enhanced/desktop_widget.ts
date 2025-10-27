@@ -39,6 +39,8 @@ type WidgetDataset = {
 }
 
 export class DesktopWidget extends HTMLElement {
+  props!: WidgetDataset;
+
   get widgetEl() {
     return this.shadowRoot!.querySelector('.desktop-widget')!;
   }
@@ -83,7 +85,7 @@ export class DesktopWidget extends HTMLElement {
   }
 
   connectedCallback() {
-    const { orgType, showBranding } = this.dataset as WidgetDataset;
+    const { orgType, showBranding } = this.props;
 
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
@@ -108,8 +110,11 @@ export class DesktopWidget extends HTMLElement {
   }
 }
 
-export const DESKTOP_WIDGET_NAME = 'atomic-search-enhanced-desktop-widget';
+const DESKTOP_WIDGET_NAME = 'atomic-search-enhanced-desktop-widget';
+customElements.define(DESKTOP_WIDGET_NAME, DesktopWidget);
 
-export function registerDesktopWidget() {
-  customElements.define(DESKTOP_WIDGET_NAME, DesktopWidget);
+export function createDesktopWidget(props: WidgetDataset) {
+  const widget = document.createElement(DESKTOP_WIDGET_NAME) as DesktopWidget;
+  widget.props = props;
+  return widget;
 }

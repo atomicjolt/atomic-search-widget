@@ -1,21 +1,26 @@
 declare global {
   interface Window {
     atomicSearchCustomConfig?: BrightspaceCustomWidgetConfig;
-    // eventually we'll have to figure out how to handle canvas config here
-    atomicSearchConfig?: BrightspaceWidgetConfig;
+    atomicSearchConfig?: BrightspaceWidgetConfig | CanvasWidgetConfig;
     ATOMIC_SEARCH_ENHANCED_LOCKED?: boolean;
   }
 }
 
+export interface CanvasWidgetConfig {
+  // This needs to have something in it to avoid TS errors, I haven't switched
+  // canvas over yet
+  todo: string;
+}
+
 export interface BrightspaceCustomWidgetConfig {
   link?: string;
-  showBranding?: string;
+  showBranding?: 'on' | 'off';
 }
 
 export interface BrightspaceWidgetConfig {
   orgTypeId?: string;
   link?: string;
-  showBranding?: string;
+  showBranding?: 'on' | 'off';
 }
 
 export {};

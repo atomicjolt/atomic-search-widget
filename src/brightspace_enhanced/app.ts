@@ -1,15 +1,15 @@
-import registerModal from '../brightspace_common/modal';
-import getBrightspaceConfig from '../common/brightspace_config';
+import registerModal, { CreateModal } from '../brightspace_common/modal';
+import ConfigWrapper from '../common/brightspace_config';
 import { COURSE, ORG, ORG_TYPE } from './org_types';
-import { DESKTOP_WIDGET_NAME, DesktopWidget, registerDesktopWidget } from './desktop_widget';
+import { DesktopWidget, createDesktopWidget } from './desktop_widget';
 import { SEARCH_EVENT } from './widget_common';
-import { MOBILE_WIDGET_NAME, MobileWidget, registerMobileWidget } from './mobile_widget';
+import { MobileWidget, createMobileWidget } from './mobile_widget';
 
 console.log('[AJ] global JS attached');
 
 const MODAL_ELEMENT_NAME = 'atomic-search-enhanced-modal';
 
-const getConfig = getBrightspaceConfig('atomicSearchCustomConfig');
+const config = new ConfigWrapper('brightspaceCustom');
 
 const PARENT_SELECTOR = '.d2l-navigation-s-main-wrapper';
 function canInjectWidget() {
@@ -18,25 +18,24 @@ function canInjectWidget() {
 
 type Widget = DesktopWidget | MobileWidget;
 
-function addSearchListener(widget: Widget, orgId: string) {
+function addSearchListener(widget: Widget, orgId: string, createModal: CreateModal) {
   widget.addEventListener(SEARCH_EVENT, (e: Event) => {
     const searchText = (e as CustomEvent).detail.searchText;
 
-    let link = getConfig('link');
+    let link = config.get('link');
     link = link.replace('{orgUnitId}', orgId);
     link = link.concat(`&ajsearch=${encodeURIComponent(searchText)}`);
 
-    const modal = document.createElement(MODAL_ELEMENT_NAME);
-    modal.dataset.frameSrc = link;
-    modal.dataset.query = searchText;
+    const modal = createModal({ frameSrc: link, query: searchText });
     document.body.appendChild(modal);
   });
 }
 
-function addDesktopWidget(orgType: ORG_TYPE, orgId: string) {
-  const widget = document.createElement(DESKTOP_WIDGET_NAME) as DesktopWidget;
-  widget.dataset.orgType = orgType;
-  widget.dataset.showBranding = getConfig('showBranding', 'on');
+function addDesktopWidget(orgType: ORG_TYPE, orgId: string, createModal: CreateModal) {
+  const widget = createDesktopWidget({
+    orgType: orgType,
+    showBranding: config.get('showBranding', 'on'),
+  });
   widget.style.position = 'absolute';
   widget.style.top = '0';
   widget.style.height = '100%';
@@ -54,18 +53,19 @@ function addDesktopWidget(orgType: ORG_TYPE, orgId: string) {
     widget.parentElement!.style.position = 'relative';
   }
 
-  addSearchListener(widget, orgId);
+  addSearchListener(widget, orgId, createModal);
 }
 
-function addMobileWidget(orgType: ORG_TYPE, orgId: string) {
-  const widget = document.createElement(MOBILE_WIDGET_NAME) as MobileWidget;
-  widget.dataset.orgType = orgType;
-  widget.dataset.showBranding = getConfig('showBranding', 'on');
+function addMobileWidget(orgType: ORG_TYPE, orgId: string, createModal: CreateModal) {
+  const widget = createMobileWidget({
+    orgType: orgType,
+    showBranding: config.get('showBranding', 'on'),
+  });
 
   const parent = document.querySelector<HTMLElement>('.d2l-navigation-s-mobile-menu-nav')!;
   parent.prepend(widget);
 
-  addSearchListener(widget, orgId);
+  addSearchListener(widget, orgId, createModal);
 }
 
 function orgData() {
@@ -91,9 +91,7 @@ function init() {
 
   window.ATOMIC_SEARCH_ENHANCED_LOCKED = true;
 
-  registerDesktopWidget();
-  registerMobileWidget();
-  registerModal(MODAL_ELEMENT_NAME);
+  const createModal = registerModal(MODAL_ELEMENT_NAME);
 
   if (!canInjectWidget()) {
     console.log('[AJ] page does not have injection location');
@@ -102,8 +100,8 @@ function init() {
 
   const [orgType, orgId] = orgData();
 
-  addDesktopWidget(orgType, orgId);
-  addMobileWidget(orgType, orgId);
+  addDesktopWidget(orgType, orgId, createModal);
+  addMobileWidget(orgType, orgId, createModal);
 }
 
 init();

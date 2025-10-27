@@ -33,6 +33,8 @@ type WidgetDataset = {
 }
 
 export class MobileWidget extends HTMLElement {
+  props!: WidgetDataset;
+
   get widgetEl() {
     return this.shadowRoot!.querySelector('.widget')!;
   }
@@ -46,7 +48,7 @@ export class MobileWidget extends HTMLElement {
   }
 
   connectedCallback() {
-    const { orgType, showBranding } = this.dataset as WidgetDataset
+    const { orgType, showBranding } = this.props;
 
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
@@ -68,7 +70,11 @@ export class MobileWidget extends HTMLElement {
 }
 
 export const MOBILE_WIDGET_NAME = 'atomic-search-enhanced-mobile-widget';
+customElements.define(MOBILE_WIDGET_NAME, MobileWidget);
 
-export function registerMobileWidget() {
-  customElements.define(MOBILE_WIDGET_NAME, MobileWidget);
+export function createMobileWidget(props: WidgetDataset) {
+  const widget = document.createElement(MOBILE_WIDGET_NAME) as MobileWidget;
+  widget.props = props;
+  return widget;
 }
+
