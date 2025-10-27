@@ -4,11 +4,13 @@ import { COURSE, ORG, ORG_TYPE } from './org_types';
 import { DesktopWidget, createDesktopWidget } from './desktop_widget';
 import { SEARCH_EVENT } from './widget_common';
 import { MobileWidget, createMobileWidget } from './mobile_widget';
+import checkSupportedOrgs from './check_supported_orgs';
 
 console.log('[AJ] global JS attached');
 
 const MODAL_ELEMENT_NAME = 'atomic-search-enhanced-modal';
 
+window.atomicSearchCustomConfig.supportedOrgs= ["6606"]
 const config = new ConfigWrapper('brightspaceCustom');
 
 const PARENT_SELECTOR = '.d2l-navigation-s-main-wrapper';
@@ -18,7 +20,11 @@ function canInjectWidget() {
 
 type Widget = DesktopWidget | MobileWidget;
 
-function addSearchListener(widget: Widget, orgId: string, createModal: CreateModal) {
+function addSearchListener(
+  widget: Widget,
+  orgId: string,
+  createModal: CreateModal,
+) {
   widget.addEventListener(SEARCH_EVENT, (e: Event) => {
     const searchText = (e as CustomEvent).detail.searchText;
 
@@ -31,7 +37,11 @@ function addSearchListener(widget: Widget, orgId: string, createModal: CreateMod
   });
 }
 
-function addDesktopWidget(orgType: ORG_TYPE, orgId: string, createModal: CreateModal) {
+function addDesktopWidget(
+  orgType: ORG_TYPE,
+  orgId: string,
+  createModal: CreateModal,
+) {
   const widget = createDesktopWidget({
     orgType: orgType,
     showBranding: config.get('showBranding', 'on'),
@@ -40,7 +50,9 @@ function addDesktopWidget(orgType: ORG_TYPE, orgId: string, createModal: CreateM
   widget.style.top = '0';
   widget.style.height = '100%';
 
-  const parent = document.querySelector<HTMLElement>('.d2l-navigation-s-main-wrapper')!;
+  const parent = document.querySelector<HTMLElement>(
+    '.d2l-navigation-s-main-wrapper',
+  )!;
 
   parent.after(widget);
 
@@ -56,19 +68,25 @@ function addDesktopWidget(orgType: ORG_TYPE, orgId: string, createModal: CreateM
   addSearchListener(widget, orgId, createModal);
 }
 
-function addMobileWidget(orgType: ORG_TYPE, orgId: string, createModal: CreateModal) {
+function addMobileWidget(
+  orgType: ORG_TYPE,
+  orgId: string,
+  createModal: CreateModal,
+) {
   const widget = createMobileWidget({
     orgType: orgType,
     showBranding: config.get('showBranding', 'on'),
   });
 
-  const parent = document.querySelector<HTMLElement>('.d2l-navigation-s-mobile-menu-nav')!;
+  const parent = document.querySelector<HTMLElement>(
+    '.d2l-navigation-s-mobile-menu-nav',
+  )!;
   parent.prepend(widget);
 
   addSearchListener(widget, orgId, createModal);
 }
 
-function orgData() {
+function orgData(): [ORG_TYPE, string] {
   const courseTitleTag = document.querySelector<HTMLAnchorElement>(
     'header nav .d2l-navigation-s-title-container a',
   );
@@ -80,10 +98,12 @@ function orgData() {
   const orgId = JSON.parse(
     document.querySelector('html')!.dataset.heContext!,
   ).orgUnitId;
+  console.log('[AJ] detected orgId:', orgId);
   return [ORG, orgId];
 }
 
-function init() {
+
+async function init() {
   if (window.ATOMIC_SEARCH_ENHANCED_LOCKED) {
     console.log('[AJ] global JS loaded twice');
     return;
@@ -99,6 +119,15 @@ function init() {
   }
 
   const [orgType, orgId] = orgData();
+
+  const supportedOrgs = config.get('supportedOrgs', []);
+  if (supportedOrgs.length > 0) {
+    const supported = await checkSupportedOrgs(supportedOrgs, orgId);
+    if (!supported) {
+      console.log('[AJ] org not supported, not injecting widget');
+      return;
+    }
+  }
 
   addDesktopWidget(orgType, orgId, createModal);
   addMobileWidget(orgType, orgId, createModal);

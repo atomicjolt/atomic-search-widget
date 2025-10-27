@@ -12,9 +12,11 @@ export interface CanvasWidgetConfig {
   todo: string;
 }
 
+type orgId = string | number;
 export interface BrightspaceCustomWidgetConfig {
   link?: string;
   showBranding?: 'on' | 'off';
+  supportedOrgs?: orgId[];
 }
 
 export interface BrightspaceWidgetConfig {
