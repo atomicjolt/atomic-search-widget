@@ -48,6 +48,7 @@ export default async function checkSupportedOrgs(
 }
 
 // Using a generator here to avoid loading more pages until we need them.
+// It seems unlikely that the hierarchy would be that deep, but who knows.
 // This code could be generalized but I don't see why we would need it yet.
 async function* parentOrgs(orgId: orgId): AsyncGenerator<Item> {
   let bookmark = '';
