@@ -1,8 +1,5 @@
-import dotenv from 'dotenv';
 import { context, build } from 'esbuild';
 import { sassPlugin } from 'esbuild-sass-plugin';
-
-dotenv.config();
 
 const [env] = process.argv.slice(2);
 
