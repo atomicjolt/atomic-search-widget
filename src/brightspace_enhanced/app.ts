@@ -97,7 +97,7 @@ function orgData(): [ORG_TYPE, string] {
   const orgId = JSON.parse(
     document.querySelector('html')!.dataset.heContext!,
   ).orgUnitId;
-  console.log('[AJ] detected orgId:', orgId);
+
   return [ORG, orgId];
 }
 
