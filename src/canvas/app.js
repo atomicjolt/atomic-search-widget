@@ -211,7 +211,7 @@ const SEARCH_WORDS = [
 ];
 
 function elementMatchesSearchWord(el) {
-  return SEARCH_WORDS.some((word) => el.textContent.trim() === word)
+  return SEARCH_WORDS.some((word) => el.textContent.trim() === word || el.textContent.trim().startsWith(`Search (`));
 }
 
 function getToolUrl() {
@@ -226,40 +226,50 @@ function getToolUrl() {
     return `/accounts/${atomicSearchConfig.accountId}/${toolPath}?launch_type=global_navigation`;
   }
 
-  // local nav could be within a course or subaccount
-  const localNavLinks = Array.from(
-    document.querySelectorAll('#section-tabs a[href*="/external_tools"]'),
-  );
-  const localNavElement = localNavLinks.find(
-    (link) =>
-      link.href.match(EXTERNAL_TOOL_REGEX) &&
-      elementMatchesSearchWord(link)
-  );
-
-  if (localNavElement) {
-    return localNavElement.href;
-  }
-
-  const globalNavLinks = Array.from(
-    document.querySelectorAll(`#menu a[href*="/external_tools"]`),
-  );
-  const globalNavElement = globalNavLinks.find((link) => {
-    const textEl = link.querySelector('.menu-item__text');
-    return (
-      textEl &&
-      elementMatchesSearchWord(textEl) &&
-      link.href.match(EXTERNAL_TOOL_REGEX)
+  for (let i = 0; i < SEARCH_WORDS.length; i++) {
+    const word = SEARCH_WORDS[i];
+    const baseSelector = `a[href*="/external_tools/"]`;
+    // this could be within a course or subaccount
+    const localNavLinks = Array.from(
+      document.querySelectorAll(`#section-tabs ${baseSelector}`),
     );
-  });
 
-  if (globalNavElement) {
-    const toolPath = globalNavElement.href.match(EXTERNAL_TOOL_REGEX);
-    const contextMatch = window.location.pathname.match(PATH_REGEX);
-    if (contextMatch && toolPath) {
-      return `${contextMatch[0]}${toolPath[0]}`;
+    const localNavElement = localNavLinks.find(
+      (link) => elementMatchesSearchWord(link)
+    );
+    if (localNavElement) {
+      return localNavElement.href;
     }
 
-    return globalNavElement.href;
+    const globalNavLinks = Array.from(document.querySelectorAll(`#menu ${baseSelector}`));
+    const globalNavElement = globalNavLinks.find((link) => {
+      const textEl = link.querySelector('.menu-item__text');
+      return (
+        textEl &&
+        elementMatchesSearchWord(textEl)
+      );
+    });
+
+    if (globalNavElement) {
+      const toolPath = globalNavElement.href.match(EXTERNAL_TOOL_REGEX);
+      const contextMatch = window.location.pathname.match(PATH_REGEX);
+      if (contextMatch && toolPath) {
+        return `${contextMatch[0]}${toolPath[0]}`;
+      }
+
+      return globalNavElement.href;
+    }
+
+    if (
+      globalNavElement.attr('href') &&
+      globalNavElement.find('.menu-item__text').text().trim() === word
+    ) {
+      const toolPath = globalNavElement.attr('href').match(EXTERNAL_TOOL_REGEX);
+      const contextMatch = window.location.pathname.match(PATH_REGEX);
+      if (contextMatch && toolPath) {
+        return `${contextMatch[0]}${toolPath[0]}`;
+      }
+    }
   }
 
   return null;
@@ -325,9 +335,9 @@ function addSmallWidget(placeholder) {
 }
 
 const Placeholders = {
-  ACCOUNTS: 'Search this account',
-  COURSES: 'Search this course',
-  DASHBOARD: 'Search my courses',
+  ACCOUNTS: 'Search this account (local)',
+  COURSES: 'Search this course (local)',
+  DASHBOARD: 'Search my courses (local)',
 };
 
 function addWidget(addToDOM, attemptNumber) {

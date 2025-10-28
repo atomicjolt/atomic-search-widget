@@ -11,18 +11,29 @@ This application adds a search widget to Canvas.
 Make sure to install git and npm before you start then:
 
 1. git clone https://github.com/atomicjolt/atomic-search-widget.git my_project_name
-2. Rename .env.example to .env. This file contains the port the server will use.
-   The default 8080 should be fine, but you can also use a local domain or ngrok if you wish.
-3. run ./bin/setup or ./bin/setup-linux
-4. Install packages with
+2. Configure Caddy to serve the build dir by adding this to your Caddyfile, changing
+   the file path
+
+```
+atomic-search-widget.atomicjolt.xyz {
+  root * /[path-to-repo]/build/dev
+  file_server
+
+  header {
+        Cache-Control: no-cache, no-store, must-revalidate
+  }
+}
+```
+
+3. Install packages with
 
     `npm install`
 
-5. Start server with:
+4. Start server with:
 
   `npm run hot`
 
-6. Upload the file loaders/local.js as your canvas theme js (Do this in a
+5. Upload the file loaders/local.js as your canvas theme js (Do this in a
    subaccount or on test or beta canvas). It's a small
    snippet that simply loads the js from the webpack server.
 
