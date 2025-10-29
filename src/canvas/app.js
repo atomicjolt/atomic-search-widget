@@ -162,7 +162,7 @@ function ajHandleComm(event) {
         default:
           break;
       }
-    } catch (_error) {
+    } catch {
       // Ignore errors
     }
   }

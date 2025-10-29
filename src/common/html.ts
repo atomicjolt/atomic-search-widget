@@ -1,7 +1,7 @@
-export function htmlToElement(htmlText) {
+export function htmlToElement(htmlText: string) {
   const template = document.createElement('template');
   template.innerHTML = htmlText.trim();
-  return template.content.firstChild;
+  return template.content.firstChild!;
 }
 
 export const SEARCH_SVG = `<svg class="ajas-search-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64.8 64.6">
