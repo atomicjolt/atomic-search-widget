@@ -9,9 +9,6 @@ declare global {
 }
 
 export interface CanvasWidgetConfig {
-  // This needs to have something in it to avoid TS errors, I haven't switched
-  // canvas over yet
-  todo: string;
   accountId?: string | number;
   externalToolId?: string | number;
   hasEquella?: boolean;

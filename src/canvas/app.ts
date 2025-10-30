@@ -61,7 +61,10 @@ function getCachedResults() {
   }
 }
 
-function allModuleProgress(courseIds: string[], cb: (progress: ModuleProgress) => void) {
+function allModuleProgress(
+  courseIds: string[],
+  cb: (progress: ModuleProgress) => void,
+) {
   const cachedProgress = getCachedResults();
 
   const missingCourseIds = [];
@@ -211,7 +214,10 @@ const SEARCH_WORDS = [
 ];
 
 function elementMatchesSearchWord(el: HTMLElement) {
-  return SEARCH_WORDS.some((word) => el.textContent.trim() === word || el.textContent.trim().startsWith(`Search (`));
+  return (
+    SEARCH_WORDS.some((word) => el.textContent.trim() === word) ||
+    el.textContent.trim().startsWith(`Search (`)
+  );
 }
 
 function getToolUrl() {
@@ -229,23 +235,24 @@ function getToolUrl() {
   const baseSelector = `a[href*="/external_tools/"]`;
   // this could be within a course or subaccount
   const localNavLinks = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>(`#section-tabs ${baseSelector}`),
+    document.querySelectorAll<HTMLAnchorElement>(
+      `#section-tabs ${baseSelector}`,
+    ),
   );
 
-  const localNavElement = localNavLinks.find(
-    (link) => elementMatchesSearchWord(link)
+  const localNavElement = localNavLinks.find((link) =>
+    elementMatchesSearchWord(link),
   );
   if (localNavElement) {
     return localNavElement.href;
   }
 
-  const globalNavLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>(`#menu ${baseSelector}`));
+  const globalNavLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>(`#menu ${baseSelector}`),
+  );
   const globalNavElement = globalNavLinks.find((link) => {
     const textEl = link.querySelector<HTMLElement>('.menu-item__text');
-    return (
-      textEl &&
-      elementMatchesSearchWord(textEl)
-    );
+    return textEl && elementMatchesSearchWord(textEl);
   });
 
   if (globalNavElement) {
@@ -315,7 +322,6 @@ function addSmallWidget(placeholder: string): [BaseWidget, string] {
     ></atomic-search-widget>
   `) as BaseWidget;
 
-
   document.querySelector('.mobile-header-title')!.after(node);
   node.parentElement!.style.position = 'relative';
 
@@ -323,9 +329,9 @@ function addSmallWidget(placeholder: string): [BaseWidget, string] {
 }
 
 const Placeholders = {
-  ACCOUNTS: 'Search this account (local)',
-  COURSES: 'Search this course (local)',
-  DASHBOARD: 'Search my courses (local)',
+  ACCOUNTS: 'Search this account',
+  COURSES: 'Search this course',
+  DASHBOARD: 'Search my courses',
 };
 
 function addWidget(addToDOM: AddWidget, attemptNumber: number) {
