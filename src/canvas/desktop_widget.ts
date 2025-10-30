@@ -6,7 +6,7 @@ import {
 } from './widget_common';
 import { SEARCH_SVG } from '../common/html';
 
-function html(cssClass, placeholder) {
+function html(cssClass: string, placeholder: string) {
   const { dropdownHtml, equellaClass } = getEquellaDomData();
 
   return `<div class="ajas-search-widget ${cssClass} ${equellaClass}">
@@ -27,7 +27,7 @@ function html(cssClass, placeholder) {
 export default class AtomicSearchDesktopWidget extends BaseWidget {
   _onConnect() {
     const { cssClass, placeholder } = this.dataset;
-    const htmlText = html(cssClass, placeholder);
+    const htmlText = html(cssClass!, placeholder!);
 
     initWidget(this, htmlText);
   }

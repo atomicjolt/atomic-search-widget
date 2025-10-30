@@ -5,7 +5,7 @@ const [env] = process.argv.slice(2);
 
 const baseConfig = {
   entryPoints: [
-    'src/atomic_search_widget.js',
+    'src/atomic_search_widget.ts',
     'src/brightspace.ts',
     'src/brightspace_enhanced.ts',
   ],
