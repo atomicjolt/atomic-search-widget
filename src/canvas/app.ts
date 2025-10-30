@@ -22,6 +22,9 @@ function updateSearchWidgetText(newText: string | null) {
     });
 }
 
+// I'm ok with 'any' here because we don't touch the data here, we just pass
+// it along to search
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ModuleProgress = Record<string, any>;
 type CachedResults = { time: number; data: ModuleProgress };
 
@@ -223,39 +226,36 @@ function getToolUrl() {
     return `/accounts/${atomicSearchConfig.accountId}/${toolPath}?launch_type=global_navigation`;
   }
 
-  for (let i = 0; i < SEARCH_WORDS.length; i++) {
-    const word = SEARCH_WORDS[i];
-    const baseSelector = `a[href*="/external_tools/"]`;
-    // this could be within a course or subaccount
-    const localNavLinks = Array.from(
-      document.querySelectorAll<HTMLAnchorElement>(`#section-tabs ${baseSelector}`),
-    );
+  const baseSelector = `a[href*="/external_tools/"]`;
+  // this could be within a course or subaccount
+  const localNavLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>(`#section-tabs ${baseSelector}`),
+  );
 
-    const localNavElement = localNavLinks.find(
-      (link) => elementMatchesSearchWord(link)
+  const localNavElement = localNavLinks.find(
+    (link) => elementMatchesSearchWord(link)
+  );
+  if (localNavElement) {
+    return localNavElement.href;
+  }
+
+  const globalNavLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>(`#menu ${baseSelector}`));
+  const globalNavElement = globalNavLinks.find((link) => {
+    const textEl = link.querySelector<HTMLElement>('.menu-item__text');
+    return (
+      textEl &&
+      elementMatchesSearchWord(textEl)
     );
-    if (localNavElement) {
-      return localNavElement.href;
+  });
+
+  if (globalNavElement) {
+    const toolPath = globalNavElement.href.match(EXTERNAL_TOOL_REGEX);
+    const contextMatch = window.location.pathname.match(PATH_REGEX);
+    if (contextMatch && toolPath) {
+      return `${contextMatch[0]}${toolPath[0]}`;
     }
 
-    const globalNavLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>(`#menu ${baseSelector}`));
-    const globalNavElement = globalNavLinks.find((link) => {
-      const textEl = link.querySelector<HTMLElement>('.menu-item__text');
-      return (
-        textEl &&
-        elementMatchesSearchWord(textEl)
-      );
-    });
-
-    if (globalNavElement) {
-      const toolPath = globalNavElement.href.match(EXTERNAL_TOOL_REGEX);
-      const contextMatch = window.location.pathname.match(PATH_REGEX);
-      if (contextMatch && toolPath) {
-        return `${contextMatch[0]}${toolPath[0]}`;
-      }
-
-      return globalNavElement.href;
-    }
+    return globalNavElement.href;
   }
 
   return null;

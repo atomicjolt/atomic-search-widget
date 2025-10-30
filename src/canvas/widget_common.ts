@@ -75,6 +75,9 @@ export abstract class BaseWidget extends HTMLElement {
 
 // multiple instances of the script can be running in some cases, this prevents
 // that from throwing an error
+
+// eslint doesn't know about CustomElementConstructor
+// eslint-disable-next-line no-undef 
 export function registerWidget(name: string, klass: CustomElementConstructor) {
   if (!customElements.get(name)) {
     customElements.define(name, klass);
