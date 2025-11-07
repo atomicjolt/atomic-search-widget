@@ -3,7 +3,7 @@ import styles from '../brightspace_common/styles.scss';
 
 import { htmlToElement, SEARCH_SVG } from '../common/html';
 
-function widgetHtml(placeholderText, showBranding) {
+function widgetHtml(placeholderText: string, showBranding: boolean) {
   const brandingClass = showBranding ? '' : 'no-branding';
   return `
     <div class="mobile-widget ${brandingClass}">
@@ -23,9 +23,16 @@ function widgetHtml(placeholderText, showBranding) {
 
 export const SEARCH_EVENT = 'ATOMIC_SEARCH';
 
+type ModalData = {
+  placeholderText: string;
+  showBranding: "on" | "off";
+}
+
 class Widget extends HTMLElement {
+  props!: ModalData;
+
   connectedCallback() {
-    const { placeholderText, showBranding } = this.dataset;
+    const { placeholderText, showBranding } = this.props;
 
     const shadow = this.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
@@ -35,9 +42,9 @@ class Widget extends HTMLElement {
       htmlToElement(widgetHtml(placeholderText, showBranding === 'on')),
     );
 
-    shadow.querySelector('form').addEventListener('submit', (e) => {
+    shadow.querySelector('form')!.addEventListener('submit', (e) => {
       e.preventDefault();
-      const searchText = shadow.querySelector('input').value;
+      const searchText = shadow.querySelector('input')!.value;
       this.dispatchEvent(
         new CustomEvent(SEARCH_EVENT, { detail: { searchText } }),
       );
@@ -45,6 +52,10 @@ class Widget extends HTMLElement {
   }
 }
 
-export function registerWidget() {
-  customElements.define('atomic-search-widget', Widget);
+customElements.define('atomic-search-widget', Widget);
+
+export function createWidget(props: ModalData) {
+  const widget = document.createElement('atomic-search-widget') as Widget;
+  widget.props = props;
+  return widget;
 }
