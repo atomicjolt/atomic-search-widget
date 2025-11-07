@@ -14,9 +14,11 @@ export interface CanvasWidgetConfig {
   hasEquella?: boolean;
 }
 
+type orgId = string | number;
 export interface BrightspaceCustomWidgetConfig {
   link?: string;
   showBranding?: 'on' | 'off';
+  supportedOrgs?: orgId[];
 }
 
 export interface BrightspaceWidgetConfig {

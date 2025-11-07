@@ -12,6 +12,7 @@ const baseConfig = {
   bundle: true,
   logLevel: 'info',
   plugins: [sassPlugin({ type: 'css-text' })],
+  target: ['es2020'],
 };
 
 if (env === 'dev') {
