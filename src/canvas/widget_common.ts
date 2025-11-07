@@ -14,7 +14,7 @@ const CARET_SVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://w
 
 export { CARET_SVG, SEARCH_EVENT, DEFAULT_SEARCH, EQUELLA_SEARCH };
 
-export function initWidget(widget, htmlText) {
+export function initWidget(widget: BaseWidget, htmlText: string) {
   const shadow = widget.attachShadow({ mode: 'open' });
 
   const style = document.createElement('style');
@@ -22,9 +22,9 @@ export function initWidget(widget, htmlText) {
 
   shadow.append(style, htmlToElement(htmlText));
 
-  shadow.querySelector('form').addEventListener('submit', (e) => {
-    const searchText = shadow.querySelector('input').value;
-    const searchType = e.submitter.value || DEFAULT_SEARCH;
+  shadow.querySelector('form')!.addEventListener('submit', (e: SubmitEvent) => {
+    const searchText = shadow.querySelector('input')!.value;
+    const searchType = (e.submitter as HTMLButtonElement).value || DEFAULT_SEARCH;
     widget.dispatchEvent(
       new CustomEvent(SEARCH_EVENT, { detail: { searchText, searchType } }),
     );
@@ -51,28 +51,34 @@ export function initWidget(widget, htmlText) {
   // canvas has global keyboard shortcuts. Normally they don't apply when you're
   // in an input, but since this is a shadow DOM their check doesn't work. So we
   // just stop the event from bubbling here.
-  shadow.querySelector('input').addEventListener('keydown', (e) => {
+  shadow.querySelector('input')!.addEventListener('keydown', (e) => {
     e.stopPropagation();
   });
 }
 
-export class BaseWidget extends HTMLElement {
+export abstract class BaseWidget extends HTMLElement {
+  abstract _onConnect(): void;
+  _alreadyConnected = false;
+
   connectedCallback() {
     if (this._alreadyConnected) return;
     this._onConnect();
     this._alreadyConnected = true;
   }
 
-  updateSearchText(newValue) {
+  updateSearchText(newValue: string | null) {
     // undefined will get turned into text, so ignore all falsey values
     const text = newValue || '';
-    this.shadowRoot.querySelector('input').value = text;
+    this.shadowRoot!.querySelector('input')!.value = text;
   }
 }
 
 // multiple instances of the script can be running in some cases, this prevents
 // that from throwing an error
-export function registerWidget(name, klass) {
+
+// eslint doesn't know about CustomElementConstructor
+// eslint-disable-next-line no-undef 
+export function registerWidget(name: string, klass: CustomElementConstructor) {
   if (!customElements.get(name)) {
     customElements.define(name, klass);
   }

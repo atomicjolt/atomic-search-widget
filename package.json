@@ -17,14 +17,11 @@
     "url": "https://github.com/atomicjolt/atomic-search-widget"
   },
   "keywords": [],
-  "dependencies": {
-    "jquery": "^3.6.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.470.0",
     "@typescript-eslint/eslint-plugin": "8.46.0",
     "@typescript-eslint/parser": "8.46.0",
-    "dotenv": "^16.4.7",
     "esbuild": "^0.25.0",
     "esbuild-sass-plugin": "^3.3.1",
     "eslint": "^8.15.0",

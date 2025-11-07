@@ -6,7 +6,7 @@ import {
 } from './widget_common';
 import { CLOSE_SVG, SEARCH_SVG } from '../common/html';
 
-function html(placeholder) {
+function html(placeholder: string) {
   const { dropdownHtml, equellaClass } = getEquellaDomData();
 
   return `<div class="ajas-search-widget ajas-search-widget--small ${equellaClass}">
@@ -31,12 +31,12 @@ function html(placeholder) {
 export default class AtomicSearchMobileWidget extends BaseWidget {
   _onConnect() {
     const { placeholder } = this.dataset;
-    const htmlText = html(placeholder);
+    const htmlText = html(placeholder!);
 
     initWidget(this, htmlText);
 
-    const toggleBtn = this.shadowRoot.querySelector('.ajas-search-toggle');
-    const wrapper = this.shadowRoot.querySelector('.ajas-search-widget--small');
+    const toggleBtn = this.shadowRoot!.querySelector('.ajas-search-toggle')!;
+    const wrapper = this.shadowRoot!.querySelector('.ajas-search-widget--small')!;
 
     toggleBtn.addEventListener('click', () => {
       wrapper.classList.toggle('is-active');

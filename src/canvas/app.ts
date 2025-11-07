@@ -1,7 +1,6 @@
-import $ from 'jquery';
 import './desktop_widget';
 import './mobile_widget';
-import { SEARCH_EVENT, EQUELLA_SEARCH } from './widget_common';
+import { SEARCH_EVENT, EQUELLA_SEARCH, BaseWidget } from './widget_common';
 import handleTrayExpand from './expand_lti_launch';
 import atomicSearchConfig from './config';
 import {
@@ -9,12 +8,13 @@ import {
   receiveQueryVariables,
   sendQueryVariables,
 } from './query_params';
+import { htmlToElement } from '../common/html';
 
-let APP_IFRAME;
+let APP_IFRAME: Window;
 
-function updateSearchWidgetText(newText) {
+function updateSearchWidgetText(newText: string | null) {
   document
-    .querySelectorAll(
+    .querySelectorAll<BaseWidget>(
       'atomic-search-desktop-widget,atomic-search-mobile-widget',
     )
     .forEach((widget) => {
@@ -22,14 +22,20 @@ function updateSearchWidgetText(newText) {
     });
 }
 
-function cacheResults(results) {
+// I'm ok with 'any' here because we don't touch the data here, we just pass
+// it along to search
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ModuleProgress = Record<string, any>;
+type CachedResults = { time: number; data: ModuleProgress };
+
+function cacheResults(results: ModuleProgress) {
   try {
     localStorage.setItem(
       'atomicjoltModuleProgress',
       JSON.stringify({
         time: Date.now(),
         data: results,
-      }),
+      } as CachedResults),
     );
   } catch (e) {
     console.warn('failed to write to localStorage', e);
@@ -38,13 +44,13 @@ function cacheResults(results) {
 
 function getCachedResults() {
   try {
-    let stored = localStorage.getItem('atomicjoltModuleProgress');
+    const stored = localStorage.getItem('atomicjoltModuleProgress');
     if (stored) {
-      stored = JSON.parse(stored);
+      const cached = JSON.parse(stored) as CachedResults;
 
-      if (Date.now() - stored.time < 3600000) {
+      if (Date.now() - cached.time < 3600000) {
         // one hour
-        return stored.data;
+        return cached.data;
       }
     }
 
@@ -55,7 +61,10 @@ function getCachedResults() {
   }
 }
 
-function allModuleProgress(courseIds, cb) {
+function allModuleProgress(
+  courseIds: string[],
+  cb: (progress: ModuleProgress) => void,
+) {
   const cachedProgress = getCachedResults();
 
   const missingCourseIds = [];
@@ -70,18 +79,23 @@ function allModuleProgress(courseIds, cb) {
     return;
   }
 
-  const promises = courseIds.map(
+  const promises: Promise<ModuleProgress>[] = courseIds.map(
     (id) =>
       new Promise((resolve) => {
-        $.ajax({
-          url: `/courses/${id}/modules/progressions.json?user_id=${ENV.current_user_id}`,
-          dataType: 'text',
-        })
-          .done((data) => {
+        fetch(
+          `/courses/${id}/modules/progressions.json?user_id=${window.ENV.current_user_id}`,
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.text();
+          })
+          .then((data) => {
             const json = JSON.parse(data.replace(/^while\(1\);/, ''));
             resolve({ [id]: json });
           })
-          .fail(() => {
+          .catch(() => {
             // sometimes they will get 401's from this call. proceed with modules we
             // did manage to load, otherwise they will be stuck waiting
             resolve({});
@@ -98,7 +112,7 @@ function allModuleProgress(courseIds, cb) {
     .catch((error) => console.error(error));
 }
 
-function sendModuleProgress(source, progress) {
+function sendModuleProgress(source: Window, progress: ModuleProgress) {
   source.postMessage(
     JSON.stringify({
       subject: 'atomicjolt.moduleProgress',
@@ -109,12 +123,12 @@ function sendModuleProgress(source, progress) {
 }
 
 // sends the current query parameters to the search widget, and to Search
-function pushQuery(sourceFrame) {
+function pushQuery(sourceFrame: Window) {
   sendQueryVariables(sourceFrame);
   updateSearchWidgetText(getQuery().get('ajsearch'));
 }
 
-function ajHandleComm(event) {
+function ajHandleComm(event: MessageEvent) {
   if (typeof event.data === 'string') {
     try {
       const message = JSON.parse(event.data);
@@ -122,7 +136,7 @@ function ajHandleComm(event) {
       switch (message.subject) {
         case 'atomicjolt.requestSearchParams': {
           if (!APP_IFRAME) {
-            APP_IFRAME = event.source;
+            APP_IFRAME = event.source as Window;
             // catch the back button and re-search down below.
             window.addEventListener('popstate', () => pushQuery(APP_IFRAME));
           }
@@ -137,15 +151,15 @@ function ajHandleComm(event) {
         case 'atomicjolt.requestModuleProgress': {
           // Send a 'ping' back immediately. If the app doesn't receive it, it
           // will assume they don't have global JS enabled.
-          event.source.postMessage(
+          event.source!.postMessage(
             JSON.stringify({
               subject: 'atomicjolt.ping',
             }),
-            '*',
+            {},
           );
           if (message.courseIds) {
-            allModuleProgress(message.courseIds, (progress) =>
-              sendModuleProgress(event.source, progress),
+            allModuleProgress(message.courseIds, (progress: ModuleProgress) =>
+              sendModuleProgress(event.source as Window, progress),
             );
           }
           break;
@@ -164,14 +178,8 @@ function ajHandleComm(event) {
 }
 
 function ajEnableListener() {
-  // Create IE + others compatible event handler
-  const eventMethod = window.addEventListener
-    ? 'addEventListener'
-    : 'attachEvent';
-  const eventer = window[eventMethod];
-  Window.messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message';
   // Listen to message from child window
-  eventer(Window.messageEvent, ajHandleComm, false);
+  window.addEventListener('message', ajHandleComm, false);
 }
 
 // in consortium searches, the id might be something like 4346~2848
@@ -205,6 +213,13 @@ const SEARCH_WORDS = [
   'Tüm',
 ];
 
+function elementMatchesSearchWord(el: HTMLElement) {
+  return (
+    SEARCH_WORDS.some((word) => el.textContent.trim() === word) ||
+    el.textContent.trim().startsWith(`Search (`)
+  );
+}
+
 function getToolUrl() {
   if (atomicSearchConfig.accountId && atomicSearchConfig.externalToolId) {
     const toolPath = `external_tools/${atomicSearchConfig.externalToolId}`;
@@ -217,34 +232,37 @@ function getToolUrl() {
     return `/accounts/${atomicSearchConfig.accountId}/${toolPath}?launch_type=global_navigation`;
   }
 
-  for (let i = 0; i < SEARCH_WORDS.length; i++) {
-    const word = SEARCH_WORDS[i];
-    const baseSelector = `a:contains("${word}")[href*="/external_tools/"]`;
-    // this could be within a course or subaccount
-    const localNavElement = $(`#section-tabs ${baseSelector}`);
-    const globalNavElement = $(`#menu ${baseSelector}`);
+  const baseSelector = `a[href*="/external_tools/"]`;
+  // this could be within a course or subaccount
+  const localNavLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>(
+      `#section-tabs ${baseSelector}`,
+    ),
+  );
 
-    if (
-      localNavElement.attr('href') &&
-      (localNavElement[0].text.trim() === word ||
-        // This is a special case to allow the E2E test to hit different search
-        // environments
-        localNavElement[0].text.trim().startsWith(`Search (`))
-    ) {
-      return localNavElement.attr('href');
-    }
-    if (
-      globalNavElement.attr('href') &&
-      globalNavElement.find('.menu-item__text').text().trim() === word
-    ) {
-      const toolPath = globalNavElement.attr('href').match(EXTERNAL_TOOL_REGEX);
-      const contextMatch = window.location.pathname.match(PATH_REGEX);
-      if (contextMatch && toolPath) {
-        return `${contextMatch[0]}${toolPath[0]}`;
-      }
+  const localNavElement = localNavLinks.find((link) =>
+    elementMatchesSearchWord(link),
+  );
+  if (localNavElement) {
+    return localNavElement.href;
+  }
 
-      return globalNavElement.attr('href');
+  const globalNavLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>(`#menu ${baseSelector}`),
+  );
+  const globalNavElement = globalNavLinks.find((link) => {
+    const textEl = link.querySelector<HTMLElement>('.menu-item__text');
+    return textEl && elementMatchesSearchWord(textEl);
+  });
+
+  if (globalNavElement) {
+    const toolPath = globalNavElement.href.match(EXTERNAL_TOOL_REGEX);
+    const contextMatch = window.location.pathname.match(PATH_REGEX);
+    if (contextMatch && toolPath) {
+      return `${contextMatch[0]}${toolPath[0]}`;
     }
+
+    return globalNavElement.href;
   }
 
   return null;
@@ -252,15 +270,18 @@ function getToolUrl() {
 
 const BIG_WIDGET_ID = 'ajas-search-widget';
 
-function addBigWidget(placeholder) {
-  function buildHTML(cssClass) {
-    return `
+type AddWidget = (placeholder: string) => [BaseWidget, string];
+
+function addBigWidget(placeholder: string): [BaseWidget, string] {
+  function buildHTML(cssClass: string) {
+    const htmlText = `
       <atomic-search-desktop-widget
         id="${BIG_WIDGET_ID}"
         data-css-class="${cssClass}"
         data-placeholder="${placeholder}"
       ></atomic-search-widget>
     `;
+    return htmlToElement(htmlText) as BaseWidget;
   }
 
   const path = window.location.pathname;
@@ -268,22 +289,24 @@ function addBigWidget(placeholder) {
 
   if (path === '/') {
     // Dashboard page.
-    const html = buildHTML('ajas-search-widget--dashboard');
-    node = $(html).prependTo('.ic-Dashboard-header__actions');
+    node = buildHTML('ajas-search-widget--dashboard');
+
+    document.querySelector('.ic-Dashboard-header__actions')!.appendChild(node);
   } else if (path.match(/^\/courses\/?$/i)) {
     // All courses page.
-    const html = buildHTML('ajas-search-widget--all-courses');
-    node = $(html).insertAfter('.header-bar');
+    node = buildHTML('ajas-search-widget--all-courses');
+
+    document.querySelector('.header-bar')!.after(node);
   } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) {
     // Course files page. Not individual file pages though.
     // NOTE This one is not working at the moment. It seems that the parent node
     // is removed, and the mutation observer never fires
-    const html = buildHTML('ajas-search-widget--files');
-    node = $(html).insertAfter('.ic-app-crumbs');
+    node = buildHTML('ajas-search-widget--files');
+    document.querySelector('.ic-app-crumbs')!.after(node);
   } else {
     // Any course page.
-    const html = buildHTML('ajas-search-widget--files');
-    node = $(html).appendTo('.right-of-crumbs');
+    node = buildHTML('ajas-search-widget--files');
+    node = document.querySelector('.right-of-crumbs')!.appendChild(node);
   }
 
   return [node, BIG_WIDGET_ID];
@@ -291,16 +314,16 @@ function addBigWidget(placeholder) {
 
 const SMALL_WIDGET_ID = 'ajas-search-widget-mobile';
 
-function addSmallWidget(placeholder) {
-  const html = `
+function addSmallWidget(placeholder: string): [BaseWidget, string] {
+  const node = htmlToElement(`
     <atomic-search-mobile-widget
       id="${SMALL_WIDGET_ID}"
       data-placeholder="${placeholder}"
     ></atomic-search-widget>
-  `;
+  `) as BaseWidget;
 
-  const node = $(html).insertAfter('.mobile-header-title');
-  node.parent().css('position', 'relative');
+  document.querySelector('.mobile-header-title')!.after(node);
+  node.parentElement!.style.position = 'relative';
 
   return [node, SMALL_WIDGET_ID];
 }
@@ -311,7 +334,7 @@ const Placeholders = {
   DASHBOARD: 'Search my courses',
 };
 
-function addWidget(addToDOM, attemptNumber) {
+function addWidget(addToDOM: AddWidget, attemptNumber: number) {
   // Cap the number of times we re-add the widget in case we end up in a loop
   // with canvas
   if (attemptNumber >= 5) return;
@@ -337,15 +360,15 @@ function addWidget(addToDOM, attemptNumber) {
   }
 
   const [widget, id] = addToDOM(placeholder);
-  if (widget.length === 0) {
+  if (!widget) {
     // not incrementing attemptNumber here because repeating this isn't too
     // bad
     setTimeout(() => addWidget(addToDOM, attemptNumber), 50);
     return;
   }
 
-  widget[0].addEventListener(SEARCH_EVENT, (e) => {
-    const { searchText, searchType } = e.detail;
+  widget.addEventListener(SEARCH_EVENT, (e: Event) => {
+    const { searchText, searchType } = (e as CustomEvent).detail;
     if (APP_IFRAME) {
       const query = getQuery();
       query.set('ajsearch', searchText);
@@ -377,7 +400,7 @@ function addWidget(addToDOM, attemptNumber) {
     let wasRemoved = false;
     mutations.forEach((mutation) => {
       const searchNode = Array.from(mutation.removedNodes).find(
-        (node) => node.id === id,
+        (node) => (node as HTMLElement).id === id,
       );
       if (searchNode) {
         wasRemoved = true;
@@ -389,7 +412,7 @@ function addWidget(addToDOM, attemptNumber) {
     }
   });
 
-  observer.observe(widget.parent()[0], { childList: true });
+  observer.observe(widget.parentElement!, { childList: true });
 }
 
 // an instance of the script is already running
