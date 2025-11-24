@@ -268,11 +268,16 @@ function getToolUrl() {
   return null;
 }
 
+type AddWidgetResult = {
+  id: string;
+  widget: BaseWidget | null;
+};
+
+type AddWidget = (placeholder: string) => AddWidgetResult;
+
 const BIG_WIDGET_ID = 'ajas-search-widget';
 
-type AddWidget = (placeholder: string) => [BaseWidget, string];
-
-function addBigWidget(placeholder: string): [BaseWidget, string] {
+function addBigWidget(placeholder: string): AddWidgetResult {
   function buildHTML(cssClass: string) {
     const htmlText = `
       <atomic-search-desktop-widget
@@ -285,47 +290,66 @@ function addBigWidget(placeholder: string): [BaseWidget, string] {
   }
 
   const path = window.location.pathname;
-  let node;
+  let node: BaseWidget | null = null;
 
   if (path === '/') {
     // Dashboard page.
-    node = buildHTML('ajas-search-widget--dashboard');
-
-    document.querySelector('.ic-Dashboard-header__actions')!.appendChild(node);
+    const target = document.querySelector(
+      '.ic-Dashboard-header__actions #DashboardOptionsMenu_Container',
+    );
+    if (target) {
+      node = buildHTML('ajas-search-widget--dashboard');
+      target.before(node);
+    }
   } else if (path.match(/^\/courses\/?$/i)) {
     // All courses page.
-    node = buildHTML('ajas-search-widget--all-courses');
 
-    document.querySelector('.header-bar')!.after(node);
+    const target = document.querySelector('.header-bar');
+    if (target) {
+      node = buildHTML('ajas-search-widget--all-courses');
+      target.after(node);
+    }
   } else if (path.match(/^\/courses\/[\d]+\/files\/?$/i)) {
     // Course files page. Not individual file pages though.
     // NOTE This one is not working at the moment. It seems that the parent node
     // is removed, and the mutation observer never fires
-    node = buildHTML('ajas-search-widget--files');
-    document.querySelector('.ic-app-crumbs')!.after(node);
+    const target = document.querySelector('.ic-app-crumbs');
+    if (target) {
+      node = buildHTML('ajas-search-widget--files');
+      target.after(node);
+    }
   } else {
     // Any course page.
-    node = buildHTML('ajas-search-widget--files');
-    node = document.querySelector('.right-of-crumbs')!.appendChild(node);
+    const parent = document.querySelector('.right-of-crumbs');
+    if (parent) {
+      node = buildHTML('ajas-search-widget--files');
+      parent.appendChild(node);
+    }
   }
 
-  return [node, BIG_WIDGET_ID];
+  return {
+    id: BIG_WIDGET_ID,
+    widget: node,
+  };
 }
 
 const SMALL_WIDGET_ID = 'ajas-search-widget-mobile';
 
-function addSmallWidget(placeholder: string): [BaseWidget, string] {
-  const node = htmlToElement(`
-    <atomic-search-mobile-widget
-      id="${SMALL_WIDGET_ID}"
-      data-placeholder="${placeholder}"
-    ></atomic-search-widget>
-  `) as BaseWidget;
+function addSmallWidget(placeholder: string): AddWidgetResult {
+  const target = document.querySelector('.mobile-header-title');
+  if (target) {
+    const node = htmlToElement(`
+      <atomic-search-mobile-widget
+        id="${SMALL_WIDGET_ID}"
+        data-placeholder="${placeholder}"
+      ></atomic-search-widget>
+    `) as BaseWidget;
+    target.after(node);
+    node.parentElement!.style.position = 'relative';
 
-  document.querySelector('.mobile-header-title')!.after(node);
-  node.parentElement!.style.position = 'relative';
-
-  return [node, SMALL_WIDGET_ID];
+    return { id: SMALL_WIDGET_ID, widget: node };
+  }
+  return { id: SMALL_WIDGET_ID, widget: null };
 }
 
 const Placeholders = {
@@ -335,84 +359,88 @@ const Placeholders = {
 };
 
 function addWidget(addToDOM: AddWidget, attemptNumber: number) {
-  // Cap the number of times we re-add the widget in case we end up in a loop
-  // with canvas
-  if (attemptNumber >= 5) return;
+  try {
+    // Cap the number of times we re-add the widget in case we end up in a loop
+    // with canvas
+    if (attemptNumber >= 5) return;
 
-  const isSearchableLocation =
-    window.location.pathname.match(/^\/(accounts|courses)/i) ||
-    window.location.pathname === '/';
+    const isSearchableLocation =
+      window.location.pathname.match(/^\/(accounts|courses)/i) ||
+      window.location.pathname === '/';
 
-  if (!isSearchableLocation) return;
+    if (!isSearchableLocation) return;
 
-  const toolUrl = getToolUrl();
+    const toolUrl = getToolUrl();
 
-  if (!toolUrl) return;
+    if (!toolUrl) return;
 
-  let placeholder = Placeholders.DASHBOARD;
+    let placeholder = Placeholders.DASHBOARD;
 
-  if (window.location.pathname.match(/^\/(accounts)/i)) {
-    placeholder = Placeholders.ACCOUNTS;
-  }
-
-  if (window.location.pathname.match(/^\/(courses)/i)) {
-    placeholder = Placeholders.COURSES;
-  }
-
-  const [widget, id] = addToDOM(placeholder);
-  if (!widget) {
-    // not incrementing attemptNumber here because repeating this isn't too
-    // bad
-    setTimeout(() => addWidget(addToDOM, attemptNumber), 50);
-    return;
-  }
-
-  widget.addEventListener(SEARCH_EVENT, (e: Event) => {
-    const { searchText, searchType } = (e as CustomEvent).detail;
-    if (APP_IFRAME) {
-      const query = getQuery();
-      query.set('ajsearch', searchText);
-      query.set('ajpage', '1');
-
-      if (searchType === EQUELLA_SEARCH) {
-        query.set('ajcontext', 'OPEN_EQUELLA');
-      }
-
-      window.history.pushState(null, '', `?${query.toString()}`);
-      pushQuery(APP_IFRAME);
-    } else {
-      const query = new URLSearchParams({
-        ajsearch: searchText,
-        ajpage: '1',
-      });
-      if (window.location.pathname.match(/\/(discussion_topics)/i)) {
-        query.set('ajfilters', 'discussion_replies');
-      }
-      if (searchType === EQUELLA_SEARCH) {
-        query.set('ajcontext', 'OPEN_EQUELLA');
-      }
-      const queryChar = toolUrl.match(/\?/) ? '&' : '?';
-      window.location.href = `${toolUrl}${queryChar}${query.toString()}`;
+    if (window.location.pathname.match(/^\/(accounts)/i)) {
+      placeholder = Placeholders.ACCOUNTS;
     }
-  });
 
-  const observer = new MutationObserver((mutations) => {
-    let wasRemoved = false;
-    mutations.forEach((mutation) => {
-      const searchNode = Array.from(mutation.removedNodes).find(
-        (node) => (node as HTMLElement).id === id,
-      );
-      if (searchNode) {
-        wasRemoved = true;
+    if (window.location.pathname.match(/^\/(courses)/i)) {
+      placeholder = Placeholders.COURSES;
+    }
+
+    const { widget, id } = addToDOM(placeholder);
+    if (!widget) {
+      // not incrementing attemptNumber here because repeating this isn't too
+      // bad
+      setTimeout(() => addWidget(addToDOM, attemptNumber), 50);
+      return;
+    }
+
+    widget.addEventListener(SEARCH_EVENT, (e: Event) => {
+      const { searchText, searchType } = (e as CustomEvent).detail;
+      if (APP_IFRAME) {
+        const query = getQuery();
+        query.set('ajsearch', searchText);
+        query.set('ajpage', '1');
+
+        if (searchType === EQUELLA_SEARCH) {
+          query.set('ajcontext', 'OPEN_EQUELLA');
+        }
+
+        window.history.pushState(null, '', `?${query.toString()}`);
+        pushQuery(APP_IFRAME);
+      } else {
+        const query = new URLSearchParams({
+          ajsearch: searchText,
+          ajpage: '1',
+        });
+        if (window.location.pathname.match(/\/(discussion_topics)/i)) {
+          query.set('ajfilters', 'discussion_replies');
+        }
+        if (searchType === EQUELLA_SEARCH) {
+          query.set('ajcontext', 'OPEN_EQUELLA');
+        }
+        const queryChar = toolUrl.match(/\?/) ? '&' : '?';
+        window.location.href = `${toolUrl}${queryChar}${query.toString()}`;
       }
     });
-    if (wasRemoved) {
-      observer.disconnect();
-      addWidget(addToDOM, attemptNumber + 1);
-    }
-  });
 
-  observer.observe(widget.parentElement!, { childList: true });
+    const observer = new MutationObserver((mutations) => {
+      let wasRemoved = false;
+      mutations.forEach((mutation) => {
+        const searchNode = Array.from(mutation.removedNodes).find(
+          (node) => (node as HTMLElement).id === id,
+        );
+        if (searchNode) {
+          wasRemoved = true;
+        }
+      });
+      if (wasRemoved) {
+        observer.disconnect();
+        addWidget(addToDOM, attemptNumber + 1);
+      }
+    });
+
+    observer.observe(widget.parentElement!, { childList: true });
+  } catch (e) {
+    console.error('Error adding search widget:', e);
+  }
 }
 
 // an instance of the script is already running
