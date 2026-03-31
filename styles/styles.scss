@@ -60,6 +60,7 @@ $canvas-header-height: 55px;
     padding-inline: 12px 42px;
     border: 1px solid #8d959f;
     border-radius: 4px;
+    background-color: white;
 
     &:focus {
       border-color: #006fbf;
@@ -110,6 +111,7 @@ $canvas-header-height: 55px;
   white-space: nowrap;
   border: none;
   background-color: white;
+  color: #202122;
 }
 
 .ajas-search-widget__dropdown button:hover {
