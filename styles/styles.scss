@@ -1,5 +1,9 @@
 $canvas-header-height: 55px;
 
+:host {
+  color-scheme: light;
+}
+
 // Search widget on Large screens
 .ajas-search-widget {
   --svg-fill: #01579b;
